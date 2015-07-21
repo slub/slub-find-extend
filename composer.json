@@ -1,6 +1,6 @@
 {
-    "name": "slub/find-slub",
-    "description": "Configuration for the frontend for Solr indexes",
+    "name": "slub/slub-find-extend",
+    "description": "Extension extending Find functionality",
     "version": "1.0.2",
     "type": "typo3-cms-extension",
     "homepage": "",
@@ -17,6 +17,6 @@
         "typo3/cms-core": ">=6.2.11,<8.0"
     },
     "replace": {
-        "typo3-ter/find-slub": "*"
+        "typo3-ter/slub-find-extend": "*"
     }
 }
