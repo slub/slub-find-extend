@@ -6,7 +6,7 @@ use Solarium\QueryType\Select\Result\Document;
 
 /**
  * Class FulltextService
- * @package Slub\FindSlub\Services
+ * @package Slub\SlubFindExtend\Services
  */
 class FulltextService {
 

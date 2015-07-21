@@ -14,7 +14,7 @@ namespace Slub\SlubFindExtend\Slots;
  * The TYPO3 project - inspiring people to share!
  */
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use Slub\FindSlub\Backend\Solr\SearchHandler;
+use Slub\SlubFindExtend\Backend\Solr\SearchHandler;
 use Solarium\QueryType\Select\Query\Query;
 
 

@@ -3,13 +3,13 @@
 namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
 
-use Slub\FindSlub\Services\FulltextService;
+use Slub\SlubFindExtend\Services\FulltextService;
 use Solarium\QueryType\Select\Result\Document;
 
 class FulltextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @var \Slub\FindSlub\Services\FulltextService
+	 * @var \Slub\SlubFindExtend\Services\FulltextService
 	 * @inject
 	 */
 	protected $fulltextService;

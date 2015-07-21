@@ -4,7 +4,7 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
 /**
  * Class HoldingStatusJsonViewHelper
- * @package Slub\FindSlub\ViewHelpers\Find
+ * @package Slub\SlubFindExtend\ViewHelpers\Find
  */
 class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
