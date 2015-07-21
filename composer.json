@@ -1,0 +1,22 @@
+{
+    "name": "slub/find-slub",
+    "description": "Configuration for the frontend for Solr indexes",
+    "version": "1.0.2",
+    "type": "typo3-cms-extension",
+    "homepage": "",
+    "keywords" : ["TYPO3 CMS"],
+    "license": ["GPL-2.0+"],
+    "authors" : [
+        {
+            "name" : "Christof Rodejohann",
+            "email" : "christof.rodejohann@slub-dresden.de",
+            "role" : "Developer"
+        }
+    ],
+    "require": {
+        "typo3/cms-core": ">=6.2.11,<8.0"
+    },
+    "replace": {
+        "typo3-ter/find-slub": "*"
+    }
+}
