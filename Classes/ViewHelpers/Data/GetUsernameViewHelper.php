@@ -1,5 +1,5 @@
 <?php
-namespace Slub\FindSlub\ViewHelpers\Data;
+namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
     /***************************************************************
      *

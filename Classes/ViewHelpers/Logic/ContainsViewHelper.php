@@ -1,6 +1,6 @@
 <?php
 
-namespace Slub\FindSlub\ViewHelpers\Logic;
+namespace Slub\SlubFindExtend\ViewHelpers\Logic;
 
 /*
  * This file is part of the FluidTYPO3/Vhs project under GPLv2 or later.

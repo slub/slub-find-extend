@@ -1,6 +1,6 @@
 <?php
 
-namespace Slub\FindSlub\Services;
+namespace Slub\SlubFindExtend\Services;
 
 use Solarium\QueryType\Select\Result\Document;
 

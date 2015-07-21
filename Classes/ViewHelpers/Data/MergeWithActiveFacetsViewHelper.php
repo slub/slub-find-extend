@@ -1,6 +1,6 @@
 <?php
 
-namespace Slub\FindSlub\ViewHelpers\Data;
+namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use Solarium\QueryType\Select\Result\Facet\Field;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Slub\FindSlub\ViewHelpers\Find;
+namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
 /**
  * Class HoldingStatusJsonViewHelper

@@ -1,6 +1,6 @@
 <?php
 
-namespace Slub\FindSlub\ViewHelpers\Format;
+namespace Slub\SlubFindExtend\ViewHelpers\Format;
 
 /***************************************************************
  *  Copyright notice

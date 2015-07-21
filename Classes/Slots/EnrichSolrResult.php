@@ -1,5 +1,5 @@
 <?php
-namespace Slub\FindSlub\Slots;
+namespace Slub\SlubFindExtend\Slots;
 
 /*
  * This file is part of the TYPO3 CMS project.

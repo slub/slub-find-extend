@@ -8,7 +8,7 @@ $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TY
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
     'detailActionBeforeRender',
-    'Slub\FindSlub\Slots\EnrichSolrResult',
+    'Slub\SlubFindExtend\Slots\EnrichSolrResult',
     'detail',
     FALSE
 );
@@ -17,7 +17,7 @@ $signalSlotDispatcher->connect(
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
     'indexActionBeforeRender',
-    'Slub\FindSlub\Slots\EnrichSolrResult',
+    'Slub\SlubFindExtend\Slots\EnrichSolrResult',
     'index',
     FALSE
 );
@@ -26,7 +26,7 @@ $signalSlotDispatcher->connect(
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
     'indexActionBeforeSelect',
-    'Slub\FindSlub\Slots\AdvancedQuery',
+    'Slub\SlubFindExtend\Slots\AdvancedQuery',
     'build',
     FALSE
 );
@@ -35,7 +35,7 @@ $signalSlotDispatcher->connect(
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
     'detailActionBeforePagingSelect',
-    'Slub\FindSlub\Slots\AdvancedQuery',
+    'Slub\SlubFindExtend\Slots\AdvancedQuery',
     'build',
     FALSE
 );

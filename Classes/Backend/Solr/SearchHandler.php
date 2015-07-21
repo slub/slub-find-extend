@@ -29,7 +29,7 @@
  * @link     http://vufind.org
  */
 
-namespace Slub\FindSlub\Backend\Solr;
+namespace Slub\SlubFindExtend\Backend\Solr;
 
 /**
  * VuFind SearchHandler.
