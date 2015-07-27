@@ -34,6 +34,7 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
  */
 class NotAssignedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
+	private $notAssignedStrings = ['No subject assigned', 'not assigned', 'Not assigned'];
 
 	/**
 	 * Register arguments.
@@ -51,12 +52,12 @@ class NotAssignedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 
 		$data = $this->arguments['data'];
 
-		if($data === 'not assigned') {
+		if(in_array($data, $this->notAssignedStrings)) {
 			return false;
 		}
 
 		if(is_array($data)) {
-			if($data[0] === 'not assigned') {
+			if(in_array($data[0], $this->notAssignedStrings)) {
 				return false;
 			}
 		}
