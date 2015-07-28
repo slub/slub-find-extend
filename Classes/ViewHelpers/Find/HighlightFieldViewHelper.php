@@ -97,15 +97,18 @@ class HighlightFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 			foreach ($fieldContent as $singleField) {
 
 				if($this->arguments['translate']) {
-					$singleField = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']);
+					$singleField = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']) ?
+						\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']) : $singleField;
 				}
 
 				$result[] = $this->highlightSingleField($singleField, $highlightInfo);
 			}
 		} else {
 
+
 			if($this->arguments['translate']) {
-				$fieldContent = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']);
+				$fieldContent = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']) ?
+					\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']) : $fieldContent;
 			}
 
 			$result = $this->highlightSingleField($fieldContent, $highlightInfo);
