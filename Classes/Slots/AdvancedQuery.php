@@ -56,15 +56,17 @@ class AdvancedQuery {
      */
     public function build(&$query, $arguments) {
 
-        if(strlen($arguments['q']['default']) > 0) {
+        $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
+
+        if(strlen($queryParameter) > 0) {
 
             $settings = $this->settings['components'];
 
             $searchHandler = new SearchHandler($settings);
 
-            $boostquery = $searchHandler->createBoostQueryString($arguments['q']['default']);
+            $boostquery = $searchHandler->createBoostQueryString($queryParameter);
 
-            $querystring = $searchHandler->createAdvancedQueryString($arguments['q']['default']);
+            $querystring = $searchHandler->createAdvancedQueryString($queryParameter);
 
             $query->setQuery($querystring);
 
