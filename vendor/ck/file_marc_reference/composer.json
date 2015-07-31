@@ -1,0 +1,34 @@
+{
+    "name": "ck/file_marc_reference",
+    "type": "library",
+    "description": "MARCspec adapter for File_MARC",
+    "keywords": [ "MARCspec", "MARC 21" ],
+    "authors": [
+        {
+            "name": "Carsten Klee",
+            "homepage": "http://collidoscope.de",
+            "role": "Developer"
+        }
+    ],
+    "repositories": [{
+        "type": "pear",
+        "url": "http://pear.php.net"
+    }],
+    "require": {
+        "ck/php-marcspec": "@dev"
+    },
+    "require-dev": {
+        "pear-pear.php.net/File_MARC": "*",
+        "pear-pear.php.net/validate_ispn": "*",
+        "pear/pear_exception": "1.0.0",
+        "phpunit/phpunit": "4.5.*"
+    },
+    "suggest": {
+        "pear-pear.php.net/File_MARC": "*",
+        "pear-pear.php.net/validate_ispn": "*",
+        "pear/pear_exception": "1.0.0"
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    }
+}
