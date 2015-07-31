@@ -49,6 +49,20 @@ class AdvancedQuery {
     }
 
     /**
+     * Special handling for pure numeric queries
+     *
+     * @param $parameter
+     */
+    private function handleNumeric($parameter) {
+
+        if(is_numeric($parameter)) {
+            $parameter = sprintf($this->settings['queryModifier']['numeric'], $parameter);
+        }
+
+        return $parameter;
+    }
+
+    /**
      * Slot to enrich finds detail view
      *
      * @param Query &$query
@@ -59,6 +73,14 @@ class AdvancedQuery {
         $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
 
         if(strlen($queryParameter) > 0) {
+
+            if($this->settings['queryModifier']) {
+
+                if($this->settings['queryModifier']['numeric']) {
+                    $queryParameter = $this->handleNumeric($queryParameter);
+                }
+
+            }
 
             $settings = $this->settings['components'];
 
