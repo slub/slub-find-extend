@@ -1,0 +1,23 @@
+{
+    "name": "ck/php-marcspec",
+    "type": "library",
+    "description": "PHP based MARCspec parser and validator",
+    "keywords": [ "MARCspec", "MARC 21" ],
+    "authors": [
+        {
+            "name": "Carsten Klee",
+            "homepage": "http://collidoscope.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+         "phpunit/phpunit": "4.5.*"
+    },
+    "autoload": {
+        "psr-0": { "CK\\MARCspec": "" }
+    },
+    "target-dir": "CK/MARCspec"
+}
