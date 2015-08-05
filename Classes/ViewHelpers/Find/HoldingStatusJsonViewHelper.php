@@ -26,15 +26,21 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 		if($data['documents'][0]['access_facet'] == "Local Holdings") {
 
-			foreach($data['enriched']['fields']['exemplare'] as $exemplar) {
+			if($data['enriched']['fields']['exemplare']) {
+				foreach ($data['enriched']['fields']['exemplare'] as $exemplar) {
 
-				if($exemplar['_calc_colorcode'] < $status) {
-					$status = $exemplar['_calc_colorcode'];
+					if ($exemplar['_calc_colorcode'] < $status) {
+						$status = $exemplar['_calc_colorcode'];
+					}
 				}
+			} else {
 
+				// Somehow this is a Local Holdings file with no copies. Send "Action needed" state.
+				return json_encode(array('status' => 2));
 			}
+
 		} elseif($data['documents'][0]['access_facet'] =="Electronic Resources") {
-			$status = 4;
+			$status = 1;
 		}
 
 		return json_encode(array('status' => $status));
