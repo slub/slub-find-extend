@@ -34,7 +34,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 			}
 		} elseif($data['documents'][0]['access_facet'] =="Electronic Resources") {
-			$status = 1;
+			$status = 4;
 		}
 
 		return json_encode(array('status' => $status));
