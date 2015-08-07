@@ -27,6 +27,12 @@ use Solarium\QueryType\Select\Query\Query;
 class AdvancedQuery {
 
     /**
+     * @var \Slub\SlubFindExtend\Services\StopWordService
+     * @inject
+     */
+    protected $stopWordService;
+
+    /**
      * Contains the settings of the current extension
      *
      * @var array
@@ -75,6 +81,10 @@ class AdvancedQuery {
         if(strlen($queryParameter) > 0) {
 
             if($this->settings['queryModifier']) {
+
+                if($this->settings['queryModifier']['stopwords']) {
+                    $queryParameter = $this->stopWordService->cleanQueryString($queryParameter);
+                }
 
                 if($this->settings['queryModifier']['numeric']) {
                     $queryParameter = $this->handleNumeric($queryParameter);
