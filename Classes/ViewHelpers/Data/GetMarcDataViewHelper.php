@@ -37,15 +37,22 @@ class GetMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
      */
     public function initializeArguments() {
         parent::initializeArguments();
-        $this->registerArgument('record', '\File_MARC_Record', 'The decoded MARC record', FALSE, NULL);
+        $this->registerArgument('record', '\File_MARC_Record|boolean', 'The decoded MARC record', FALSE, NULL);
         $this->registerArgument('path', 'string', 'The MARC path', FALSE, NULL);
     }
 
     public function render (){
 
-        $reference = new File_MARC_Reference($this->arguments['path'], $this->arguments['record']);
 
-        return $reference->content;
+        if($this->arguments['record']) {
+
+            $reference = new File_MARC_Reference($this->arguments['path'], $this->arguments['record']);
+
+            return $reference->content;
+
+        }
+
+        return FALSE;
 
     }
 
