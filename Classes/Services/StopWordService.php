@@ -46,6 +46,8 @@ class StopWordService {
      */
     public function cleanQueryString($querystring) {
 
+        if(preg_match('/^".*"$/', trim($querystring))) { return $querystring; }
+
         return $this->stripStopWords($this->stripPuntuations(strtoupper($querystring)));
 
     }
