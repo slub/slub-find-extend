@@ -17,22 +17,42 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 	}
 
 	/**
+	 * Returns the holding state
+	 *
+	 * @param $exemplare
+	 * @return int
+	 */
+	private function getStatusFromArray($exemplare) {
+
+		$status = 9999;
+
+		foreach ($exemplare as $exemplar) {
+
+			if($exemplar['elements'] && is_array($exemplar['elements'])) {
+				$status = $this->getStatusFromArray($exemplar['elements']);
+			} elseif ( ( $exemplar['_calc_colorcode'] < $status ) && ( $status != 1) ) {
+				$status = $exemplar['_calc_colorcode'];
+			}
+
+		}
+
+		return $status;
+
+	}
+
+	/**
 	 * @return string
 	 */
 	public function render() {
 
-		$status = 9999;
 		$data = $this->arguments['data'];
 
 		if($data['documents'][0]['access_facet'] == "Local Holdings") {
 
 			if($data['enriched']['fields']['exemplare']) {
-				foreach ($data['enriched']['fields']['exemplare'] as $exemplar) {
 
-					if ($exemplar['_calc_colorcode'] < $status) {
-						$status = $exemplar['_calc_colorcode'];
-					}
-				}
+				$status = $this->getStatusFromArray($data['enriched']['fields']['exemplare']);
+
 			} else {
 
 				// Somehow this is a Local Holdings file with no copies. Send "Action needed" state.
