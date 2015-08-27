@@ -77,7 +77,7 @@ class AdvancedQuery {
 
         if(preg_match('/^".*"$/', trim($originalQuerystring))) { return $querystring; }
 
-        return $querystring . '"'.$originalQuerystring.'"';
+        return $querystring . ' "'.$originalQuerystring.'"';
 
     }
 
