@@ -69,14 +69,27 @@ class AdvancedQuery {
     }
 
     /**
-     * Slot to enrich finds detail view
+     * @param string $querystring
+     * @param string $originalQuerystring
+     * @return string
+     */
+    public function handlePhraseMatch($querystring, $originalQuerystring) {
+
+        if(preg_match('/^".*"$/', trim($originalQuerystring))) { return $querystring; }
+
+        return $querystring . ' OR ' . '"'.$originalQuerystring.'"';
+
+    }
+
+    /**
+     * Slot to build the advanced query
      *
      * @param Query &$query
      * @param array $arguments request arguments
      */
     public function build(&$query, $arguments) {
 
-        $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
+        $originalQueryParameter = $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
 
         if(strlen($queryParameter) > 0) {
 
@@ -88,6 +101,10 @@ class AdvancedQuery {
 
                 if($this->settings['queryModifier']['numeric']) {
                     $queryParameter = $this->handleNumeric($queryParameter);
+                }
+
+                if($this->settings['queryModifier']['phraseMatch']) {
+                    $queryParameter = $this->handlePhraseMatch($queryParameter, $originalQueryParameter);
                 }
 
             }
