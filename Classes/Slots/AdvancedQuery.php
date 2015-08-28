@@ -71,13 +71,17 @@ class AdvancedQuery {
     /**
      * @param string $querystring
      * @param string $originalQuerystring
+     * @param SearchHandler $searchHandler
+     * @param array $settings
      * @return string
      */
-    public function handlePhraseMatch($querystring, $originalQuerystring) {
+    public function handlePhraseMatch($originalQuerystring, $searchHandler, $settings) {
 
-        if(preg_match('/^".*"$/', trim($originalQuerystring))) { return $querystring; }
+        if(preg_match('/^".*"$/', trim($originalQuerystring))) { return ''; }
 
-        return $querystring . ' "'.$originalQuerystring.'"';
+        $boost = ($settings['queryModifier']['phraseMatchBoost']) ? '^'.$settings['queryModifier']['phraseMatchBoost'] : '';
+
+        return ' OR ' . $searchHandler->createAdvancedQueryString('"'.$originalQuerystring.'"') . $boost;
 
     }
 
@@ -103,10 +107,6 @@ class AdvancedQuery {
                     $queryParameter = $this->handleNumeric($queryParameter);
                 }
 
-                if($this->settings['queryModifier']['phraseMatch']) {
-                    $queryParameter = $this->handlePhraseMatch($queryParameter, $originalQueryParameter);
-                }
-
             }
 
             $settings = $this->settings['components'];
@@ -116,6 +116,10 @@ class AdvancedQuery {
             $boostquery = $searchHandler->createBoostQueryString($queryParameter);
 
             $querystring = $searchHandler->createAdvancedQueryString($queryParameter);
+
+            if($this->settings['queryModifier'] && $this->settings['queryModifier']['phraseMatch']) {
+                $querystring .= $this->handlePhraseMatch($originalQueryParameter, $searchHandler, $this->settings);
+            }
 
             $query->setQuery($querystring);
 
