@@ -48,8 +48,6 @@ class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 
 			foreach($rvk_obj->{'node'}->{'register'} as $register) {
 
-				var_dump($register);
-
 				if(strlen($rvk_string) > 0) {
 					$rvk_string .= ' - ';
 				}
