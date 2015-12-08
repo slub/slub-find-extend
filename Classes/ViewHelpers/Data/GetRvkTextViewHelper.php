@@ -46,16 +46,21 @@ class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 		if($rvk_obj->{'error-code'} > 0) { return $rvk; }
 		else {
 
-			foreach($rvk_obj->{'node'}->{'register'} as $register) {
+			if($rvk_obj->{'node'}->{'register'}) {
 
-				if(strlen($rvk_string) > 0) {
-					$rvk_string .= ' - ';
+				foreach ($rvk_obj->{'node'}->{'register'} as $register) {
+
+					if (strlen($rvk_string) > 0) {
+						$rvk_string .= ' - ';
+					}
+
+					$rvk_string .= utf8_encode($register);
 				}
 
-				$rvk_string .= utf8_encode($register);
+				return trim($rvk) . ' : ' . $rvk_string . (strlen($rvk_string) > 0 ? ' - ' : '') . $rvk_obj->{'node'}->{'benennung'};
+			} else {
+				return $rvk;
 			}
-
-			return trim($rvk) . ' : ' . $rvk_string .( strlen($rvk_string) > 0 ? ' - ' : '' ). $rvk_obj->{'node'}->{'benennung'};
 		}
 	}
 
