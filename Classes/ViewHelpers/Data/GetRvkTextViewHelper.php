@@ -41,25 +41,31 @@ class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 			$rvk = $this->renderChildren();
 		}
 
-		$rvk_obj = json_decode(file_get_contents('http://rvk.uni-regensburg.de/api/json/node/'.urlencode(trim($rvk))));
+		$rvk_obj = json_decode(@file_get_contents('http://rvk.uni-regensburg.de/api/json/node/'.urlencode(trim($rvk))));
 
-		if($rvk_obj->{'error-code'} > 0) { return $rvk; }
+		if($rvk_obj === FALSE) {
+			return $rvk;
+		}
 		else {
+			if ($rvk_obj->{'error-code'} > 0) {
+				return $rvk;
+			} else {
 
-			if($rvk_obj->{'node'}->{'register'}) {
+				if ($rvk_obj->{'node'}->{'register'}) {
 
-				foreach ($rvk_obj->{'node'}->{'register'} as $register) {
+					foreach ($rvk_obj->{'node'}->{'register'} as $register) {
 
-					if (strlen($rvk_string) > 0) {
-						$rvk_string .= ' - ';
+						if (strlen($rvk_string) > 0) {
+							$rvk_string .= ' - ';
+						}
+
+						$rvk_string .= utf8_encode($register);
 					}
 
-					$rvk_string .= utf8_encode($register);
+					return trim($rvk) . ' : ' . $rvk_string . (strlen($rvk_string) > 0 ? ' - ' : '') . $rvk_obj->{'node'}->{'benennung'};
+				} else {
+					return $rvk;
 				}
-
-				return trim($rvk) . ' : ' . $rvk_string . (strlen($rvk_string) > 0 ? ' - ' : '') . $rvk_obj->{'node'}->{'benennung'};
-			} else {
-				return $rvk;
 			}
 		}
 	}
