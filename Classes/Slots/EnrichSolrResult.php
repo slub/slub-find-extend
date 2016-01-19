@@ -82,7 +82,7 @@ class EnrichSolrResult {
 
                     // HTTP errors won't throw an exception
                     // TODO: Handle with Logging Service
-                    $enriched = json_decode(@file_get_contents(sprintf($enrichment['ws'], $field_data, $user_data)), true);
+                    $enriched = (array)$this->safe_json_decode(@file_get_contents(sprintf($enrichment['ws'], $field_data, $user_data)));
 
                     if(is_array($enriched) && count($enriched)) {
                         $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
@@ -103,6 +103,44 @@ class EnrichSolrResult {
      */
     public function index(&$resultSet) {
 
+    }
+
+    /**
+     * A safe way to decode stringified json data
+     * @param $value
+     * @return mixed|string
+     */
+    private function safe_json_decode($value){
+
+        $decoded = json_decode($value);
+
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                return $decoded;
+            case JSON_ERROR_UTF8:
+                $clean = $this->unutf8ize($value);
+                return $this->safe_json_decode($clean);
+            default:
+                return '';
+
+        }
+    }
+
+    /**
+     * Decode UTF8 recursively
+     * @param $mixed
+     * @return array|string
+     */
+    private function unutf8ize($mixed) {
+
+        if (is_array($mixed)) {
+            foreach ($mixed as $key => $value) {
+                $mixed[$key] = $this->unutf8ize($value);
+            }
+        } else if (is_string ($mixed)) {
+            return utf8_decode($mixed);
+        }
+        return $mixed;
     }
 
 
