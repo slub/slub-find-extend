@@ -55,7 +55,7 @@ class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 
 				if ($node["benennung"] && strlen($node["benennung"]) > 0) {
 
-					return trim($rvk) . ' : ' . $node["benennung"];
+					return trim($rvk) . ' : ' . utf8_encode($node["benennung"]);
 				} else {
 					return $rvk;
 				}
