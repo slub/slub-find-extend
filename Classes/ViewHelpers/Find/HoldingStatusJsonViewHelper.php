@@ -28,6 +28,10 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 		foreach ($exemplare as $exemplar) {
 
+			if(!is_array($exemplar)) {
+				$exemplar = (array)$exemplar;
+			}
+
 			if($exemplar['elements'] && is_array($exemplar['elements'])) {
 				$status = $this->getStatusFromArray($exemplar['elements']);
 			} elseif ( ( $exemplar['_calc_colorcode'] < $status ) && ( $status != 1) ) {
