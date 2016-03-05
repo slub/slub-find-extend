@@ -22,6 +22,8 @@ class FulltextService {
 
             return sprintf(self::RESOLVER_BASE, $document['url'][0]);
 
+        } elseif (substr($document['format'][0], 0, 10) === 'Electronic') {
+            return sprintf(self::RESOLVER_BASE, $document['url'][0]);
         }
 
         return false;
