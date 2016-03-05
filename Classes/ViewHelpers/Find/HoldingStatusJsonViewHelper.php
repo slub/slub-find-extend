@@ -35,7 +35,10 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 			if($exemplar['elements'] && is_array($exemplar['elements'])) {
 				$status = $this->getStatusFromArray($exemplar['elements']);
 			} elseif ( ( $exemplar['_calc_colorcode'] < $status ) && ( $status != 1) ) {
-				$status = $exemplar['_calc_colorcode'];
+				if(!($exemplar['_calc_colorcode'] == 0 && ($status == 2))) {
+					$status = $exemplar['_calc_colorcode'];
+				}
+
 			}
 
 		}
@@ -60,7 +63,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 			} else {
 
 				// Somehow this is a Local Holdings file with no copies. Send "Action needed" state.
-				return json_encode(array('status' => 2));
+				return json_encode(array('status' => 0));
 			}
 
 		} elseif($data['documents'][0]['access_facet'] =="Electronic Resources") {
