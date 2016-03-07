@@ -20,9 +20,10 @@ class CharRemoveViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
         if ($content === NULL) {
             $content = $this->renderChildren();
         }
+        $content = trim($content);
         if ($chars !== NULL) {
             $chars = explode(',', $chars);
-            return str_replace($chars, '', $content);
+            return trim(str_replace($chars, '', $content));
         }
         return $content;
     }
