@@ -86,6 +86,12 @@ class EnrichSolrResult {
 
                     if(is_array($enriched) && count($enriched)) {
                         $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
+
+                        foreach ($assignments['enriched']['fields']  as $key => $value) {
+                            if($key != str_replace(' ', '', $key)) {
+                                $assignments['enriched']['fields'][str_replace(' ', '', $key)] = $assignments['enriched']['fields'][$key];
+                            }
+                        }
                     }
                 }
             }
