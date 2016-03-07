@@ -84,7 +84,7 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 
 			foreach ($results as $result) {
 
-				if (in_array('solr', $this->templateVariableContainer->getAllIdentifiers())) {
+				if ($this->templateVariableContainer->exists('solr')) {
 					$this->templateVariableContainer->remove('solr');
 				}
 				$this->templateVariableContainer->add('solr', $result);
