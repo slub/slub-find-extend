@@ -23,7 +23,7 @@ use Solarium\QueryType\Select\Result\Document;
  * @category    Slots
  * @package     TYPO3
  */
-class DecodeSolrResult {
+class ModifySolrResult {
 
     /**
      * Contains the settings of the current extension
@@ -48,7 +48,7 @@ class DecodeSolrResult {
     }
 
     /**
-     * Slot to decode data fro Solr result to use in templates
+     * Slot to decode data from Solr result to use in templates
      *
      * @param array &$assignments
      */
@@ -73,6 +73,33 @@ class DecodeSolrResult {
 
             }
 
+        }
+    }
+
+    /**
+     * Slot to filter data from Solr result against blacklist values
+     *
+     * @param array &$assignments
+     */
+    public function blacklist(&$assignments) {
+        
+        $document = $assignments['document'];
+        
+        if($document && $this->settings['blacklist']) {
+        
+            $fields = $document->getFields();
+        
+            foreach ($this->settings['blacklist'] as $blacklistName => $blacklistValues) {
+        
+                if(isset($fields[$blacklistName]) && is_array($fields[$blacklistName]) && is_array($blacklistValues)) {
+        
+                    $fields[$blacklistName] = array_values(array_diff($fields[$blacklistName], $blacklistValues));
+        
+                }
+        
+            }
+
+            $assignments['document'] = new \Solarium\QueryType\Select\Result\Document($fields);
         }
     }
 
