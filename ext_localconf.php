@@ -44,7 +44,16 @@ $signalSlotDispatcher->connect(
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
     'detailActionBeforeRender',
-    'Slub\SlubFindExtend\Slots\DecodeSolrResult',
+    'Slub\SlubFindExtend\Slots\ModifySolrResult',
     'decode',
+    FALSE
+);
+
+// Hook into \Subugoe\Find\Controller
+$signalSlotDispatcher->connect(
+    'Subugoe\Find\Controller\SearchController',
+    'detailActionBeforeRender',
+    'Slub\SlubFindExtend\Slots\ModifySolrResult',
+    'blacklist',
     FALSE
 );
