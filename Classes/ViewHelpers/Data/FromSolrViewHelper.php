@@ -62,15 +62,41 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->registerArgument('id', 'string', 'ID to fetch', TRUE);
-		$this->registerArgument('idfield', 'string', 'Field to query id', TRUE);
+		$this->registerArgument('query', 'string|array', 'Solr querystring or array of query fields and their query values.', TRUE);
+		$this->registerArgument('operator', 'string', 'Solr query operator.', FALSE, 'AND');
+		$this->registerArgument('sortField', 'string', 'Sort field.', FALSE);
+		$this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', FALSE, 'asc');
+		$this->registerArgument('rows', 'integer', 'Number of rows to be returned.', FALSE);
+		$this->registerArgument('fields', 'string', 'Fields to be returned, comma seperated if more than one field.', FALSE);
 	}
 
 	/**
 	 */
 	public function render() {
 
-		$query = $this->createQuery($this->arguments['id'], $this->arguments['idfield']);
+		switch(gettype($this->arguments['query'])) {
+			case 'string':
+				$query = $this->createQuery($this->arguments['query']);
+				break;
+			case 'array':
+				$query = $this->createQuery(implode(' ' . $this->arguments['operator'] . ' ', array_map( function($k,$v) { return $k . ':' . $v; }, array_keys($this->arguments['query']), array_values($this->arguments['query']))));
+				break;
+			default:
+				$query = $this->createQuery('*:*');
+		}
+
+		if(!is_null($this->arguments['sortField'])) {
+			$query->addSort($this->arguments['sortField'], $this->arguments['sortOrder']);
+		}
+
+		if(!is_null($this->arguments['rows'])) {
+			$query->setRows($this->arguments['rows']);
+		}
+
+		if(!is_null($this->arguments['fields'])) {
+			$query->clearFields();
+			$query->addFields($this->arguments['fields']);
+		}
 
 		/** @var Result $resultSet */
 		$resultSet = $this->solr->select($query);
@@ -136,15 +162,16 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 	 * @param string $idfield the document id field
 	 * @return \Solarium\QueryType\Select\Query\Query
 	 */
-	private function createQuery ($id, $idfield) {
-		$query = $this->solr->createSelect();
-		$this->addTypoScriptFilters($query);
+	private function createQuery ($query) {
 
-		$query->setQuery($idfield.':'.$id);
+		$queryObject = $this->solr->createSelect();
+		$this->addTypoScriptFilters($queryObject);
 
-		$this->createQueryComponents($query);
+		$queryObject->setQuery($query);
 
-		$this->configuration['solarium'] = $query;
+		$this->createQueryComponents($queryObject);
+
+		$this->configuration['solarium'] = $queryObject;
 
 		return $this->configuration['solarium'];
 	}
