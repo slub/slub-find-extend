@@ -91,7 +91,10 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 			'&title='.urlencode($jtitle);
 
 		$doc = new \DOMDocument();
-		$doc->loadHTML(file_get_contents($url));
+		$html = file_get_contents($url);
+		if(strlen($html) === 0) return;
+
+		$doc->loadHTML($html);
 
 		$xpath = new \DOMXpath($doc);
 
