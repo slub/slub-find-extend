@@ -182,7 +182,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 		} elseif(($data['documents'][0]['access_facet'] =="Electronic Resources") || ($data['documents'][0]['physical'] && in_array('Online-Ressource', $data['documents'][0]['physical']))) {
 
-			$cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('resolv_link_electronic');
+			$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
 			$cacheIdentifier = sha1($data['documents'][0]['id']);
 			$entry = $cache->get($cacheIdentifier);
 			if (!$entry) {
