@@ -27,7 +27,7 @@ use File_MARC_Reference;
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_find_extend') . 'vendor/autoload.php');
 
 /**
- * GetUsernameViewHelper
+ * GetMarcDataViewHelper
  */
 class GetMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
