@@ -95,6 +95,8 @@ class AdvancedQuery {
 
         $originalQueryParameter = $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
 
+        $settings = $this->settings['components'];
+
         if(strlen($queryParameter) > 0) {
 
             if($this->settings['queryModifier']) {
@@ -109,8 +111,6 @@ class AdvancedQuery {
 
             }
 
-            $settings = $this->settings['components'];
-
             $searchHandler = new SearchHandler($settings);
 
             $boostquery = $searchHandler->createBoostQueryString($queryParameter);
@@ -123,21 +123,26 @@ class AdvancedQuery {
 
             $query->setQuery($querystring);
 
-            /** @var \Solarium\QueryType\Select\Query\Component\EdisMax $edismax */
-            $edismax = $query->getEDisMax();
+        } else {
+
+            if($settings['DismaxHandler'] === 'edismax') {
+                $dismax = $query->getEDisMax();
+            } else {
+                $dismax = $query->getDisMax();
+            }
+
+            if($settings['DismaxParams']) {
+                foreach ($settings['DismaxParams'] as $params) {
+                    if ($params['name'] === 'bf') {
+                        $dismax->setBoostFunctions($params['value']);
+                    }
+                    if ($params['name'] === 'bq') {
+                        $dismax->setBoostQuery($params['value']);
+                    }
+                }
+            }
 
         }
-
-        // Needs to be dicussed if activated or not
-        //$edismax->setBoostQuery($boostquery);
-
-        //$edismax->setBoostFunctions("ord(publishDateSort)^10");
-
-        //$edismax->setBoostQuery('mega_collection:"Qucosa"^10.0');
-
-        //$edismax->setBoostQuery('(mega_collection:"Verbunddaten SWB")^100.0 OR (mega_collection:"SLUB/Deutsche Fotothek")^0.01');
-
-
 
     }
 
