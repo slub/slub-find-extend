@@ -86,6 +86,21 @@ class AdvancedQuery {
     }
 
     /**
+     * @param array $settings Settings Array
+     */
+    private function handleStripIntFields(&$settings, $queryParameter) {
+
+        if(!is_numeric(substr($queryParameter, 0, 2))) {
+            foreach ($settings['DismaxFields'] as $key => $value) {
+                if (intval($key) >= 800) {
+                    unset($settings['DismaxFields'][$key], $queryParameter);
+                }
+            }
+        }
+
+    }
+
+    /**
      * Slot to build the advanced query
      *
      * @param Query &$query
@@ -109,6 +124,10 @@ class AdvancedQuery {
                     $queryParameter = $this->handleNumeric($queryParameter);
                 }
 
+            }
+
+            if($this->settings['queryModifier'] && $this->settings['queryModifier']['stripIntFields']) {
+                $this->handleStripIntFields($settings, $queryParameter);
             }
 
             $searchHandler = new SearchHandler($settings);
