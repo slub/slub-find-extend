@@ -16,6 +16,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 	public function initializeArguments() {
 		parent::initializeArguments();
 		$this->registerArgument('data', 'array|string|int|float', 'The holding data', FALSE, NULL);
+		$this->registerArgument('index', 'int', 'Its called from index view', FALSE, 0);
 	}
 
 	/**
@@ -185,32 +186,37 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 		} elseif(($data['documents'][0]['access_facet'] =="Electronic Resources") || ($data['documents'][0]['physical'] && in_array('Online-Ressource', $data['documents'][0]['physical']))) {
 
-			$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
-			$cacheIdentifier = sha1($data['documents'][0]['id']);
-			$entry = $cache->get($cacheIdentifier);
-			if (!$entry) {
+			if(!$this->arguments['index']) {
 
-				// Try to resolve article against holdings
-				$entry = $this->getElectronicHoldingFromData($data);
+				$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
+				$cacheIdentifier = sha1($data['documents'][0]['id']);
+				$entry = $cache->get($cacheIdentifier);
+				if (!$entry) {
 
-				// Try to resolve article against databases
-				if(strlen($entry['url']) === 0) {
-					$entry = $this->getElectronicDatabaseFromData($data);
+					// Try to resolve article against holdings
+					$entry = $this->getElectronicHoldingFromData($data);
+
+					// Try to resolve article against databases
+					if (strlen($entry['url']) === 0) {
+						$entry = $this->getElectronicDatabaseFromData($data);
+					}
+
+					// Still no luck? Fall back to first url
+
+					if (strlen($entry['url']) === 0) {
+						$entry = [
+							'infolink' => '',
+							'access' => 1,
+							'via' => 1,
+							'url' => $data['documents'][0]['url'][0],
+							'status' => 1
+						];
+					}
+
+					$cache->set($cacheIdentifier, $entry);
 				}
-
-				// Still no luck? Fall back to first url
-
-				if(strlen($entry['url']) === 0) {
-					$entry = [
-						'infolink' => '',
-						'access' => 1,
-						'via' => 1,
-						'url' => $data['documents'][0]['url'][0],
-						'status' => 1
-					];
-				}
-
-				//$cache->set($cacheIdentifier, $entry);
+			} else {
+				return json_encode(array('status' => 1));
 			}
 
 			$entry['url'] = 'http://wwwdb.dbod.de/login?url='.$entry['url'];
