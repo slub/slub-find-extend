@@ -80,9 +80,12 @@ class EnrichSolrResult {
 
                 if (strlen($field_data) > 0) {
 
+                    $opts = array('http' => array( 'timeout' => 10 ) );
+                    $context  = stream_context_create($opts);
+
                     // HTTP errors won't throw an exception
                     // TODO: Handle with Logging Service
-                    $enriched = (array)$this->safe_json_decode(@file_get_contents(sprintf($enrichment['ws'], $field_data, $user_data)));
+                    $enriched = (array)$this->safe_json_decode(@file_get_contents(sprintf($enrichment['ws'], $field_data, $user_data), null, $context));
 
                     if(is_array($enriched) && count($enriched)) {
                         $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
