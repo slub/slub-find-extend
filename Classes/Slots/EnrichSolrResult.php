@@ -80,12 +80,9 @@ class EnrichSolrResult {
 
                 if (strlen($field_data) > 0) {
 
-                    $opts = array('http' => array( 'timeout' => 10 ) );
-                    $context  = stream_context_create($opts);
-
                     // HTTP errors won't throw an exception
                     // TODO: Handle with Logging Service
-                    $enriched = (array)$this->safe_json_decode(@file_get_contents(sprintf($enrichment['ws'], $field_data, $user_data), null, $context));
+                    $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
 
                     if(is_array($enriched) && count($enriched)) {
                         $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
@@ -150,6 +147,17 @@ class EnrichSolrResult {
             return utf8_decode($mixed);
         }
         return $mixed;
+    }
+
+    private function getData($url) {
+        $ch = curl_init();
+        $timeout = 10;
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
     }
 
 
