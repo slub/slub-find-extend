@@ -62,6 +62,7 @@ class EnrichSolrResult {
         if($document) {
 
             $fields = $document->getFields();
+            $pageType = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('type');
 
             foreach ($this->settings['enrich']['detail'] as $enrichment) {
 
@@ -70,15 +71,19 @@ class EnrichSolrResult {
 
                 $check_fields = is_array($fields[$enrichment['check_field']]) ? $fields[$enrichment['check_field']] : array($fields[$enrichment['check_field']]);
 
+                $check_typenum = false;
+
+                if(array_key_exists('check_typenum', $enrichment) && $pageType !== (int)$enrichment['check_typenum']) {
+                    $check_typenum = true;
+                }
+
                 foreach ($check_fields as $check_field) {
-
                     if (preg_match($enrichment['check_pattern'], $check_field, $matches) === 1) {
-
                         $field_data = $matches[1];
                     }
                 }
 
-                if (strlen($field_data) > 0) {
+                if (strlen($field_data) > 0 && !$check_typenum) {
 
                     // HTTP errors won't throw an exception
                     // TODO: Handle with Logging Service
