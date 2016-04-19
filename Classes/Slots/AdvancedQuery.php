@@ -85,6 +85,16 @@ class AdvancedQuery {
 
     }
 
+    public function handleIsilMatch($originalQuerystring, $searchHandler, $settings) {
+
+        if(preg_match('/^".*"$/', trim($originalQuerystring))) { return ''; }
+
+        if(!$settings['queryModifier']['isilMatchId']) { return ''; }
+
+        return ' OR ' . $searchHandler->createAdvancedQueryString('"('.$settings['queryModifier']['isilMatchId'].')'.$originalQuerystring.'"');
+
+    }
+
     /**
      * @param array $settings Settings Array
      */
@@ -138,6 +148,10 @@ class AdvancedQuery {
 
             if($this->settings['queryModifier'] && $this->settings['queryModifier']['phraseMatch']) {
                 $querystring .= $this->handlePhraseMatch($originalQueryParameter, $searchHandler, $this->settings);
+            }
+
+            if($this->settings['queryModifier'] && $this->settings['queryModifier']['isilMatch']) {
+                $querystring .= $this->handleIsilMatch($originalQueryParameter, $searchHandler, $this->settings);
             }
 
             $query->setQuery($querystring);
