@@ -45,16 +45,34 @@ class HasDocumentHighlightingViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper
 	 */
 	public function render() {
 
+		$highlights = [];
+
 		$resultFields = explode(',',$this->templateVariableContainer->get('settings')['highlightingCheckFields']);
+		$resultIgnoreFields = explode(',',$this->templateVariableContainer->get('settings')['highlightingCheckFieldsIgnore']);
+		$resultExclusiveFields = explode(',',$this->templateVariableContainer->get('settings')['highlightingCheckFieldsExclusive']);
+		$exclusiveHit = false;
+
 
 		if($this->arguments['highlighting'][$this->arguments['id']]->getFields()) {
 			foreach($this->arguments['highlighting'][$this->arguments['id']]->getFields() as $key => $hit) {
+				if($exclusiveHit) { break; }
+
+				if(!in_array($key, $resultIgnoreFields)) {
+					$highlights[] = [$key, $hit];
+				}
+
+				if(in_array($key, $resultExclusiveFields)) {
+					$highlights = [[$key, $hit]];
+					$exclusiveHit = true;
+				}
+
 				if(in_array($key, $resultFields)) {
 					return $this->renderThenChild();
 				}
 			}
 		}
 
+		$this->templateVariableContainer->add('highlights', $highlights);
 		return $this->renderElseChild();
 
 	}
