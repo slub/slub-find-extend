@@ -74,7 +74,7 @@ class SearchHandler
     /**
      * Constructor.
      *
-     * @param array  $spec                 Search handler specification
+     * @param array $spec Search handler specification
      * @param string $defaultDismaxHandler Default dismax handler (if no
      * DismaxHandler set in specs).
      *
@@ -281,8 +281,8 @@ class SearchHandler
      *
      * If optional argument $tokenize is true tokenize the search string.
      *
-     * @param string $search   Search string
-     * @param bool   $tokenize Tokenize the search string?
+     * @param string $search Search string
+     * @param bool $tokenize Tokenize the search string?
      *
      * @return string
      */
@@ -296,13 +296,13 @@ class SearchHandler
                     '"%s"', str_replace('"', '', implode(' ', $tokens))
                 ),
                 'and' => implode(' AND ', $tokens),
-                'or'  => implode(' OR ', $tokens),
+                'or' => implode(' OR ', $tokens),
                 'identity' => $search,
             ];
         } else {
             $mungeValues = [
                 'and' => $search,
-                'or'  => $search,
+                'or' => $search,
             ];
             // If we're skipping tokenization, we just want to pass $lookfor through
             // unmodified (it's probably an advanced search that won't benefit from
@@ -357,8 +357,8 @@ class SearchHandler
      * If optional argument $advanced is true the search string contains
      * advanced lucene query syntax.
      *
-     * @param string $search   Search string
-     * @param bool   $advanced Is the search an advanced search string?
+     * @param string $search Search string
+     * @param bool $advanced Is the search an advanced search string?
      *
      * @return string
      */
@@ -370,12 +370,12 @@ class SearchHandler
         if (($this->hasExtendedDismax() || !$advanced) && $this->hasDismax()) {
             $query = $this->dismaxSubquery($search);
         } else {
-            $mungeRules  = $this->mungeRules();
+            $mungeRules = $this->mungeRules();
 
             // Do not munge w/o rules
             if ($mungeRules) {
                 $mungeValues = $this->mungeValues($search, !$advanced);
-                $query       = $this->munge($mungeRules, $mungeValues);
+                $query = $this->munge($mungeRules, $mungeValues);
             } else {
                 $query = $search;
             }
@@ -401,9 +401,9 @@ class SearchHandler
     /**
      * Return modified search string after applying the transformation rules.
      *
-     * @param array  $mungeRules  Munge rules
-     * @param array  $mungeValues Munge values
-     * @param string $joiner      Joiner of subqueries
+     * @param array $mungeRules Munge rules
+     * @param array $mungeValues Munge values
+     * @param string $joiner Joiner of subqueries
      *
      * @return string
      */
@@ -481,13 +481,13 @@ class SearchHandler
         );
         $phrases = $phrases[0];
 
-        $tokens  = [];
-        $token   = [];
+        $tokens = [];
+        $token = [];
 
         reset($phrases);
         while (current($phrases) !== false) {
             $token[] = current($phrases);
-            $next    = next($phrases);
+            $next = next($phrases);
             if (in_array($next, self::$booleanOperators)) {
                 $token[] = $next;
                 if (next($phrases) === false) {
