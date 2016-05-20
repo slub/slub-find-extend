@@ -37,11 +37,18 @@ class FilterBlacklistedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 		parent::initializeArguments();
 		$this->registerArgument('data', 'array', 'The data checked against the blacklist', TRUE, NULL);
 		$this->registerArgument('blacklist', 'array', 'The blacklist to be parsed', TRUE, NULL);
+		$this->registerArgument('blacklistOnKeys', 'boolean', 'Blacklist on array values (default: false) or array keys (true)', FALSE, FALSE);
 	}
 
 	public function render() {
-		if( is_array($this->arguments['data']) && is_array($this->arguments['blacklist'])) {
-			return array_diff($this->arguments['data'], $this->arguments['blacklist']);
+		if (is_array($this->arguments['data']) && is_array($this->arguments['blacklist'])) {
+			if( $this->arguments['blacklistOnKeys'] === FALSE ) {
+				return preg_grep('/^(' . implode('|', $this->arguments['blacklist']) . ')$/', $this->arguments['data'], PREG_GREP_INVERT);
+			} else {
+				return array_flip(preg_grep('/^(' . implode('|', $this->arguments['blacklist']) . ')$/', array_flip($this->arguments['data']), PREG_GREP_INVERT));
+			}
+		} elseif (is_array($this->arguments['data'])) {
+			return $this->arguments['data'];
 		} else {
 			return array();
 		}
