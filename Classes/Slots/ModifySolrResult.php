@@ -84,16 +84,16 @@ class ModifySolrResult {
     public function blacklist(&$assignments) {
         
         $document = $assignments['document'];
-        
+
         if($document && $this->settings['blacklist']) {
-        
+
             $fields = $document->getFields();
         
-            foreach ($this->settings['blacklist'] as $blacklistName => $blacklistValues) {
+            foreach($this->settings['blacklist'] as $blacklistName => $blacklistValues) {
         
                 if(isset($fields[$blacklistName]) && is_array($fields[$blacklistName]) && is_array($blacklistValues)) {
-        
-                    $fields[$blacklistName] = array_values(array_diff($fields[$blacklistName], $blacklistValues));
+
+                    $fields[$blacklistName] = preg_grep('/^(' . implode('|', $blacklistValues) . ')$/', $fields[$blacklistName], PREG_GREP_INVERT);
         
                 }
         
