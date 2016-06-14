@@ -103,23 +103,44 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 		$access = $xpath->query("//div[@id ='t_ezb']/div/p/b")->item(0)->nodeValue;
 
-		$ezb_status = $xpath->query("//div[contains(@class,'t_ezb_result')]/p/span/@class")->item(0)->nodeValue;
-		$ezb_status_via = trim($xpath->query("//div[contains(@class,'t_ezb_result')]/p")->item(0)->nodeValue);
-		$ezb_url = $xpath->query("//div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item(0)->nodeValue;
+		$status_code = 10;
+		$url = '';
+		$via = '';
 
-		$via = substr($ezb_status_via, strpos($ezb_status_via, 'via')+4, -4);
+		for ($i = 0; $i < $xpath->query("//div[contains(@class,'t_ezb_result')]/p")->length; $i++) {
 
-		$status_code = 1;
-		switch ($ezb_status) {
-			case 't_ezb_red':
-				$status_code = 0;
-				break;
+			$ezb_status_code = 10;
+
+			$ezb_status = $xpath->query("//div[contains(@class,'t_ezb_result')]/p/span[contains(@class, 't_ezb_yellow') or contains(@class, 't_ezb_green') or contains(@class, 't_ezb_red')]/@class")->item($i)->nodeValue;
+			$ezb_status_via = trim($xpath->query("//div[contains(@class,'t_ezb_result')]/p")->item($i)->nodeValue);
+			$ezb_url = $xpath->query("//div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item($i)->nodeValue;
+
+			$ezb_via = substr($ezb_status_via, strpos($ezb_status_via, 'via')+4, -4);
+
+			switch ($ezb_status) {
+				case 't_ezb_green':
+					$ezb_status_code = 0;
+					break;
+				case 't_ezb_yellow':
+					$ezb_status_code = 2;
+					break;
+				case 't_ezb_red':
+					$ezb_status_code = 4;
+					break;
+			}
+
+			if($ezb_status_code < $status_code) {
+				$status_code = $ezb_status_code;
+				$via = $ezb_via;
+				$url = $ezb_url;
+			}
+
 		}
 
 		$status['infolink'] = $infolink;
 		$status['access'] = $access == 'freigeschaltet' ? 1 : 0;
 		$status['via'] = $via;
-		$status['url'] = $ezb_url;
+		$status['url'] = $url;
 		$status['status'] = $status_code;
 
 		return $status;
@@ -190,7 +211,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 				$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
 				$cacheIdentifier = sha1($data['documents'][0]['id']);
-				$entry = $cache->get($cacheIdentifier);
+				//$entry = $cache->get($cacheIdentifier);
 				if (!$entry) {
 
 					// Try to resolve article against holdings
