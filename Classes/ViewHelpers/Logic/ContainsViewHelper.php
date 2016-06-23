@@ -26,16 +26,24 @@ class ContainsViewHelper extends AbstractConditionViewHelper {
     /**
      * Render method
      *
-     * @param string $haystack
+     * @param string|array $haystacks
      * @param mixed $needle
      * @return string
      */
-    public function render($haystack, $needle) {
-        if (FALSE !== strpos($haystack, $needle)) {
-            return $this->renderThenChild();
-        } else {
-            return $this->renderElseChild();
+    public function render($haystacks, $needle) {
+
+        if(!is_array($haystacks)) {
+            $haystacks = [$haystacks];
         }
+
+        foreach ($haystacks as $haystack) {
+            if (FALSE !== strpos($haystack, $needle)) {
+                return $this->renderThenChild();
+            } else {
+                return $this->renderElseChild();
+            }
+        }
+        
     }
 
 }
