@@ -43,9 +43,9 @@ class FilterBlacklistedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 	public function render() {
 		if (is_array($this->arguments['data']) && is_array($this->arguments['blacklist'])) {
 			if( $this->arguments['blacklistOnKeys'] === FALSE ) {
-				return preg_grep('/^(' . implode('|', $this->arguments['blacklist']) . ')$/', $this->arguments['data'], PREG_GREP_INVERT);
+				return preg_grep('/^(' . str_replace('/', '\/', implode('|', $this->arguments['blacklist'])) . ')$/', $this->arguments['data'], PREG_GREP_INVERT);
 			} else {
-				return array_flip(preg_grep('/^(' . implode('|', $this->arguments['blacklist']) . ')$/', array_flip($this->arguments['data']), PREG_GREP_INVERT));
+				return array_flip(preg_grep('/^(' . str_replace('/', '\/', implode('|', $this->arguments['blacklist'])) . ')$/', array_flip($this->arguments['data']), PREG_GREP_INVERT));
 			}
 		} elseif (is_array($this->arguments['data'])) {
 			return $this->arguments['data'];
