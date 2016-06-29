@@ -89,9 +89,14 @@ class AdvancedQuery {
 
         if(preg_match('/^".*"$/', trim($originalQuerystring))) { return ''; }
 
-        if(!$settings['queryModifier']['isilMatchId']) { return ''; }
+        if(!$settings['queryModifier']['isilQueryString']) { return ''; }
 
-        return ' OR ' . $searchHandler->createAdvancedQueryString('"('.$settings['queryModifier']['isilMatchId'].')'.$originalQuerystring.'"');
+        $originalQuerystring = trim($originalQuerystring, "*");
+        $originalQuerystring = str_replace([' ', ')', '('], ['\\\ ', '\\\)', '\\\('], $originalQuerystring);
+        
+        $return = ' OR ' . sprintf($this->settings['queryModifier']['isilQueryString'], $originalQuerystring).'^500000';
+
+        return $return;
 
     }
 
