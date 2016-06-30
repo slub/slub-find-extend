@@ -91,7 +91,7 @@ class AdvancedQuery {
 
         if(!$settings['queryModifier']['isilQueryString']) { return ''; }
 
-        $originalQuerystring = trim($originalQuerystring, "*");
+        $originalQuerystring = trim($originalQuerystring, " \t\n\r\0\x0B*");
         $originalQuerystring = str_replace([' ', ')', '('], ['\\\ ', '\\\)', '\\\('], $originalQuerystring);
         
         $return = ' OR ' . sprintf($this->settings['queryModifier']['isilQueryString'], $originalQuerystring).'^500000';
