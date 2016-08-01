@@ -58,6 +58,15 @@ $signalSlotDispatcher->connect(
     FALSE
 );
 
+// Hook into \Subugoe\Find\Controller
+$signalSlotDispatcher->connect(
+    'Subugoe\Find\Controller\SearchController',
+    'initializeActionAfterArgumentsFilled',
+    'Slub\SlubFindExtend\Slots\ModifyArguments',
+    'modify',
+    FALSE
+);
+
 $cacheKey = 'resolv_link_electronic';
 if( !is_array( $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ] ) ){
     $cacheConfig =  $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ] = array();
