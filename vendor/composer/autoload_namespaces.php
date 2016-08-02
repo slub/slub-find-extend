@@ -7,5 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'PEAR' => array($vendorDir . '/pear/pear_exception'),
+    'File' => array($vendorDir . '/pear/file_marc'),
     'CK\\MARCspec' => array($vendorDir . '/ck/php-marcspec'),
+    'BaconQrCode' => array($vendorDir . '/bacon/bacon-qr-code/src'),
 );

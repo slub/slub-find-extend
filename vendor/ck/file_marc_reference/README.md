@@ -1,4 +1,4 @@
-#File_MARC_Reference
+#File_MARC_Reference [![Build Status](https://travis-ci.org/MARCspec/File_MARC_Reference.svg)] (https://travis-ci.org/MARCspec/File_MARC_Reference) [![Coverage Status](https://coveralls.io/repos/MARCspec/File_MARC_Reference/badge.svg?branch=master&service=github)](https://coveralls.io/github/MARCspec/File_MARC_Reference?branch=master)
 
 File_MARC_Reference is an extension to the famous MARC parser for PHP [File_MARC](http://pear.php.net/package/File_MARC). With File_MARC_Reference you can use [MARCspec](http://marcspec.github.io/MARCspec) as an unified way to access MARC data. Besides it simplifies File_MARC a lot. 
 
@@ -6,29 +6,7 @@ File_MARC_Reference is an extension to the famous MARC parser for PHP [File_MARC
 
 Installation can be done by using [Composer](https://getcomposer.org/doc/00-intro.md). Just run
 
-    composer require ck/File_MARC_Reference dev-master
-
-in the root of your project to install File_MARC_Reference and [php-marc-spec](https://github.com/MARCspec/php-marc-spec).
-
-If you haven't already installed File_MARC, you can modify the `composer.json` file created by Composer to
-look something like this:
-
-```json
-{
-    "repositories": [{
-        "type": "pear",
-        "url": "http://pear.php.net"
-    }],
-    "require": {
-        "ck/File_MARC_Reference": "dev-master",
-        "pear-pear.php.net/File_MARC": "*",
-        "pear-pear.php.net/validate_ispn": "*",
-        "pear/pear_exception": "1.0.0"
-    }
-}
-```
-
-and then run `composer update`.
+    composer require ck/file_marc_reference
 
 # Usage
 
@@ -123,15 +101,12 @@ if($subfields_a)
 
     $reference = new File_MARC_Reference('306$a{007/0=\m|007/0=\s|007/0=\v}',$record);
     
-    if($reference->content)
+    foreach($reference->content as $subfield_a)
     {
-        foreach($reference->content as $subfield_a)
-        {
-            echo $subfield_a."\n";
-        }
+        echo $subfield_a."\n";
     }
     
-    // interseted in field 007? No problem!
+    // interested in field 007? No problem!
     print get_class($reference->cache['007'][0]);       // File_MARC_Control_Field
     print $reference->cache['007/0'][0];                // prints the first char of first 007 field
     print $reference->cache['007/0'][1];                // prints the first char of second 007 field

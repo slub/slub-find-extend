@@ -3,6 +3,7 @@
     "type": "library",
     "description": "PHP based MARCspec parser and validator",
     "keywords": [ "MARCspec", "MARC 21" ],
+    "license": "MIT",
     "authors": [
         {
             "name": "Carsten Klee",
@@ -14,7 +15,8 @@
         "php": ">=5.4.0"
     },
     "require-dev": {
-         "phpunit/phpunit": "4.5.*"
+         "phpunit/phpunit": "^4.8",
+         "ck/marcspec-test-suite": "@dev"
     },
     "autoload": {
         "psr-0": { "CK\\MARCspec": "" }

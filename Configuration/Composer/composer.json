@@ -1,0 +1,22 @@
+{
+    "name": "slub/slub-find-extend",
+    "authors": [
+        {
+            "name": "Christof Rodejohann",
+            "email": "christof.rodejohann@slub-dresden.de"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "pear",
+            "url": "https://pear.php.net"
+        }
+    ],
+    "require": {
+        "pear-pear.php.net/File_MARC": "^1.1",
+        "pear-pear.php.net/Validate": "^0.8.5",
+        "pear-pear.php.net/Validate_ISPN": "^0.6.1",
+        "ck/file_marc_reference": "^1.0",
+        "bacon/bacon-qr-code": "^1.0"
+    }
+}
