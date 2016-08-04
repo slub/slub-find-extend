@@ -15,7 +15,12 @@ class ParseUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHe
      * @return array
      */
     public function render($url = NULL) {
-        return parse_url($url);
+
+        $url = parse_url($url);
+
+        $url['ext'] = pathinfo($url['path'], PATHINFO_EXTENSION);
+
+        return $url;
     }
 
 }
