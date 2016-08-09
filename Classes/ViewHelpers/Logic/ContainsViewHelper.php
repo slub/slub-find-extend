@@ -38,11 +38,17 @@ class ContainsViewHelper extends AbstractConditionViewHelper {
 
         foreach ($haystacks as $haystack) {
             if (FALSE !== strpos($haystack, $needle)) {
+
+                if ($this->templateVariableContainer->exists('hit')) {
+                    $this->templateVariableContainer->remove('hit');
+                }
+                $this->templateVariableContainer->add('hit', $haystack);
+
                 return $this->renderThenChild();
-            } else {
-                return $this->renderElseChild();
             }
         }
+
+        return $this->renderElseChild();
         
     }
 
