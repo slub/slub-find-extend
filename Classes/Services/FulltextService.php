@@ -22,7 +22,7 @@ class FulltextService {
 
             return sprintf(self::RESOLVER_BASE, $document['url'][0]);
 
-        } elseif ((substr($document['format'][0], 0, 10) === 'Electronic') && (strlen($document['url'][0]) > 0)) {
+        } elseif (($document['format'][0] === 'Electronic Resource (Remote Access)') && (strlen($document['url'][0]) > 0)) {
             return sprintf(self::RESOLVER_BASE, $document['url'][0]);
         }
 
