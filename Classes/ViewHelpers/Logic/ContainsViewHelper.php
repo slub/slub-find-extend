@@ -24,13 +24,26 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class ContainsViewHelper extends AbstractConditionViewHelper {
 
     /**
+     * Registers own arguments.
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('haystacks', 'string|array', 'Haystack to search', TRUE);
+        $this->registerArgument('needle', 'string', 'Needle to be searched', TRUE);
+    }
+
+    /**
      * Render method
      *
      * @param string|array $haystacks
-     * @param mixed $needle
+     * @param string $needle
      * @return string
      */
-    public function render($haystacks, $needle) {
+    public function render() {
+
+        $haystacks = $this->arguments['haystacks'];
+        $needle = $this->arguments['needle'];
 
         if(!is_array($haystacks)) {
             $haystacks = [$haystacks];
