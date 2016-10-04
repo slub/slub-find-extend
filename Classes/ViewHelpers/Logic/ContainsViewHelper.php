@@ -36,8 +36,6 @@ class ContainsViewHelper extends AbstractConditionViewHelper {
     /**
      * Render method
      *
-     * @param string|array $haystacks
-     * @param string $needle
      * @return string
      */
     public function render() {
