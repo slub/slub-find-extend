@@ -39,6 +39,7 @@ class GetMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
         parent::initializeArguments();
         $this->registerArgument('record', '\File_MARC_Record|boolean', 'The decoded MARC record', FALSE, NULL);
         $this->registerArgument('path', 'string', 'The MARC path', FALSE, NULL);
+        $this->registerArgument('index', 'integer', 'If return data might be an array, define which index should be returned', FALSE, NULL);
     }
 
     public function render (){
@@ -48,7 +49,11 @@ class GetMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 
             $reference = new File_MARC_Reference($this->arguments['path'], $this->arguments['record']);
 
-            return $reference->content;
+            if($this->arguments['index'] !== NULL && is_array($reference->content)) {
+                return $reference->content[$this->arguments['index']];
+            } else {
+                return $reference->content;
+            }
 
         }
 
