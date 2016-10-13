@@ -33,9 +33,6 @@ class SplitFixedDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
             $string = $this->renderChildren();
         }
 
-
-        var_dump($string);
-
 		$lengths = explode(',',$this->arguments['lengths']);
 
         if (sizeof($lengths) == 0) {
