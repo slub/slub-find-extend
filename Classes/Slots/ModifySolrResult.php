@@ -63,12 +63,19 @@ class ModifySolrResult {
 
             foreach ($this->settings['decode'] as $decoding) {
 
-                if(($decoding['type'] === 'marc21')
-                    && (strrpos($fields[$decoding['field']], 'blob:', -strlen($fields[$decoding['field']])) === FALSE)) {
-
-                    $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
-                    $assignments['decoded'][$decoding['field']] = $decoder->decode($fields[$decoding['field']]);
-
+                switch ($decoding['type']) {
+                    case 'marcfinc':
+                        if($fields['recordtype'] === 'marcfinc') {
+                            $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
+                            $assignments['decoded'][$decoding['field']] = $decoder->decode($fields[$decoding['field']]);
+                        }
+                        break;
+                    case 'ai':
+                        if(($fields['recordtype'] === 'ai')
+                            && (strrpos($fields[$decoding['field']], 'blob:', -strlen($fields[$decoding['field']])) === FALSE)) {
+                            $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']]);
+                        }
+                        break;
                 }
 
             }
