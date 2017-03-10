@@ -57,7 +57,7 @@ class GetMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 
         }
 
-        return FALSE;
+        return NULL;
 
     }
 
