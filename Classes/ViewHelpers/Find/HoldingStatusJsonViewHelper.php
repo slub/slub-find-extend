@@ -1,14 +1,22 @@
 <?php
 
 namespace Slub\SlubFindExtend\ViewHelpers\Find;
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use Slub\SlubFindExtend\Services\HoldingStatusService;
 
 /**
  * Class HoldingStatusJsonViewHelper
  * @package Slub\SlubFindExtend\ViewHelpers\Find
  */
 class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+    /**
+     * @var \Slub\SlubFindExtend\Services\HoldingStatusService
+     * @inject
+     */
+    protected $holdingStatusService;
 
 	/**
 	 * Registers own arguments.
@@ -17,35 +25,6 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 		parent::initializeArguments();
 		$this->registerArgument('data', 'array|string|int|float', 'The holding data', FALSE, NULL);
 		$this->registerArgument('index', 'int', 'Its called from index view', FALSE, 0);
-	}
-
-	/**
-	 * Returns the holding state
-	 *
-	 * @param $exemplare
-	 * @return int
-	 */
-	private function getLocalHoldingStatusFromArray($exemplare) {
-
-		$status = 9999;
-
-		foreach ($exemplare as $exemplar) {
-
-			if(!is_array($exemplar)) {
-				$exemplar = (array)$exemplar;
-			}
-			if ( $status != 1) {
-                if ($exemplar['elements'] && is_array($exemplar['elements'])) {
-                    $status = $this->getLocalHoldingStatusFromArray($exemplar['elements']);
-                } elseif ($exemplar['_calc_colorcode'] < $status) {
-                    if (!($exemplar['_calc_colorcode'] == 0 && ($status == 2))) {
-                        $status = $exemplar['_calc_colorcode'];
-                    }
-                }
-            }
-		}
-		return $status;
-
 	}
 
 	/**
@@ -195,8 +174,9 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 			if($data['enriched']['fields']['exemplare']) {
 
-				$status = $this->getLocalHoldingStatusFromArray($data['enriched']['fields']['exemplare']);
-				return json_encode(array('status' => $status));
+                $status = $this->holdingStatusService->getStatus($data['documents'][0], $data['enriched']['fields']['exemplare']);
+                return json_encode(array('status' => $status));
+
 
 			} else {
 				// Somehow this is a Local Holdings file with no copies. Send "Action needed" state.

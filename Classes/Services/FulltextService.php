@@ -14,9 +14,10 @@ class FulltextService {
 
     /**
      * @param Document $document
+     * @param \File_MARC_Record $record NULL
      * @return bool|string
      */
-    public function getFulltextLink(Document $document) {
+    public function getFulltextLink(Document $document, $record = NULL) {
 
         if(($document['access_facet'] === 'Electronic Resources') && (strlen($document['url'][0]) > 0)) {
 
