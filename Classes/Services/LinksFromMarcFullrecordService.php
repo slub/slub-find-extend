@@ -45,18 +45,20 @@ class LinksFromMarcFullrecordService
                     $note = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
                 }
 
-                $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-                if(substr( $uri, 0, 4 ) === "urn:") {
-                    $uri = 'http://nbn-resolving.de/'.$uri;
-                }
-
-                if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
-                    if(!$this->in_array_field($uri, 'uri', $isilLinks)) {
-                        $isilLinks[] = ["uri" => $uri, "note" => $note];
+                if($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                    $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+                    if (substr($uri, 0, 4) === "urn:") {
+                        $uri = 'http://nbn-resolving.de/' . $uri;
                     }
-                } elseif (!$reference->cache["856[" . $i . "]"]->getSubfield('9')) {
-                    if(!$this->in_array_field($uri, 'uri', $titleLinks)) {
-                        $titleLinks[] = ["uri" => $uri, "note" => $note];
+
+                    if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
+                        if (!$this->in_array_field($uri, 'uri', $isilLinks)) {
+                            $isilLinks[] = ["uri" => $uri, "note" => $note];
+                        }
+                    } elseif (!$reference->cache["856[" . $i . "]"]->getSubfield('9')) {
+                        if (!$this->in_array_field($uri, 'uri', $titleLinks)) {
+                            $titleLinks[] = ["uri" => $uri, "note" => $note];
+                        }
                     }
                 }
 
