@@ -20,6 +20,10 @@ class HoldingStatusService {
 
         $status = 9999;
 
+        if(!is_array($exemplare)) {
+            return 0;
+        }
+
         foreach ($exemplare as $exemplar) {
 
             if(!is_array($exemplar)) {
