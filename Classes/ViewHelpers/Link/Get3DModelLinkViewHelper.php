@@ -5,8 +5,12 @@ namespace Slub\SlubFindExtend\ViewHelpers\Link;
 class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
+	 * Maps location string to location link in 3d.slub-dresden.de
+	 *
+	 * @param string $content
 	 * @return string
 	 */
+
 	public function render($content = NULL) {
 
 		if ($content === NULL) {
