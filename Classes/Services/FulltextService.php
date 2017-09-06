@@ -10,7 +10,7 @@ use Solarium\QueryType\Select\Result\Document;
  */
 class FulltextService {
 
-    const RESOLVER_BASE = 'http://wwwdb.dbod.de/login?url=%s';
+    const RESOLVER_BASE = '//wwwdb.dbod.de/login?url=%s';
 
     /**
      * @param Document $document

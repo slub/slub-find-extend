@@ -218,7 +218,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 				return json_encode(array('status' => 1));
 			}
 
-			$entry['url'] = 'http://wwwdb.dbod.de/login?url='.$entry['url'];
+			$entry['url'] = '//wwwdb.dbod.de/login?url='.$entry['url'];
 
 			return json_encode($entry);
 		} else {
