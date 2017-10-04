@@ -123,7 +123,7 @@ class EnrichSolrResult {
      */
     private function safe_json_decode($value){
 
-        $decoded = json_decode($value);
+        $decoded = json_decode($value, true);
 
         switch (json_last_error()) {
             case JSON_ERROR_NONE:
