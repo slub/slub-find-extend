@@ -58,7 +58,7 @@ class HoldingStatusService {
      */
     public function getStatus(Document $document, $copies = []) {
 
-        // Electronic Resource are always accessible. Might needs fine tuning furtehr on.
+        // Electronic Resource are always accessible. Might needs fine tuning further on.
         if($document['access_facet'] === 'Electronic Resources') {
             return 1;
         } else {
