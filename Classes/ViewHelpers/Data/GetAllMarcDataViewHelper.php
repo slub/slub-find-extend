@@ -47,6 +47,11 @@ class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
         if($record) {
 
+            $leader = $record->getLeader();
+            if($leader) {
+                $lines[] = $leader;
+            }
+
             foreach ($record->getFields() as $tag=>$value) {
 
                 $line = "";
@@ -70,6 +75,8 @@ class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
                     }
 
                 }
+
+
 
                 $lines[] = $line;
 
