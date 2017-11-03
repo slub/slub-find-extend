@@ -24,7 +24,11 @@ class HoldingStatusViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
 	 * @return string
 	 */
 	public function render() {
-		return $this->holdingStatusService->getStatus($this->arguments['document'], $this->arguments['copies']);
+		if ($this->arguments['document']) {
+			return $this->holdingStatusService->getStatus($this->arguments['document'], $this->arguments['copies']);
+		} else {
+			return 0;
+		}
 	}
 
 
