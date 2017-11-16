@@ -22,7 +22,17 @@ class CleanUrnLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVi
             return 'http://nbn-resolving.de/'.$link;
         }
 
-        return $link;
+        // HOTFIX
+        if (strpos($link,'lynda.com') !== FALSE) {
+            return $link.'?org=slub-dresden.de';
+        }
+
+        // HOTFIX
+        if (strpos($link,'ezeit') !== FALSE) {
+            return $link.'&bibid=SLUB';
+        }
+
+        return 'http://wwwdb.dbod.de/login?url='.urlencode($link);
     }
 
 }
