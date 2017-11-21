@@ -47,6 +47,7 @@ class GetLinksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHe
                     return $this->linksFromMarcFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil']);
                     break;
                 case 'ai':
+                case 'is':
                     return $this->linksFromAiFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil'], false);
                 default:
                     return [];
