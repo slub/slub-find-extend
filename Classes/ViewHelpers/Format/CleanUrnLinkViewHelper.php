@@ -32,7 +32,7 @@ class CleanUrnLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVi
             return $link.'&bibid=SLUB';
         }
 
-        return 'http://wwwdb.dbod.de/login?url='.urlencode($link);
+        return 'http://wwwdb.dbod.de/login?url='.$link;
     }
 
 }

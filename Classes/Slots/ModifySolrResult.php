@@ -64,8 +64,9 @@ class ModifySolrResult {
             foreach ($this->settings['decode'] as $decoding) {
 
                 switch ($decoding['type']) {
+                    case 'marc':
                     case 'marcfinc':
-                        if($fields['recordtype'] === 'marcfinc') {
+                        if($fields['recordtype'] === 'marc' || $fields['recordtype'] === 'marcfinc') {
                             $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
                             $assignments['decoded'][$decoding['field']] = $decoder->decode($fields[$decoding['field']]);
                         }
