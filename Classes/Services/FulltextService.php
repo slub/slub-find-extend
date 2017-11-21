@@ -19,12 +19,11 @@ class FulltextService {
      */
     public function getFulltextLink(Document $document, $record = NULL) {
 
-        if(($document['access_facet'] === 'Electronic Resources') && (strlen($document['url'][0]) > 0)) {
+        if((in_array($document['access_facet'],['Electronic Resources','Electronic Resource (Remote Access)'])) && (strlen($document['url'][0]) > 0)) {
+
 
             return sprintf(self::RESOLVER_BASE, $document['url'][0]);
 
-        } elseif (($document['format'][0] === 'Electronic Resource (Remote Access)') && (strlen($document['url'][0]) > 0)) {
-            return sprintf(self::RESOLVER_BASE, $document['url'][0]);
         }
 
         return false;
