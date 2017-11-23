@@ -122,6 +122,7 @@ class EnrichSolrResult {
      * @return mixed|string
      */
     private function safe_json_decode($value){
+        $original_value = $value;
 
         $decoded = json_decode($value, true);
 
@@ -131,6 +132,16 @@ class EnrichSolrResult {
             case JSON_ERROR_UTF8:
                 $clean = $this->unutf8ize($value);
                 return $this->safe_json_decode($clean);
+            case JSON_ERROR_SYNTAX:
+
+                // Fix double ,, syntax error
+                if (strpos($original_value,',,') !== FALSE) {
+                    $value = str_replace(',,', ',', $original_value );
+                    $decoded = json_decode($value, true);
+                    return $decoded;
+                }
+
+                return '';
             default:
                 return '';
 
