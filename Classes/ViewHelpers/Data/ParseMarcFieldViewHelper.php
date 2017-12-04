@@ -34,6 +34,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
     public function initializeArguments() {
         parent::initializeArguments();
         $this->registerArgument('field', 'string', 'The marc field string', FALSE, NULL);
+        $this->registerArgument('subfieldasarray', 'boolean', 'Return subfields as array?', FALSE, NULL);
     }
 
     /**
@@ -56,7 +57,12 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
                         $output[$index] = [];
                     }
 
-                    $output[$index][] = $this->cleanedArrayData(array_slice($fieldData,1));
+                    if($this->arguments['subfieldasarray'] === TRUE) {
+                        $output[$index][] = $this->cleanedArrayData($fieldData, TRUE);
+                    } else {
+                        $output[$index][] = $this->cleanedArrayData(array_slice($fieldData,1));
+                    }
+
 
                 } else {
                     $output[] = $this->cleanedArrayData($fieldData,1);
@@ -74,7 +80,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
      * @param $arr
      * @return array
      */
-    private function cleanedArrayData($arr) {
+    private function cleanedArrayData($arr, $subfieldasarray = FALSE) {
 
         $return = [];
 
@@ -82,7 +88,15 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
             $offset = substr($fieldData, 0, 1);
             $data = trim(substr($fieldData, 1),'');
-            $return[$offset] = $data;
+            if($subfieldasarray === TRUE) {
+                if(is_array($return[$offset])) {
+                    $return[$offset][] = $data;
+                } else {
+                    $return[$offset] = [$data];
+                }
+            } else {
+                $return[$offset] = $data;
+            }
 
         }
 
