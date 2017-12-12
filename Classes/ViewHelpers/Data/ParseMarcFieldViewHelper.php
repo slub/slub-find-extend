@@ -34,7 +34,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
     public function initializeArguments() {
         parent::initializeArguments();
         $this->registerArgument('field', 'string', 'The marc field string', FALSE, NULL);
-        $this->registerArgument('subfieldasarray', 'boolean', 'Return subfields as array?', FALSE, NULL);
+        $this->registerArgument('subfieldasarray', 'boolean', 'Return subfields as array?', FALSE, FALSE);
     }
 
     /**
@@ -65,7 +65,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
 
                 } else {
-                    $output[] = $this->cleanedArrayData($fieldData,1);
+                    $output[] = $this->cleanedArrayData($fieldData, TRUE);
                 }
 
             }
