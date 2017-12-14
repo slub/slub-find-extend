@@ -167,7 +167,7 @@ class EnrichSolrResult {
 
     private function getData($url) {
         $ch = curl_init();
-        $timeout = 10;
+        $timeout = 20;
         curl_setopt($ch,CURLOPT_URL,$url);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
