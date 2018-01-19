@@ -189,7 +189,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 				$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
 				$cacheIdentifier = sha1($data['documents'][0]['id']);
-				//$entry = $cache->get($cacheIdentifier);
+				$entry = $cache->get($cacheIdentifier);
 				if (!$entry) {
 
 					// Try to resolve article against holdings
