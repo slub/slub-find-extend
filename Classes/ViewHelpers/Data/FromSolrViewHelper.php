@@ -108,13 +108,23 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 
 		if($results) {
 
+			$iterator = ["iterator" => 0, "cycle" => 1, "isFirst" => TRUE, "total" => count($results)];
+
 			foreach ($results as $result) {
 
 				if ($this->templateVariableContainer->exists('solr')) {
 					$this->templateVariableContainer->remove('solr');
 				}
+				if ($this->templateVariableContainer->exists('iterator')) {
+					$this->templateVariableContainer->remove('iterator');
+				}
 				$this->templateVariableContainer->add('solr', $result);
+				$this->templateVariableContainer->add('iterator', $iterator);
 				$out .= $this->renderThenChild();
+
+				$iterator["iterator"]++;
+				$iterator["cycle"]++;
+				$iterator["isFirst"] = FALSE;
 			}
 		} else {
 			$out .= $this->renderElseChild();
