@@ -33,6 +33,7 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 			$isKey = TRUE;
 
 			$keyValue = ($translate) ?  \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key, $translatekeyextension) : $key;
+			if(strlen($keyValue) === 0) $keyValue = $key;
 
 			foreach ($value as $innervalue) {
 
@@ -42,6 +43,7 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 				} elseif ($isKey === FALSE) {
 
 					$innerkeyValue = ($translate) ?  \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key.'.'.$innerkey, $translatekeyextension) : $innerkey;
+					if(strlen($innerkeyValue) === 0) $innerkeyValue = $innerkey;
 					$innerresult[$innerkeyValue] = $innervalue;
 					$isKey = TRUE;
 				}
