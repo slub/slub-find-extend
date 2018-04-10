@@ -6,13 +6,15 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
 
     /**
-     * COmbines ordered Keys and values to kv
+     * Combines ordered Keys and values to kv. Possible to translate.
      *
      * @param array $array
-     * @param string $remaining
+     * @param boolean $translate
+     * @param string $translatekey
+     * @param string $translatekeyextension
      * @return array
      */
-    public function render($array = NULL) {
+    public function render($array = NULL, $translate = FALSE, $translatekey = '', $translatekeyextension = '') {
 
 		$result = [];
 
@@ -24,12 +26,13 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 			return [];
 		}
 
-
 		foreach ($array as $key => $value) {
 
 			$innerresult = [];
 			$innerkey = '';
 			$isKey = TRUE;
+
+			$keyValue = ($translate) ?  \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key, $translatekeyextension) : $key;
 
 			foreach ($value as $innervalue) {
 
@@ -37,13 +40,15 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 					$innerkey = $innervalue;
 					$isKey = FALSE;
 				} elseif ($isKey === FALSE) {
-					$innerresult[$innerkey] = $innervalue;
+
+					$innerkeyValue = ($translate) ?  \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key.'.'.$innerkey, $translatekeyextension) : $innerkey;
+					$innerresult[$innerkeyValue] = $innervalue;
 					$isKey = TRUE;
 				}
 
 			}
 
-			$result[$key] = $innerresult;
+			$result[$keyValue] = $innerresult;
 
 		}
 
