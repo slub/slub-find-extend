@@ -12,9 +12,10 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
      * @param boolean $translate
      * @param string $translatekey
      * @param string $translatekeyextension
+     * @param boolean $keeporiginalvalue
      * @return array
      */
-    public function render($array = NULL, $translate = FALSE, $translatekey = '', $translatekeyextension = '') {
+    public function render($array = NULL, $translate = FALSE, $translatekey = '', $translatekeyextension = '', $keeporiginalvalue = FALSE) {
 
 		$result = [];
 
@@ -44,13 +45,26 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 
 					$innerkeyValue = ($translate) ?  \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key.'.'.$innerkey, $translatekeyextension) : $innerkey;
 					if(strlen($innerkeyValue) === 0) $innerkeyValue = $innerkey;
-					$innerresult[$innerkeyValue] = $innervalue;
+
+					if($keeporiginalvalue) {
+						$innerresult[$innerkeyValue] = [];
+						$innerresult[$innerkeyValue]['translateOrig'] = $innerkey;
+						$innerresult[$innerkeyValue]['values'] = $innervalue;
+					} else {
+						$innerresult[$innerkeyValue] = $innervalue;
+					}
 					$isKey = TRUE;
 				}
 
 			}
 
-			$result[$keyValue] = $innerresult;
+			if($keeporiginalvalue) {
+				$result[$keyValue] = [];
+				$result[$keyValue]['translateOrig'] = $key;
+				$result[$keyValue]['values'] = $innerresult;
+			} else {
+				$result[$keyValue] = $innerresult;
+			}
 
 		}
 
