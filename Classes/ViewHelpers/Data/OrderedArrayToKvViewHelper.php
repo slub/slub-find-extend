@@ -47,9 +47,9 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 					if(strlen($innerkeyValue) === 0) $innerkeyValue = $innerkey;
 
 					if($keeporiginalvalue) {
-						$innerresult[$innerkeyValue] = [];
-						$innerresult[$innerkeyValue]['translateOrig'] = $innerkey;
-						$innerresult[$innerkeyValue]['values'] = $innervalue;
+						$innerresult[$innerkey] = [];
+						$innerresult[$innerkey]['translation'] = $innerkeyValue;
+						$innerresult[$innerkey]['values'] = $innervalue;
 					} else {
 						$innerresult[$innerkeyValue] = $innervalue;
 					}
@@ -59,9 +59,9 @@ class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstra
 			}
 
 			if($keeporiginalvalue) {
-				$result[$keyValue] = [];
-				$result[$keyValue]['translateOrig'] = $key;
-				$result[$keyValue]['values'] = $innerresult;
+				$result[$key] = [];
+				$result[$key]['translation'] = $keyValue;
+				$result[$key]['values'] = $innerresult;
 			} else {
 				$result[$keyValue] = $innerresult;
 			}
