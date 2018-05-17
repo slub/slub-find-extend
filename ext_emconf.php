@@ -22,6 +22,13 @@ $EM_CONF[$_EXTKEY] = array(
 	'createDirs' => '',
 	'clearCacheOnLoad' => 0,
 	'version' => '0.0.1',
+    'autoload' =>
+        array(
+            'psr-4' =>
+                array(
+                    'Slub\\SlubFindExtend\\' => 'Classes'
+                )
+        ),
 	'constraints' => array(
 		'depends' => array(
 			'typo3' => '6.2',

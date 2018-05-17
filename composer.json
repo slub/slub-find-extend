@@ -18,5 +18,10 @@
     },
     "replace": {
         "typo3-ter/slub-find-extend": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slub\\SlubFindExtend\\": "Classes"
+        }
     }
 }
