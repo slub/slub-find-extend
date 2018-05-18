@@ -13,7 +13,7 @@ class StopWordService {
      */
     private function getStopWords() {
 
-        return array('A','AAN','ALS','AN','AT','AU','AUS','BY','D','DAS','DE','DEM','DEN','DER','DES','DET','DIE','DU','E','EEN','EIN','EINE','EINEM','EINEN','EINER','EINES','EN','ET','ETT','FOR','FROM','FÜR','HET','IM','IN','L','LA','LE','LES','MET','MIT','N','NAAR','OF','ON','OP','OVER','POUR','S','T','THE','TO','U','ÜBER','UIT','UND','UNE','VOM','VOOR','VOR','WITH','ZU','ZUM','ZUR');
+        return array('A','ALS','AM','AN','AND','ARE','AS','AT','AUF','AUS','BE','BUT','BY','DAS','DASS','DAß','DER','DICH','DIE','DIR','DU','DURCH','EINE','EINEM','EINEN','EINER','EINES','ER','ES','FOR','FÜR','IF','IHR','IHRE','IHRES','IM','IN','INTO','IS','IST','IT','KEIN','MEIN','MICH','MIR','MIT','NO','NOT','ODER','OF','OHNE','ON','OR','S','SEIN','SIE','SUCH','T','THAT','THE','THEIR','THEN','THERE','THESE','THEY','THIS','TO','UND','VON','WAR','WAS','WEGEN','WER','WIE','WILL','WIR','WIRD','WITH');
 
     }
 
@@ -48,7 +48,7 @@ class StopWordService {
 
         if(preg_match('/^".*"$/', trim($querystring))) { return $querystring; }
 
-        return $this->stripStopWords($this->stripPuntuations(strtoupper($querystring)));
+        return $this->stripStopWords($this->stripPuntuations(mb_strtoupper($querystring,'UTF-8')));
 
     }
 
