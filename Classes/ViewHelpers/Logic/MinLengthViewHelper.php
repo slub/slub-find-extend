@@ -8,17 +8,17 @@ namespace Slub\SlubFindExtend\ViewHelpers\Logic;
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
-/**
- * ### Condition: String contains substring
- *
- * Condition ViewHelper which renders the `then` child if provided
- * string $haystack contains provided string $needle.
- *
- * @author Björn Fromme <fromme@dreipunktnull.com>, dreipunktnull
- * @package Vhs
- * @subpackage ViewHelpers\Condition\String
- */
+
 class MinLengthViewHelper extends AbstractConditionViewHelper {
+
+    /**
+     * Register arguments.
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('string', 'string', 'The string to check against minlength', TRUE, NULL);
+        $this->registerArgument('length', 'int', 'The minlength to check', TRUE, NULL);
+    }
 
     /**
      * Render method
@@ -27,7 +27,10 @@ class MinLengthViewHelper extends AbstractConditionViewHelper {
      * @param int $length
      * @return string
      */
-    public function render($string, $length = NULL) {
+    public function render() {
+
+        $string = $this->arguments['json'];
+        $length = $this->arguments['length'];
 
         if($length === NULL) { return TRUE; }
 
