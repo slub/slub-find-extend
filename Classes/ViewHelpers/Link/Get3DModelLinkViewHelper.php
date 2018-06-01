@@ -24,27 +24,35 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 				$pickupID = '2052';
 				break;
 			case "Zentralbibliothek Ebene 0 SB-Regal":
+				$content = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
 				$pickupID = '2052';
 				break;
 			case "Zentralbibliothek Ebene -1 SB-Regal Zeitungen":
+				$content = "Zentralbibliothek<br>Ebene -1<br>SB-Regal Zeitungen";
 				$pickupID = '3811';
 				break;
 			case "Zentralbibliothek Ausleihtheke":
+				$content = "Zentralbibliothek<br>Ausleihtheke";
 				$pickupID = '1429';
 				break;
 			case "Zentralbibliothek Ebene -1 IP Musik / Mediathek":
+				$content = "Zentralbibliothek<br>Ebene -1<br>IP Musik / Mediathek";
 				$pickupID = '2080';
 				break;
 			case "Zentralbibliothek Ebene -1 Lesesaal Sondersammlungen":
+				$content = "Zentralbibliothek<br>Ebene -1<br>Lesesaal Sondersammlungen";
 				$pickupID = '2084';
 				break;
 			case "Zentralbibliothek IP Zeitschriften":
+				$content = "Zentralbibliothek<br>IP Zeitschriften";
 				$pickupID = '3023';
 				break;
 			case "Zentralbibliothek Ebene -2 Lesesaal Kartensammlung":
+				$content = "Zentralbibliothek<br>Ebene -2<br>Lesesaal Kartensammlung";
 				$pickupID = '3021';
 				break;
 			case "ZwB Rechtswissenschaft":
+				$content = "Zweigbibliothek Rechtswissenschaft";
 				$pickupID = '3422';
 				break;
 			case "Bereichsbibliothek Drepunct":
