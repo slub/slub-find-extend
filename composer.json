@@ -1,7 +1,7 @@
 {
     "name": "slub/slub-find-extend",
     "description": "Extension extending Find functionality",
-    "version": "1.0.2",
+    "version": "0.1.0",
     "type": "typo3-cms-extension",
     "homepage": "",
     "keywords" : ["TYPO3 CMS"],
