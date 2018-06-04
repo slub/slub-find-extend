@@ -31,12 +31,21 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
  */
 class IsNullOrZeroViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
 
-	 /**
-     * @param mixed $value Value to check
-     *
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('value', 'mixed', 'The value to check', TRUE, NULL);
+    }
+
+    /**
+
      * @return bool the rendered string
      */
-    public function render($value) {
+    public function render() {
+        $value = $this->arguments['value'];
 		return ($value === 0 || $value === NULL) ? true : false;
     }
 }

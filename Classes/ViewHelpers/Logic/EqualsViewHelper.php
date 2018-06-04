@@ -24,13 +24,25 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 class EqualsViewHelper extends AbstractConditionViewHelper {
 
     /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('string', 'string', 'The string to check against', TRUE, NULL);
+        $this->registerArgument('test', 'string', 'The string to check', TRUE, NULL);
+    }
+
+    /**
      * Render method
      *
-     * @param string $string
-     * @param string $test
      * @return string
      */
-    public function render($string, $test) {
+    public function render() {
+
+        $string = $this->arguments['string'];
+        $test = $this->arguments['test'];
+
         if (FALSE !== ($string === $test)) {
             return $this->renderThenChild();
         } else {
