@@ -29,7 +29,7 @@ class MinLengthViewHelper extends AbstractConditionViewHelper {
      */
     public function render() {
 
-        $string = $this->arguments['json'];
+        $string = $this->arguments['string'];
         $length = $this->arguments['length'];
 
         if($length === NULL) { return TRUE; }
