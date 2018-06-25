@@ -102,7 +102,7 @@ class ModifySolrResult {
                 if(isset($fields[$blacklistName]) && is_array($fields[$blacklistName]) && is_array($blacklistValues)) {
 
                     $fields[$blacklistName] = preg_grep('/^(' . str_replace('/', '\/', implode('|', $blacklistValues)) . ')$/', $fields[$blacklistName], PREG_GREP_INVERT);
-        
+                    $fields[$blacklistName] = array_values($fields[$blacklistName]);
                 }
         
             }
