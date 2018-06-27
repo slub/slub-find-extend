@@ -116,6 +116,17 @@ class AdvancedQuery {
     }
 
     /**
+     * strip chars that breaks the solr query
+     *
+     * @param string $queryParameter Settings Array
+     */
+    private function stripCharsFromQuery($queryParameter) {
+            return str_replace(['/'],[''],$queryParameter);
+    }
+
+
+
+    /**
      * Slot to build the advanced query
      *
      * @param Query &$query
@@ -130,6 +141,10 @@ class AdvancedQuery {
         if(strlen($queryParameter) > 0) {
 
             if($this->settings['queryModifier']) {
+
+                if ( !$this->settings['queryModifier']['phraseMatch'] ) {
+                      $queryParameter = $this->stripCharsFromQuery($queryParameter);
+                }
 
                 if($this->settings['queryModifier']['stopwords']) {
                     $queryParameter = $this->stopWordService->cleanQueryString($queryParameter);
