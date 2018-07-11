@@ -86,6 +86,7 @@ class TitleViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelpe
         $title = trim(preg_replace( '/\s+/', $this->arguments['whitespaceString'], $title), $this->arguments['whitespaceString']);
 
         $GLOBALS['TSFE']->getPageRenderer()->setTitle($title);
+        $GLOBALS['TSFE']->altPageTitle = $title;
     }
 
 }
