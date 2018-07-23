@@ -59,6 +59,10 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 			case "Bereichsbibliothek Drepunct":
 				$pickupID = '3154';
 				break;
+			case "ZwB Medizin":
+				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/medizin/'>Zweigbibliothek Medizin</a>";
+			case "ZwB Forst":
+				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/forstwesen/'>Zweigbibliothek Forst</a>";
 			default:
 				return $content;
 		}
