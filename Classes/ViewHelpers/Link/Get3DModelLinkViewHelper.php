@@ -67,7 +67,7 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 				return $content;
 		}
 
-		return "<a href='http://3d.slub-dresden.de/viewer?language=de&project_id=3&activate_location=" . $pickupID . "'>". $content ."</a>";
+		return "<a href='https://3d.slub-dresden.de/viewer?language=de&project_id=3&activate_location=" . $pickupID . "'>". $content ."</a>";
 
 	}
 }
