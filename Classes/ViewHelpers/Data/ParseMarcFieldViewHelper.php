@@ -90,8 +90,13 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
         foreach($arr as $fieldData) {
 
-            $offset = substr($fieldData, 0, 1);
-            $data = trim(substr($fieldData, 1),'');
+            if(substr($fieldData, 2, 1) === ':') {
+                $offset = substr($fieldData, 0, 2);
+                $data = trim(substr($fieldData, 3),'');
+            } else {
+                $offset = substr($fieldData, 0, 1);
+                $data = trim(substr($fieldData, 1),'');
+            }
 
             $ordered[] = ['subfield' => $offset, 'data' => $data];
 
