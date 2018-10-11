@@ -35,6 +35,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
         parent::initializeArguments();
         $this->registerArgument('field', 'string', 'The marc field string', FALSE, NULL);
         $this->registerArgument('subfieldasarray', 'boolean', 'Return subfields as array?', FALSE, FALSE);
+        $this->registerArgument('orderedarray', 'boolean', 'Return subfields as array ordered as in original data?', FALSE, FALSE);
     }
 
     /**
@@ -58,9 +59,9 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
                     }
 
                     if($this->arguments['subfieldasarray'] === TRUE) {
-                        $output[$index][] = $this->cleanedArrayData($fieldData, TRUE);
+                        $output[$index][] = $this->cleanedArrayData($fieldData, TRUE, $this->arguments['orderedarray']);
                     } else {
-                        $output[$index][] = $this->cleanedArrayData(array_slice($fieldData,1));
+                        $output[$index][] = $this->cleanedArrayData(array_slice($fieldData,1), FALSE, $this->arguments['orderedarray']);
                     }
 
 
@@ -78,16 +79,22 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
     /**
      * @param $arr
+     * @param $subfieldasarray
+     * @param $orderedarray
      * @return array
      */
-    private function cleanedArrayData($arr, $subfieldasarray = FALSE) {
+    private function cleanedArrayData($arr, $subfieldasarray = FALSE, $orderedarray = FALSE) {
 
         $return = [];
+        $ordered = [];
 
         foreach($arr as $fieldData) {
 
             $offset = substr($fieldData, 0, 1);
             $data = trim(substr($fieldData, 1),'');
+
+            $ordered[] = ['subfield' => $offset, 'data' => $data];
+
             if($subfieldasarray === TRUE) {
                 if(is_array($return[$offset])) {
                     $return[$offset][] = $data;
@@ -99,6 +106,8 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
             }
 
         }
+
+        if($orderedarray) $return['_ordered'] = $ordered;
 
         return $return;
     }
