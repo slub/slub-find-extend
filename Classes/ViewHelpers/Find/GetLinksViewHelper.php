@@ -27,6 +27,7 @@ class GetLinksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHe
         $this->registerArgument('fullrecord', 'object', 'The raw fullrecord ', FALSE, NULL);
         $this->registerArgument('isil', 'array', 'If you want to filter the data by isil', FALSE, NULL);
         $this->registerArgument('index', 'boolean', 'Is this a call from an index overview?', FALSE, FALSE);
+        $this->registerArgument('unique', 'boolean', 'Should only unique Links be outputted?', FALSE, FALSE);
     }
 
     /**
@@ -44,7 +45,7 @@ class GetLinksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHe
             switch ($this->arguments['document']['recordtype']) {
                 case 'marc':
                 case 'marcfinc':
-                    return $this->linksFromMarcFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil']);
+                    return $this->linksFromMarcFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil'], $this->arguments['unique']);
                     break;
                 case 'ai':
                 case 'is':

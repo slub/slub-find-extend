@@ -23,9 +23,10 @@ class LinksFromMarcFullrecordService
      *
      * @param object $fullrecord
      * @param array $isil
+     * @param boolean $unique
      * @return array
      */
-    public function getLinks($fullrecord, $isil = NULL)
+    public function getLinks($fullrecord, $isil = NULL, $unique = FALSE)
     {
         $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
         $noPrefixHosts = ['wwwdb.dbod.de', 'dx.doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de'];
@@ -64,11 +65,34 @@ class LinksFromMarcFullrecordService
                 }
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
-                    $isilLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($isilLinks, 'uri')));
+                    }
+
+                    if($linkNotInArray) {
+                        $isilLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                    }
+
                 } elseif (($ind1 === '4') && ($ind2 === '2')) {
-                    $relatedLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => ''];
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($relatedLinks, 'uri')));
+                    }
+
+                    if($linkNotInArray) {
+                        $relatedLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => ''];
+                    }
                 } elseif (($ind1 === '4') && ($ind2 === '0')) {
-                    $resourceLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($resourceLinks, 'uri')));
+                    }
+
+                    if($linkNotInArray) {
+                        $resourceLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                    }
                 }
             }
 
