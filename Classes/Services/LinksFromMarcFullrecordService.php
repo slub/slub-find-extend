@@ -30,6 +30,7 @@ class LinksFromMarcFullrecordService
     {
         $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
         $noPrefixHosts = ['wwwdb.dbod.de', 'dx.doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de'];
+        $blacklistLabel = ['Kostenfrei'];
 
         $resourceLinks = [];
         $relatedLinks = [];
@@ -59,9 +60,11 @@ class LinksFromMarcFullrecordService
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('z')) {
                     $note = $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData();
+                    if(in_array($note, $blacklistLabel)) {$note = ''; }
                 }
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('3')) {
                     $material = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
+                    if(in_array($material, $blacklistLabel)) {$material = ''; }
                 }
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
@@ -104,17 +107,6 @@ class LinksFromMarcFullrecordService
             'related' => $relatedLinks
         ];
 
-    }
-
-    /**
-     * To check the if uri exits
-     */
-    private function in_array_field($needle, $needle_field, $haystack)
-    {
-        foreach ($haystack as $item)
-            if (isset($item[$needle_field]) && $item[$needle_field] == $needle)
-                return true;
-        return false;
     }
 
 }
