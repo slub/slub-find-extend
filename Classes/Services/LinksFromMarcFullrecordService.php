@@ -27,50 +27,58 @@ class LinksFromMarcFullrecordService
      */
     public function getLinks($fullrecord, $isil = NULL)
     {
+        $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
+        $noPrefixHosts = ['wwwdb.dbod.de', 'dx.doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de'];
 
+        $resourceLinks = [];
+        $relatedLinks = [];
         $isilLinks = [];
-        $titleLinks = [];
 
         $reference = $this->marcRefrenceResolverService->resolveReference('856', $fullrecord);
 
         for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
-            if (count($isil) > 0) {
+            $prefix = $defaultPrefix;
+            $note = '';
+            $material = '';
+            $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
+            $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
 
-                $note = '';
+            if($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+
+                if (substr($uri, 0, 4) === "urn:") {
+                    $uri = 'http://nbn-resolving.de/' . $uri;
+                }
+                $uri = str_replace('https://wwwdb.dbod.de/login?url=', '', $uri);
+
+                $uriParsed = parse_url($uri);
+
+                if(in_array($uriParsed['host'], $noPrefixHosts)) { $prefix =  ''; }
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('z')) {
                     $note = $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData();
-                } elseif ($reference->cache["856[" . $i . "]"]->getSubfield('3')) {
-                    $note = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
+                }
+                if ($reference->cache["856[" . $i . "]"]->getSubfield('3')) {
+                    $material = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
                 }
 
-                if($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
-                    $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-                    if (substr($uri, 0, 4) === "urn:") {
-                        $uri = 'http://nbn-resolving.de/' . $uri;
-                    }
-
-                    if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
-                        if (!$this->in_array_field($uri, 'uri', $isilLinks)) {
-                            $isilLinks[] = ["uri" => $uri, "note" => $note];
-                        }
-                    } elseif (!$reference->cache["856[" . $i . "]"]->getSubfield('9')) {
-                        if (!$this->in_array_field($uri, 'uri', $titleLinks)) {
-                            $titleLinks[] = ["uri" => $uri, "note" => $note];
-                        }
-                    }
+                if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
+                    $isilLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                } elseif (($ind1 === '4') && ($ind2 === '2')) {
+                    $relatedLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => ''];
+                } elseif (($ind1 === '4') && ($ind2 === '0')) {
+                    $resourceLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
                 }
-
             }
 
         }
 
-        if (count($isil) && count($isilLinks)) {
-            return $isilLinks;
-        }
-
-        return $titleLinks;
+        return [
+            'isil' => $isilLinks,
+            'resource' => $resourceLinks,
+            'related' => $relatedLinks
+        ];
 
     }
 
