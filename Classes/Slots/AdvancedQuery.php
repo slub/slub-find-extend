@@ -138,63 +138,66 @@ class AdvancedQuery {
 
         $settings = $this->settings['components'];
 
-        if(strlen($queryParameter) > 0) {
+        if($settings) {
 
-            if($this->settings['queryModifier']) {
+            if (strlen($queryParameter) > 0) {
 
-                if ( !$this->settings['queryModifier']['phraseMatch'] ) {
-                      $queryParameter = $this->stripCharsFromQuery($queryParameter);
+                if ($this->settings['queryModifier']) {
+
+                    if (!$this->settings['queryModifier']['phraseMatch']) {
+                        $queryParameter = $this->stripCharsFromQuery($queryParameter);
+                    }
+
+                    if ($this->settings['queryModifier']['stopwords']) {
+                        $queryParameter = $this->stopWordService->cleanQueryString($queryParameter);
+                    }
+
+                    if ($this->settings['queryModifier']['numeric']) {
+                        $queryParameter = $this->handleNumeric($queryParameter);
+                    }
+
                 }
 
-                if($this->settings['queryModifier']['stopwords']) {
-                    $queryParameter = $this->stopWordService->cleanQueryString($queryParameter);
+                if ($this->settings['queryModifier'] && $this->settings['queryModifier']['stripIntFields']) {
+                    $this->handleStripIntFields($settings, $queryParameter);
                 }
 
-                if($this->settings['queryModifier']['numeric']) {
-                    $queryParameter = $this->handleNumeric($queryParameter);
+                $searchHandler = new SearchHandler($settings);
+
+                $boostquery = $searchHandler->createBoostQueryString($queryParameter);
+
+                $querystring = $searchHandler->createAdvancedQueryString($queryParameter);
+
+                if ($this->settings['queryModifier'] && $this->settings['queryModifier']['phraseMatch']) {
+                    $querystring .= $this->handlePhraseMatch($originalQueryParameter, $searchHandler, $this->settings);
                 }
 
-            }
+                if ($this->settings['queryModifier'] && $this->settings['queryModifier']['isilMatch']) {
+                    $querystring .= $this->handleIsilMatch($originalQueryParameter, $searchHandler, $this->settings);
+                }
 
-            if($this->settings['queryModifier'] && $this->settings['queryModifier']['stripIntFields']) {
-                $this->handleStripIntFields($settings, $queryParameter);
-            }
+                $query->setQuery($querystring);
 
-            $searchHandler = new SearchHandler($settings);
-
-            $boostquery = $searchHandler->createBoostQueryString($queryParameter);
-
-            $querystring = $searchHandler->createAdvancedQueryString($queryParameter);
-
-            if($this->settings['queryModifier'] && $this->settings['queryModifier']['phraseMatch']) {
-                $querystring .= $this->handlePhraseMatch($originalQueryParameter, $searchHandler, $this->settings);
-            }
-
-            if($this->settings['queryModifier'] && $this->settings['queryModifier']['isilMatch']) {
-                $querystring .= $this->handleIsilMatch($originalQueryParameter, $searchHandler, $this->settings);
-            }
-
-            $query->setQuery($querystring);
-
-        } else {
-
-            if($settings['DismaxHandler'] === 'edismax') {
-                $dismax = $query->getEDisMax();
             } else {
-                $dismax = $query->getDisMax();
-            }
 
-            if($settings['DismaxParams']) {
-                foreach ($settings['DismaxParams'] as $params) {
-                    if ($params['name'] === 'bf') {
-                        $dismax->setBoostFunctions($params['value']);
-                    }
-                    if ($params['name'] === 'bq') {
-                        $dismax->setBoostQuery($params['value']);
+                if ($settings['DismaxHandler'] === 'edismax') {
+                    $dismax = $query->getEDisMax();
+                } else {
+                    $dismax = $query->getDisMax();
+                }
+
+                if ($settings['DismaxParams']) {
+                    foreach ($settings['DismaxParams'] as $params) {
+                        if ($params['name'] === 'bf') {
+                            $dismax->setBoostFunctions($params['value']);
+                        }
+                        if ($params['name'] === 'bq') {
+                            $dismax->setBoostQuery($params['value']);
+                        }
                     }
                 }
-            }
 
+            }
         }
 
     }

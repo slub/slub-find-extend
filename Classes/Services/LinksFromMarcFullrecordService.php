@@ -64,6 +64,7 @@ class LinksFromMarcFullrecordService
                 }
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('3')) {
                     $material = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
+                    $material = str_replace('#', ' - ', $material);
                     if(in_array($material, $blacklistLabel)) {$material = ''; }
                 }
 
