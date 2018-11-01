@@ -30,7 +30,7 @@ class LinksFromMarcFullrecordService
     {
         $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
         $noPrefixHosts = ['wwwdb.dbod.de', 'dx.doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de'];
-        $blacklistLabel = ['Kostenfrei'];
+        $blacklistLabel = ['Kostenfrei', 'Volltext'];
 
         $resourceLinks = [];
         $relatedLinks = [];
