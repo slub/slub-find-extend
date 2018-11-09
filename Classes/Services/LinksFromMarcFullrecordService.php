@@ -24,12 +24,13 @@ class LinksFromMarcFullrecordService
      * @param object $fullrecord
      * @param array $isil
      * @param boolean $unique
+     * @param boolean $merged
      * @return array
      */
-    public function getLinks($fullrecord, $isil = NULL, $unique = FALSE)
+    public function getLinks($fullrecord, $isil = NULL, $unique = FALSE, $merged = FALSE)
     {
         $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
-        $noPrefixHosts = ['wwwdb.dbod.de', 'dx.doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de'];
+        $noPrefixHosts = ['wwwdb.dbod.de', 'www.dbod.de','dx.doi.org', 'doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de'];
         $blacklistLabel = ['Kostenfrei', 'Volltext'];
 
         $resourceLinks = [];
@@ -102,11 +103,17 @@ class LinksFromMarcFullrecordService
 
         }
 
-        return [
-            'isil' => $isilLinks,
-            'resource' => $resourceLinks,
-            'related' => $relatedLinks
-        ];
+        if($merged) {
+            return array_merge($isilLinks, $resourceLinks, $relatedLinks);
+        } else {
+
+            return [
+                'isil' => $isilLinks,
+                'resource' => $resourceLinks,
+                'related' => $relatedLinks
+            ];
+
+        }
 
     }
 
