@@ -23,66 +23,98 @@ class LinksFromMarcFullrecordService
      *
      * @param object $fullrecord
      * @param array $isil
+     * @param boolean $unique
+     * @param boolean $merged
      * @return array
      */
-    public function getLinks($fullrecord, $isil = NULL)
+    public function getLinks($fullrecord, $isil = NULL, $unique = FALSE, $merged = FALSE)
     {
+        $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
+        $noPrefixHosts = ['wwwdb.dbod.de', 'www.dbod.de','dx.doi.org', 'doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de'];
+        $blacklistLabel = ['Kostenfrei', 'Volltext'];
 
+        $resourceLinks = [];
+        $relatedLinks = [];
         $isilLinks = [];
-        $titleLinks = [];
 
         $reference = $this->marcRefrenceResolverService->resolveReference('856', $fullrecord);
 
         for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
-            if (count($isil) > 0) {
+            $prefix = $defaultPrefix;
+            $note = '';
+            $material = '';
+            $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
+            $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
 
-                $note = '';
+            if($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+
+                if (substr($uri, 0, 4) === "urn:") {
+                    $uri = 'http://nbn-resolving.de/' . $uri;
+                }
+                $uri = str_replace('https://wwwdb.dbod.de/login?url=', '', $uri);
+
+                $uriParsed = parse_url($uri);
+
+                if(in_array($uriParsed['host'], $noPrefixHosts)) { $prefix =  ''; }
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('z')) {
                     $note = $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData();
-                } elseif ($reference->cache["856[" . $i . "]"]->getSubfield('3')) {
-                    $note = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
+                    if(in_array($note, $blacklistLabel)) {$note = ''; }
+                }
+                if ($reference->cache["856[" . $i . "]"]->getSubfield('3')) {
+                    $material = $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData();
+                    $material = str_replace('#', ' - ', $material);
+                    if(in_array($material, $blacklistLabel)) {$material = ''; }
                 }
 
-                if($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
-                    $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-                    if (substr($uri, 0, 4) === "urn:") {
-                        $uri = 'http://nbn-resolving.de/' . $uri;
+                if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
+
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($isilLinks, 'uri')));
                     }
 
-                    if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
-                        if (!$this->in_array_field($uri, 'uri', $isilLinks)) {
-                            $isilLinks[] = ["uri" => $uri, "note" => $note];
-                        }
-                    } elseif (!$reference->cache["856[" . $i . "]"]->getSubfield('9')) {
-                        if (!$this->in_array_field($uri, 'uri', $titleLinks)) {
-                            $titleLinks[] = ["uri" => $uri, "note" => $note];
-                        }
+                    if($linkNotInArray) {
+                        $isilLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                    }
+
+                } elseif (($ind1 === '4') && ($ind2 === '2')) {
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($relatedLinks, 'uri')));
+                    }
+
+                    if($linkNotInArray) {
+                        $relatedLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => ''];
+                    }
+                } elseif (($ind1 === '4') && ($ind2 === '0')) {
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($resourceLinks, 'uri')));
+                    }
+
+                    if($linkNotInArray) {
+                        $resourceLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
                     }
                 }
-
             }
 
         }
 
-        if (count($isil) && count($isilLinks)) {
-            return $isilLinks;
+        if($merged) {
+            return array_merge($isilLinks, $resourceLinks, $relatedLinks);
+        } else {
+
+            return [
+                'isil' => $isilLinks,
+                'resource' => $resourceLinks,
+                'related' => $relatedLinks
+            ];
+
         }
 
-        return $titleLinks;
-
-    }
-
-    /**
-     * To check the if uri exits
-     */
-    private function in_array_field($needle, $needle_field, $haystack)
-    {
-        foreach ($haystack as $item)
-            if (isset($item[$needle_field]) && $item[$needle_field] == $needle)
-                return true;
-        return false;
     }
 
 }
