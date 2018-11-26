@@ -36,6 +36,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
         $this->registerArgument('field', 'string', 'The marc field string', FALSE, NULL);
         $this->registerArgument('subfieldasarray', 'boolean', 'Return subfields as array?', FALSE, FALSE);
         $this->registerArgument('orderedarray', 'boolean', 'Return subfields as array ordered as in original data?', FALSE, FALSE);
+        $this->registerArgument('getindicators', 'boolean', 'Return indicator1 and indicator2 as fields', FALSE, FALSE);
     }
 
     /**
@@ -59,10 +60,19 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
                     }
 
                     if($this->arguments['subfieldasarray'] === TRUE) {
-                        $output[$index][] = $this->cleanedArrayData($fieldData, TRUE, $this->arguments['orderedarray']);
+                        $dataCleaned = $this->cleanedArrayData($fieldData, TRUE, $this->arguments['orderedarray']);
                     } else {
-                        $output[$index][] = $this->cleanedArrayData(array_slice($fieldData,1), FALSE, $this->arguments['orderedarray']);
+                        $dataCleaned = $this->cleanedArrayData(array_slice($fieldData,1), FALSE, $this->arguments['orderedarray']);
                     }
+
+                    if($this->arguments['getindicators'] === TRUE) {
+
+                        $dataCleaned['ind1'] = substr($fieldData[0], 0, 1);
+                        $dataCleaned['ind2'] = substr($fieldData[0], 1, 1);
+
+                    }
+
+                    $output[$index][] = $dataCleaned;
 
 
                 } else {
