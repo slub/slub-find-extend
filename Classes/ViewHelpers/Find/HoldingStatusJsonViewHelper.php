@@ -84,13 +84,14 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 		$url = '';
 		$via = '';
 
-		for ($i = 0; $i < $xpath->query("//div[contains(@class,'t_ezb_result')]/p")->length; $i++) {
+		for ($i = 0; $i < $xpath->query("//div[@id ='t_ezb']/div/div[contains(@class,'t_ezb_result')]/p")->length; $i++) {
 
 			$ezb_status_code = 10;
 
-			$ezb_status = $xpath->query("//div[contains(@class,'t_ezb_result')]/p/span[contains(@class, 't_ezb_yellow') or contains(@class, 't_ezb_green') or contains(@class, 't_ezb_red')]/@class")->item($i)->nodeValue;
-			$ezb_status_via = trim($xpath->query("//div[contains(@class,'t_ezb_result')]/p")->item($i)->nodeValue);
-			$ezb_url = $xpath->query("//div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item($i)->nodeValue;
+			$ezb_status = $xpath->query("//div[@id ='t_ezb']/div/div[contains(@class,'t_ezb_result')]/p/span[contains(@class, 't_ezb_yellow') or contains(@class, 't_ezb_green') or contains(@class, 't_ezb_red')]/@class")->item($i)->nodeValue;
+			$ezb_status_via = trim($xpath->query("//div[@id ='t_ezb']/div/div[contains(@class,'t_ezb_result')]/p")->item($i)->nodeValue);
+			$ezb_url = $xpath->query("//div[@id ='t_ezb']/div/div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item($i)->nodeValue;
+
 
 			$ezb_via = substr($ezb_status_via, strpos($ezb_status_via, 'via')+4, -4);
 
@@ -114,11 +115,20 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 		}
 
+		$oa_url = $xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item(0)->nodeValue;
+
+		if(strlen($oa_url) > 0) {
+            $oa_via = trim($xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p")->item(0)->nodeValue);
+            $oa_via = substr($oa_via, strpos($oa_via, 'via')+4, strlen($oa_via)-strpos($oa_via, ',')-5);
+        }
+
 		$status['infolink'] = $infolink;
 		$status['access'] = $access == 'freigeschaltet' ? 1 : 0;
 		$status['via'] = $via;
 		$status['url'] = $url;
 		$status['status'] = $status_code;
+        $status['oa_url'] = $oa_url;
+        $status['oa_via'] = $oa_via;
 
 		return $status;
 
@@ -189,7 +199,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 				$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
 				$cacheIdentifier = sha1($data['documents'][0]['id']);
-				$entry = $cache->get($cacheIdentifier);
+				//$entry = $cache->get($cacheIdentifier);
 				if (!$entry) {
 
 					// Try to resolve article against holdings
