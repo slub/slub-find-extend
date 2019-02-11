@@ -33,6 +33,7 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 				$pickupID = '3811';
 				break;
 			case "Zentralbibliothek Ausleihtheke":
+			case "Zentralbibliothek Servicetheke":
 				$content = "Zentralbibliothek<br>Servicetheke";
 				$pickupID = '1429';
 				break;
