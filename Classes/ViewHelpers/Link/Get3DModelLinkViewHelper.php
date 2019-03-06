@@ -21,8 +21,8 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
 		switch ($content) {
 			case "Zentralbibliothek":
-				$content = "Zentralbibliothek<br>Ausleihtheke";
-				$pickupID = '1429';
+				$content = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
+				$pickupID = '2052';
 				break;
 			case "Zentralbibliothek Ebene 0 SB-Regal":
 				$content = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
@@ -33,7 +33,8 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 				$pickupID = '3811';
 				break;
 			case "Zentralbibliothek Ausleihtheke":
-				$content = "Zentralbibliothek<br>Ausleihtheke";
+			case "Zentralbibliothek Servicetheke":
+				$content = "Zentralbibliothek<br>Servicetheke";
 				$pickupID = '1429';
 				break;
 			case "Zentralbibliothek Ebene -1 IP Musik Mediathek":
