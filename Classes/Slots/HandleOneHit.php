@@ -13,7 +13,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  */
 class HandleOneHit {
 
-    const IDFIELDS = ['record_id', 'barcode', 'rsn', 'isbn', 'ismn', 'issn', 'zdb', 'signatur'];
+    const IDFIELDS = ['record_id', 'barcode', 'rsn', 'isbn', 'ismn', 'issn', 'zdb', 'signatur', 'title', 'title_full'];
 
     /**
      * Contains the settings of the current extension
@@ -67,7 +67,7 @@ class HandleOneHit {
 
             if($idhit) {
 
-                $uri = $this->uriBuilder->uriFor("detail", ['id' => $document['id'], 'underlyingQuery' => ['q' => $_GET['tx_find_find']['q'], 'position' => 1]], "Search", "find", "Find");
+                $uri = $this->uriBuilder->setUseCacheHash(0)->uriFor("detail", ['id' => $document['id'], 'underlyingQuery' => ['q' => $_GET['tx_find_find']['q'], 'position' => 1]], "Search", "find", "Find");
 
                 header("Location: " . $uri, TRUE, 302);
                 die();

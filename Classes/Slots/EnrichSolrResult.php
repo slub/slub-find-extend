@@ -64,37 +64,39 @@ class EnrichSolrResult {
             $fields = $document->getFields();
             $pageType = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('type');
 
-            foreach ($this->settings['enrich']['detail'] as $enrichment) {
+            if($this->settings['enrich'] && $this->settings['enrich']['detail']) {
+                foreach ($this->settings['enrich']['detail'] as $enrichment) {
 
-                $field_data = '';
-                $user_data = ($GLOBALS['TSFE']->fe_user->user['username']) ? $GLOBALS['TSFE']->fe_user->user['username'] : '';
+                    $field_data = '';
+                    $user_data = ($GLOBALS['TSFE']->fe_user->user['username']) ? $GLOBALS['TSFE']->fe_user->user['username'] : '';
 
-                $check_fields = is_array($fields[$enrichment['check_field']]) ? $fields[$enrichment['check_field']] : array($fields[$enrichment['check_field']]);
+                    $check_fields = is_array($fields[$enrichment['check_field']]) ? $fields[$enrichment['check_field']] : array($fields[$enrichment['check_field']]);
 
-                $check_typenum = false;
+                    $check_typenum = false;
 
-                if(array_key_exists('check_typenum', $enrichment) && $pageType !== (int)$enrichment['check_typenum']) {
-                    $check_typenum = true;
-                }
-
-                foreach ($check_fields as $check_field) {
-                    if (preg_match($enrichment['check_pattern'], $check_field, $matches) === 1) {
-                        $field_data = $matches[1];
+                    if (array_key_exists('check_typenum', $enrichment) && $pageType !== (int)$enrichment['check_typenum']) {
+                        $check_typenum = true;
                     }
-                }
 
-                if (strlen($field_data) > 0 && !$check_typenum) {
+                    foreach ($check_fields as $check_field) {
+                        if (preg_match($enrichment['check_pattern'], $check_field, $matches) === 1) {
+                            $field_data = $matches[1];
+                        }
+                    }
 
-                    // HTTP errors won't throw an exception
-                    // TODO: Handle with Logging Service
-                    $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
+                    if (strlen($field_data) > 0 && !$check_typenum) {
 
-                    if(is_array($enriched) && count($enriched)) {
-                        $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
+                        // HTTP errors won't throw an exception
+                        // TODO: Handle with Logging Service
+                        $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
 
-                        foreach ($assignments['enriched']['fields']  as $key => $value) {
-                            if($key != str_replace(' ', '', $key)) {
-                                $assignments['enriched']['fields'][str_replace(' ', '', $key)] = $assignments['enriched']['fields'][$key];
+                        if (is_array($enriched) && count($enriched)) {
+                            $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
+
+                            foreach ($assignments['enriched']['fields'] as $key => $value) {
+                                if ($key != str_replace(' ', '', $key)) {
+                                    $assignments['enriched']['fields'][str_replace(' ', '', $key)] = $assignments['enriched']['fields'][$key];
+                                }
                             }
                         }
                     }
