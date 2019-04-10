@@ -36,6 +36,7 @@ class LinksFromMarcFullrecordService
         $resourceLinks = [];
         $relatedLinks = [];
         $isilLinks = [];
+        $unspecificLinks = [];
 
         $reference = $this->marcRefrenceResolverService->resolveReference('856', $fullrecord);
 
@@ -98,9 +99,22 @@ class LinksFromMarcFullrecordService
                     if($linkNotInArray) {
                         $resourceLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
                     }
+                } else {
+                    $linkNotInArray = TRUE;
+                    if($unique) {
+                        $linkNotInArray = !is_int(array_search($uri, array_column($unspecificLinks, 'uri')));
+                    }
+
+                    if($linkNotInArray) {
+                        $unspecificLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                    }
                 }
             }
 
+        }
+
+        if((sizeof($isilLinks) == 0) && (sizeof($relatedLinks) == 0) && (sizeof($relatedLinks) == 0) && (sizeof($unspecificLinks) > 0)) {
+            $resourceLinks = $unspecificLinks;
         }
 
         if($merged) {
