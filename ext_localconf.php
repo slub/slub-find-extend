@@ -25,6 +25,15 @@ $signalSlotDispatcher->connect(
 // Hook into \Subugoe\Find\Controller
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
+    'indexActionBeforeRender',
+    'Slub\SlubFindExtend\Slots\HandleOneHit',
+    'index',
+    FALSE
+);
+
+// Hook into \Subugoe\Find\Controller
+$signalSlotDispatcher->connect(
+    'Subugoe\Find\Controller\SearchController',
     'indexActionBeforeSelect',
     'Slub\SlubFindExtend\Slots\AdvancedQuery',
     'build',
