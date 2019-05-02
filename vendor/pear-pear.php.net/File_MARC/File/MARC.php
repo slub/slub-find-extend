@@ -317,7 +317,7 @@ class File_MARC extends File_MARCBASE
                 $marc->addWarning(File_MARC_Exception::formatError(File_MARC_Exception::$messages[File_MARC_Exception::ERROR_INVALID_DIRECTORY], array("tag" => $tag)));
             }
 
-            $tag_data = substr($text, $data_start + $offset, $len);
+            $tag_data = substr($text, $data_start + $offset, intval($len));
 
             if (substr($tag_data, -1, 1) == File_MARC::END_OF_FIELD) {
                 /* get rid of the end-of-tag character */
