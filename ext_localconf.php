@@ -70,6 +70,15 @@ $signalSlotDispatcher->connect(
 // Hook into \Subugoe\Find\Controller
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
+    'detailActionBeforeRender',
+    'Slub\SlubFindExtend\Slots\RedirectOldId',
+    'redirect',
+    FALSE
+);
+
+// Hook into \Subugoe\Find\Controller
+$signalSlotDispatcher->connect(
+    'Subugoe\Find\Controller\SearchController',
     'initializeActionAfterArgumentsFilled',
     'Slub\SlubFindExtend\Slots\ModifyArguments',
     'modify',

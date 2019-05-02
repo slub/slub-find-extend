@@ -11,11 +11,9 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  * @category    Slots
  * @package     TYPO3
  */
-class HandleOneHit {
+class RedirectOldId {
 
-    const IDFIELDS = ['record_id', 'barcode', 'rsn', 'isbn', 'ismn', 'issn', 'zdb', 'signatur', 'title', 'title_full'];
-
-    /**
+     /**
      * Contains the settings of the current extension
      *
      * @var array
@@ -46,34 +44,25 @@ class HandleOneHit {
         $this->uriBuilder = $uriBuilder;
     }
     /**
-     * Slot to hndle one hit results
+     * Slot to redirect from old id to new id
      *
-     * @param array &$resultSet
+     * @param array &$result
      */
-    public function index(&$resultSet)
+    public function redirect(&$result)
     {
-        $idhit = false;
+        if($this->settings['redirectOldId'] && $this->settings['redirectOldId']['active'] == 1) {
 
-        if ($resultSet->getNumFound() === 1) {
+            if(($result['document']->getFields()['id'] !== $result['document']->getFields()[$this->settings['redirectOldId']['oldField']] )
+                && ($_GET['tx_find_find']['id']) === $result['document']->getFields()[$this->settings['redirectOldId']['oldField']]) {
 
-            /* @var $document Document */
-            $document = $resultSet->getDocuments()[0];
+                $uri = $this->uriBuilder->setUseCacheHash(0)->uriFor("detail", ['id' => $result['document']->getFields()['id']], "Search", "find", "Find");
 
-            foreach ($resultSet->getHighlighting()->getResult($document['id'])->getFields() as $key => $value) {
-                if(in_array($key, $this::IDFIELDS)) {
-                    $idhit = true;
-                }
-            }
-
-            if($idhit) {
-
-                $uri = $this->uriBuilder->setUseCacheHash(0)->uriFor("detail", ['id' => $document['id'], 'underlyingQuery' => ['q' => $_GET['tx_find_find']['q'], 'position' => 1]], "Search", "find", "Find");
-
-                header("Location: " . $uri, TRUE, 302);
+                header("Location: " . $uri, TRUE, 301);
                 die();
             }
 
         }
+
 
     }
 
