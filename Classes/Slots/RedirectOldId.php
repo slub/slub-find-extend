@@ -52,7 +52,7 @@ class RedirectOldId {
     {
         if($this->settings['redirectOldId'] && $this->settings['redirectOldId']['active'] == 1) {
 
-            if(($result['document'] && ($result['document']->getFields()['id'] !== $result['document']->getFields()[$this->settings['redirectOldId']['oldField']] ))
+            if($result['document'] && ($result['document']->getFields()['id'] !== $result['document']->getFields()[$this->settings['redirectOldId']['oldField']] )
                 && ($_GET['tx_find_find']['id']) === $result['document']->getFields()[$this->settings['redirectOldId']['oldField']]) {
 
                 $uri = $this->uriBuilder->setUseCacheHash(0)->uriFor("detail", ['id' => $result['document']->getFields()['id']], "Search", "find", "Find");
