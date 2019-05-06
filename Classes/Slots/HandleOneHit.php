@@ -54,11 +54,10 @@ class HandleOneHit {
     {
         $idhit = false;
 
-        if ($resultSet->getNumFound() === 1) {
+        if (($resultSet->getNumFound() === 1) && (count($_GET['tx_find_find']['facet']) === 0)) {
 
             /* @var $document Document */
             $document = $resultSet->getDocuments()[0];
-
             foreach ($resultSet->getHighlighting()->getResult($document['id'])->getFields() as $key => $value) {
                 if(in_array($key, $this::IDFIELDS)) {
                     $idhit = true;
