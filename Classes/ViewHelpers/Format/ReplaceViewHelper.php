@@ -17,7 +17,7 @@ class ReplaceViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
 			$content = $this->renderChildren();
 		}
 
-		if ($content && $needle && $replace && (strlen($content) > 0) && (strlen($needle) > 0) && (strlen($replace) > 0)){
+		if ($content && $needle && $replace && (count($content) > 0) && (count($needle) > 0) && (count($replace) > 0)){
 			return str_replace($needle, $replace, $content);
 		} else {
 			return '';
