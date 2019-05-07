@@ -13,7 +13,7 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  */
 class HandleOneHit {
 
-    const IDFIELDS = ['record_id', 'barcode', 'rsn', 'isbn', 'ismn', 'issn', 'zdb', 'signatur', 'title', 'title_full'];
+    const IDFIELDS = ['record_id', 'barcode', 'rsn', 'isbn', 'ismn', 'issn', 'zdb', 'signatur', 'title', 'title_full', 'kxp_id_str', 'swb_id_str', 'finc_id_str'];
 
     /**
      * Contains the settings of the current extension
