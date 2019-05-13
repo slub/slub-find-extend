@@ -42,13 +42,25 @@ class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 
         $url = 'http://sdvkatalogrvk.slub-dresden.de/api/?rvk='.urlencode(trim($rvk));
 
-        $rvkArray = json_decode(@file_get_contents($url),true);
+        $rvkArray = json_decode($this->getData($url),true);
 
         if ( !empty( $rvkArray["name"] ) ) {
             return trim($rvk) . ' : ' . $rvkArray["name"];
         }
 
         return $rvk;
+    }
+
+    private function getData($url) {
+        $ch = curl_init();
+        $timeout = 10;
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+        curl_setopt($ch,CURLOPT_TIMEOUT,$timeout);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
     }
 
 }

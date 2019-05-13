@@ -69,7 +69,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 			'&title='.urlencode($jtitle);
 
 		$doc = new \DOMDocument();
-		$html = file_get_contents($url);
+		$html = $this->getData($url);
 		if(strlen($html) === 0) return;
 
 		$doc->loadHTML($html);
@@ -236,6 +236,18 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 		}
 
 	}
+
+    private function getData($url) {
+        $ch = curl_init();
+        $timeout = 10;
+        curl_setopt($ch,CURLOPT_URL,$url);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+        curl_setopt($ch,CURLOPT_TIMEOUT,$timeout);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
 
 }
 
