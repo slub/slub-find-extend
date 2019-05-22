@@ -12,7 +12,6 @@ class CharRemoveViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
      * Removes chard from string
      *
      * @param string $content Content string
-     * @param integer $start Positive or negative offset
      * @param string $chars Comma seperated list of chars
      * @return string
      */
