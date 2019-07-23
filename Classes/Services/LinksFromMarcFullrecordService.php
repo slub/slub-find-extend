@@ -30,7 +30,7 @@ class LinksFromMarcFullrecordService
     public function getLinks($fullrecord, $isil = NULL, $unique = FALSE, $merged = FALSE)
     {
         $defaultPrefix = 'http://wwwdb.dbod.de/login?url=';
-        $noPrefixHosts = ['wwwdb.dbod.de', 'www.dbod.de','dx.doi.org', 'doi.org', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de'];
+        $noPrefixHosts = ['wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de'];
         $blacklistLabel = ['Kostenfrei', 'Volltext'];
 
         $resourceLinks = [];
@@ -71,6 +71,10 @@ class LinksFromMarcFullrecordService
                 }
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
+
+                    if($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData() === 'LFER') {
+                        $prefix =  '';
+                    }
 
                     $linkNotInArray = TRUE;
                     if($unique) {
