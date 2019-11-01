@@ -28,6 +28,9 @@ class CaseViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
                 case 'upper':
                     return strtoupper($content);
                     break;
+                case 'ucfirst':
+                    return ucfirst($content);
+                    break;
                 default:
                     return $content;
             }
