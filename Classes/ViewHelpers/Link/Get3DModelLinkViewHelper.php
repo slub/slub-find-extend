@@ -19,7 +19,7 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	 * Maps location string to location link in 3d.slub-dresden.de
 	 *
 	 * @return string
-*/
+	 */
 	public function render() {
 
 		$pickupDesc = $this->arguments['pickupdesc'];
@@ -37,44 +37,40 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 		switch ($pickupDesc) {
 			case "Zentralbibliothek":
 				$pickupDesc = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
-				$pickupID = '2052';
+				$pickupID = 'ol3tb';
 				break;
 			case "Zentralbibliothek Ebene 0 SB-Regal":
 				$pickupDesc = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
-				$pickupID = '2052';
+				$pickupID = 'ol3tb';
 				break;
 			case "Zentralbibliothek Ebene -1 SB-Regal Zeitungen":
 				$pickupDesc = "Zentralbibliothek<br>Ebene -1<br>SB-Regal Zeitungen";
-				$pickupID = '3811';
+				$pickupID = 'g36eg';
 				break;
 			case "Zentralbibliothek Ausleihtheke":
 			case "Zentralbibliothek Servicetheke":
 				$pickupDesc = "Zentralbibliothek<br>Servicetheke";
-				$pickupID = '1429';
+				$pickupID = 'qtszs';
 				break;
 			case "Zentralbibliothek Ebene -1 IP Musik Mediathek":
 			case "Zentralbibliothek Ebene -1 IP Musik  Mediathek":
 				$pickupDesc = "Zentralbibliothek<br>Ebene -1<br>IP Musik Mediathek";
-				$pickupID = '2080';
+				$pickupID = 'ga3q0';
 				break;
 			case "Zentralbibliothek Ebene -1 Lesesaal Sondersammlungen":
 				$pickupDesc = "Zentralbibliothek<br>Ebene -1<br>Lesesaal Sondersammlungen";
-				$pickupID = '2084';
-				break;
-			case "Zentralbibliothek IP Zeitschriften":
-				$pickupDesc = "Zentralbibliothek<br>IP Zeitschriften";
-				$pickupID = '3023';
+				$pickupID = '6r9fv';
 				break;
 			case "Zentralbibliothek Ebene -2 Lesesaal Kartensammlung":
 				$pickupDesc = "Zentralbibliothek<br>Ebene -2<br>Lesesaal Kartensammlung";
-				$pickupID = '3021';
+				$pickupID = '7h0wg';
 				break;
 			case "ZwB Rechtswissenschaft":
 				$pickupDesc = "Zweigbibliothek Rechtswissenschaft";
-				$pickupID = '3422';
+				$pickupID = '0gryf';
 				break;
 			case "Bereichsbibliothek Drepunct":
-				$pickupID = '3154';
+				$pickupID = 'dsm3h';
 				break;
 			case "ZwB Medizin":
 				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/medizin/'>Zweigbibliothek Medizin</a>";
@@ -84,7 +80,7 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 				return $pickupDesc;
 		}
 
-		return "<a href='https://3d.slub-dresden.de/viewer?language=de&project_id=3&activate_location=" . $pickupID . "'>". $pickupDesc ."</a>";
+		return "<a href='https://3d.slub-dresden.de/s/" . $pickupID . "'>". $pickupDesc ."</a>";
 
 	}
 }
