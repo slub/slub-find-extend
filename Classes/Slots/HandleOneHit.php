@@ -46,13 +46,15 @@ class HandleOneHit {
         $this->uriBuilder = $uriBuilder;
     }
     /**
-     * Slot to hndle one hit results
+     * Slot to handle one hit results
      *
      * @param array &$resultSet
      */
     public function index(&$resultSet)
     {
         $idhit = false;
+        if($this->settings['handleOnHit'] == "0")
+            return;
 
         if ($resultSet && ( $resultSet->getNumFound() === 1) && (count($_GET['tx_find_find']['facet']) === 0) && (!$_GET['type'] > 0)) {
 
