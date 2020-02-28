@@ -38,7 +38,7 @@ class Marc21 {
     public function decode($marc) {
 
         $marc = str_replace(
-            ['#29;', '#30;', '#31;'], ["\x1D", "\x1E", "\x1F"], $marc
+            ['#29;', '#30;', '#31;', '\u001d', '\u001e', '\u001f', '\x1D', '\x1E', '\x1F'], ["\x1D", "\x1E", "\x1F", "\x1D", "\x1E", "\x1F", "\x1D", "\x1E", "\x1F"], $marc
         );
 
         $records = new File_MARC($marc, File_MARC::SOURCE_STRING);
