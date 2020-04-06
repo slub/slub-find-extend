@@ -155,7 +155,7 @@ class AdvancedQuery {
                         $queryParameter = $this->stripCharsFromQuery($queryParameter);
                     }
 
-                    if (!$this->settings['queryModifier']['cleanParameter']) {
+                    if ($this->settings['queryModifier']['cleanParameter']) {
                         $queryParameter = $this->cleanParameter($queryParameter);
                     }
 
