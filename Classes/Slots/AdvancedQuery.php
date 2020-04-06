@@ -124,7 +124,14 @@ class AdvancedQuery {
             return str_replace(['/','\\'],[' '],$queryParameter);
     }
 
-
+    /**
+     * Clean Query parameters the solr query
+     *
+     * @param string $queryParameter Settings Array
+     */
+    private function cleanParameter($queryParameter) {
+            return str_replace([':','?', ';', '-', '!', '"', '&', '‒', '(', ')'],' ',$queryParameter);
+    }
 
     /**
      * Slot to build the advanced query
@@ -146,6 +153,10 @@ class AdvancedQuery {
 
                     if (!$this->settings['queryModifier']['phraseMatch']) {
                         $queryParameter = $this->stripCharsFromQuery($queryParameter);
+                    }
+
+                    if (!$this->settings['queryModifier']['cleanParameter']) {
+                        $queryParameter = $this->cleanParameter($queryParameter);
                     }
 
                     if ($this->settings['queryModifier']['stopwords']) {
