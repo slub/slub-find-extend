@@ -130,7 +130,7 @@ class AdvancedQuery {
      * @param string $queryParameter Settings Array
      */
     private function cleanParameter($queryParameter) {
-            return str_replace([':','?', ';', '-', '!', '"', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', "„", "“"],' ',$queryParameter);
+            return str_replace([':','?', ';', '-', '!', '"', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'],' ',$queryParameter);
     }
 
     /**
