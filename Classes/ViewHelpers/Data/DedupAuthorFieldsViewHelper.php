@@ -39,18 +39,22 @@ class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
         $i = 0;
 
-        foreach ($author2 as $author2_iterate) {
-            if(!in_array($author2_iterate . $author2_role[$i], $authorcache)) {
-                $newauthor2[] = $author2_iterate;
-                $newauthor2_role[] = $author2_role[$i];
-                $authorcache[] = $author2_iterate . $author2_role[$i];
+        if($author2) {
+            foreach ($author2 as $author2_iterate) {
+                if (!in_array($author2_iterate . $author2_role[$i], $authorcache)) {
+                    $newauthor2[] = $author2_iterate;
+                    $newauthor2_role[] = $author2_role[$i];
+                    $authorcache[] = $author2_iterate . $author2_role[$i];
+                }
+
+                $i++;
             }
 
-            $i++;
+            $documentcopy['fields']['author2'] = $newauthor2;
+            $documentcopy['fields']['author2_role'] = $newauthor2_role;
         }
 
-        $documentcopy['fields']['author2'] = $newauthor2;
-        $documentcopy['fields']['author2_role'] = $newauthor2_role;
+
 
         return $documentcopy;
     }
