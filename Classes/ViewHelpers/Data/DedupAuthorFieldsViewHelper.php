@@ -31,15 +31,17 @@ class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
         $newauthor2 = [];
         $newauthor2_role = [];
 
-        $i = 0;
-        foreach ($author as $author_iterate) {
-            $authorcache[] = $author_iterate . $author_role[$i];
-            $i++;
+        if($author) {
+            $i = 0;
+            foreach ($author as $author_iterate) {
+                $authorcache[] = $author_iterate . $author_role[$i];
+                $i++;
+            }
         }
 
-        $i = 0;
-
         if($author2) {
+            $i = 0;
+
             foreach ($author2 as $author2_iterate) {
                 if (!in_array($author2_iterate . $author2_role[$i], $authorcache)) {
                     $newauthor2[] = $author2_iterate;
