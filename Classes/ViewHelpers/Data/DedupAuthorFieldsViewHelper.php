@@ -35,6 +35,7 @@ class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
             $i = 0;
             foreach ($author as $author_iterate) {
                 $authorcache[] = $author_iterate . $author_role[$i];
+                $authorcache[] = $author_iterate;
                 $i++;
             }
         }
@@ -47,6 +48,7 @@ class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
                     $newauthor2[] = $author2_iterate;
                     $newauthor2_role[] = $author2_role[$i];
                     $authorcache[] = $author2_iterate . $author2_role[$i];
+                    $authorcache[] = $author2_iterate;
                 }
 
                 $i++;
