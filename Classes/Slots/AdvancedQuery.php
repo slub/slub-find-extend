@@ -130,7 +130,7 @@ class AdvancedQuery {
      * @param string $queryParameter Settings Array
      */
     private function cleanParameter($queryParameter) {
-            return str_replace([':','?', ';', '-', '!', '"', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'],' ',$queryParameter);
+            return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'],' ',$queryParameter);
     }
 
     /**
@@ -142,7 +142,6 @@ class AdvancedQuery {
     public function build(&$query, $arguments) {
 
         $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
-        $queryParameter = preg_replace('/("|\\\)/', '\\\$1', $queryParameter);
         $originalQueryParameter = $queryParameter;
 
         $settings = $this->settings['components'];
