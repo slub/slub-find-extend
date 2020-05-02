@@ -141,7 +141,7 @@ class AdvancedQuery {
      */
     public function build(&$query, $arguments) {
 
-        $queryParameter = is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default'];
+        $queryParameter = trim(is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default']);
         $originalQueryParameter = $queryParameter;
 
         $settings = $this->settings['components'];
