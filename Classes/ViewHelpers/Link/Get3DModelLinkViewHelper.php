@@ -77,6 +77,8 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 			case "ZwB Forst":
 			case "ZwB Forstwissenschaft":
 				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/forstwesen/'>Zweigbibliothek Forst</a>";
+			case "ZwB Erziehungswissenschaften":
+				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/erziehungswissenschaften/'>Zweigbibliothek Erziehungswissenschaften</a>";
 			default:
 				return $pickupDesc;
 		}
