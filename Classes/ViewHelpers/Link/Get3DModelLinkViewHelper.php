@@ -75,6 +75,7 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 			case "ZwB Medizin":
 				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/medizin/'>Zweigbibliothek Medizin</a>";
 			case "ZwB Forst":
+			case "ZwB Forstwissenschaft":
 				return "<a href='https://www.slub-dresden.de/ueber-uns/standorte/forstwesen/'>Zweigbibliothek Forst</a>";
 			default:
 				return $pickupDesc;
