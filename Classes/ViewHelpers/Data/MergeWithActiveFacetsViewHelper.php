@@ -37,7 +37,7 @@ class MergeWithActiveFacetsViewHelper extends AbstractViewHelper {
 		/** @var Field $data */
 		$data = $arguments['data'];
 
-		if(count($arguments['activeFacets'][$arguments['key']])) {
+		if(is_array($arguments['activeFacets'][$arguments['key']]) && count($arguments['activeFacets'][$arguments['key']])) {
 
 			$mergedData = array('values' => $data->getValues());
 

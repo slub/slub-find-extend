@@ -39,12 +39,12 @@ class ReduceArrayViewHelper extends AbstractViewHelper  {
             $array = $renderChildrenClosure();
         }
 
-        if(count($array) === 0) {
+        if(is_array($array) && (count($array) === 0)) {
             return [];
         }
 
         $remaining = json_decode($remaining, TRUE);
-        if(count($remaining) === 0) {
+        if(is_array($remaining) && (count($remaining) === 0)) {
             return [];
         }
 
@@ -56,7 +56,7 @@ class ReduceArrayViewHelper extends AbstractViewHelper  {
 
                 $valueKeys = array_map('trim', explode(',', $value));
 
-                if(count($valueKeys) === 1) {
+                if(is_array($valueKeys) && (count($valueKeys) === 1)) {
                     $newPart[$key] = $part[$valueKeys[0]];
                 } elseif (count($valueKeys) > 0) {
                     foreach ($valueKeys as $valueKey) {

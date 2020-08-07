@@ -45,7 +45,7 @@ class OrderedArrayToKvViewHelper extends AbstractViewHelper  {
 			$array = $renderChildrenClosure;
 		}
 
-		if(count($array) === 0) {
+		if(is_array($array) && (count($array) === 0)) {
 			return [];
 		}
 

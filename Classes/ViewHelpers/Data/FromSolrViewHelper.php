@@ -142,7 +142,7 @@ class FromSolrViewHelper extends AbstractConditionViewHelper {
 
 		// Shards
 
-		if(count($this->templateVariableContainer->get('settings')['shards'])) {
+		if(is_array($this->templateVariableContainer->get('settings')['shards']) && count($this->templateVariableContainer->get('settings')['shards'])) {
 			$distributedSearch = $query->getDistributedSearch();
 			foreach($this->templateVariableContainer->get('settings')['shards'] as $name => $shard) {
 				$distributedSearch->addShard($name, $shard);

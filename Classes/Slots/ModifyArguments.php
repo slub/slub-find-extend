@@ -69,7 +69,7 @@ class ModifyArguments {
      */
     public function modify(&$arguments) {
         if(strlen($arguments['id']) > 0) {
-            if(count($arguments['underlyingQuery']) > 0) {
+            if(is_array($arguments['underlyingQuery']) && (count($arguments['underlyingQuery']) > 0)) {
                 $this->sessionHandler->writeToSession($arguments['underlyingQuery'], $arguments['id'].'_underlyingQuery');
             } else {
                 $storedUnderlyingQuery = $this->sessionHandler->restoreFromSession($arguments['id'].'_underlyingQuery');
