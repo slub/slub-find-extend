@@ -5,7 +5,11 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 /**
 
  */
-class DecodeJSONViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class DecodeJSONViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -15,11 +19,15 @@ class DecodeJSONViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 		$this->registerArgument('json', 'string', 'The json string to decode', FALSE, NULL);
 	}
 
-	/**
-	 * @return array
-	 */
-	public function render() {
-		$json = json_decode($this->arguments['json'], true);
+    /**
+     * @return array
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+		$json = json_decode($arguments['json'], true);
 		return $json;
 	}
 

@@ -2,22 +2,41 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
+/**
+ *
+ */
 
-class ReduceArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ReduceArrayViewHelper extends AbstractViewHelper  {
 
     /**
-     * urldecodes content
-     *
-     * @param array $array
-     * @param string $remaining
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('array', 'array', 'array to reduce', FALSE);
+        $this->registerArgument('remaining', 'string', 'remaining string to decode', FALSE);
+    }
+
+    /**
      * @return array
      */
-    public function render($array = NULL, $remaining = '') {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $array = $arguments['array'];
+        $remaining = $arguments['remaining'];
 
         $result = [];
 
         if ($array === NULL) {
-            $array = $this->renderChildren();
+            $array = $renderChildrenClosure();
         }
 
         if(count($array) === 0) {
@@ -61,8 +80,6 @@ class ReduceArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
             $result[] = $newPart;
 
         }
-
-
 
         return $result;
     }

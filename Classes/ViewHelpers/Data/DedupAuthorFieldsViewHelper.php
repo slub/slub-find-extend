@@ -7,7 +7,19 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
  * Remove deduplicate author fields from document
  *
  */
-class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class DedupAuthorFieldsViewHelper extends AbstractViewHelper {
+
+    /**
+     * Register arguments.
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('document', 'mixed', 'The document to dedup authors within', FALSE, NULL);
+    }
 
     /**
      * Remove deduplicate author fields from document
@@ -15,9 +27,15 @@ class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
      * @param mixed $document Content string
      * @return mixed
      */
-    public function render($document = NULL) {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+        $document = $arguments['document'];
+
         if ($document === NULL) {
-            $document = $this->renderChildren();
+            $document = $renderChildrenClosure();
         }
 
         $documentcopy['fields'] = $document->getFields();
@@ -57,8 +75,6 @@ class DedupAuthorFieldsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
             $documentcopy['fields']['author2'] = $newauthor2;
             $documentcopy['fields']['author2_role'] = $newauthor2_role;
         }
-
-
 
         return $documentcopy;
     }

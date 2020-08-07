@@ -2,9 +2,13 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
+/**
+ *
+ */
 
-class GroupArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+class GroupArrayViewHelper extends AbstractViewHelper {
 
     /**
      * Register arguments.
@@ -64,7 +68,6 @@ class GroupArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
             }
 
         }
-
 
         $this->templateVariableContainer->add('groupedarray', $groupedArray);
 

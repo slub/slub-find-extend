@@ -5,7 +5,11 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 /**
 
  */
-class ArrayAccessViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ArrayAccessViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -17,12 +21,16 @@ class ArrayAccessViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 		$this->registerArgument('index', 'int', 'The index to acces', FALSE, NULL);
 	}
 
-	/**
-	 * @return boolean
-	 */
-	public function render() {
-		$data = $this->arguments['data'];
-		return $data[$this->arguments['index']];
+    /**
+     * @return string
+     */
+	public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+		$data = $arguments['data'];
+		return $data[$arguments['index']];
 	}
 
 }

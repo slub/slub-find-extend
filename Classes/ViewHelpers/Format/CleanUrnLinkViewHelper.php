@@ -3,18 +3,34 @@
 namespace Slub\SlubFindExtend\ViewHelpers\Format;
 
 /**
- * Returns Resolving link then url is urn
+ * Splits a string with parse_url
  *
  */
-class CleanUrnLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class CleanUrnLinkViewHelper extends AbstractViewHelper {
 
     /**
-     * Splits a string with parse_url
-     *
-     * @param string $link URL string
-     * @return array
+     * Register arguments.
+     * @return void
      */
-    public function render($link = NULL) {
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('link', 'string', 'URL string', TRUE, NULL);
+    }
+
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $link = $arguments['link'];
 
         if($link === NULL) return '';
 

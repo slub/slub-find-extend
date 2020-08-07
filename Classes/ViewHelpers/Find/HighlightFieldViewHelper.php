@@ -26,7 +26,6 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
-
 /**
  * View Helper for styling the content of index document’s result fields.
  * Requires the query result object for finding the information as well as the
@@ -41,7 +40,17 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
  * The highlighting tags can be configured using the highlightTagOpen and
  * highlightTagClose arguments.
  */
-class HighlightFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class HighlightFieldViewHelper extends AbstractViewHelper {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
 
 	/**
 	 * Registers own arguments.

@@ -2,33 +2,44 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
-class MetaTagViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
+/**
+ *
+ */
+
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+
+class MetaTagViewHelper extends AbstractViewHelper  {
 
     public function initializeArguments()
     {
+        parent::initializeArguments();
         $this->registerArgument('property', 'string', 'meta tag property');
         $this->registerArgument('content', 'string', 'meta tag content');
     }
 
-     /**
-     * Renders the tag
+    /**
+     * @return void
      */
-    public function render()
-    {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-        if (empty($this->arguments['property'])) {
+        if (empty($arguments['property'])) {
           return;
         }
 
-        if (!empty($this->arguments['content'])) {
-            $content = $this->arguments['content'];
+        if (!empty($arguments['content'])) {
+            $content = $arguments['content'];
         } else {
-            $content = $this->renderChildren();
+            $content = $renderChildrenClosure();
         }
 
-        $metaTag = '<meta property="'.$this->arguments['property'].'" content="' . $content . '">';
+        $metaTag = '<meta property="'.$arguments['property'].'" content="' . $content . '">';
 
-        $GLOBALS['TSFE']->additionalHeaderData[$this->arguments['property']] = $metaTag;
+        $GLOBALS['TSFE']->additionalHeaderData[$arguments['property']] = $metaTag;
 
         return;
     }

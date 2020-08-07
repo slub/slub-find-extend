@@ -4,11 +4,14 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
  * View Helper to split data by fixed length to an array
- * 
+ *
  * Usage examples are available in Private/Partials/Test.html.
  */
-class SplitFixedDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class SplitFixedDataViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -16,24 +19,26 @@ class SplitFixedDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->registerArgument('string', 'string', 'The string to split into components', TRUE, NULL);
-		$this->registerArgument('lengths', 'string', 'The lengths seperated, by an "," to seperate the string', TRUE);
+		$this->registerArgument('string', 'string', 'The string to split into components', FALSE, NULL);
+		$this->registerArgument('lengths', 'string', 'The lengths seperated, by an "," to seperate the string', FALSE);
         $this->registerArgument('placeholder', 'string', 'The string that is used to mark a offset as not used', FALSE, '|');
 	}
 
+    /**
+     * @return array
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-	
-	/**
-	 * @return array
-	 */
-	public function render() {
-
-	    $string = $this->arguments['string'];
+	    $string = $arguments['string'];
         if ($string === NULL) {
-            $string = $this->renderChildren();
+            $string = $renderChildrenClosure();
         }
 
-		$lengths = explode(',',$this->arguments['lengths']);
+		$lengths = explode(',',$arguments['lengths']);
 
         if (sizeof($lengths) == 0) {
             return $lengths;
@@ -43,7 +48,7 @@ class SplitFixedDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
             foreach ($lengths as $length) {
 
-                if (substr($string, 0, 1) === $this->arguments['placeholder']) {
+                if (substr($string, 0, 1) === $arguments['placeholder']) {
                     $splittedString[] = '';
                     $string = substr($string, 1);
                 } else {
@@ -59,5 +64,3 @@ class SplitFixedDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	}
 
 }
-
-?>

@@ -1,48 +1,45 @@
 <?php
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
-    /***************************************************************
-     *
-     *  Copyright notice
-     *
-     *  This script is part of the TYPO3 project. The TYPO3 project is
-     *  free software; you can redistribute it and/or modify
-     *  it under the terms of the GNU General Public License as published by
-     *  the Free Software Foundation; either version 3 of the License, or
-     *  (at your option) any later version.
-     *
-     *  The GNU General Public License can be found at
-     *  http://www.gnu.org/copyleft/gpl.html.
-     *
-     *  This script is distributed in the hope that it will be useful,
-     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     *  GNU General Public License for more details.
-     *
-     *  This copyright notice MUST APPEAR in all copies of the script!
-     ***************************************************************/
+/**
+ *
+ */
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * GetRvkTextViewHelper
  */
-class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class GetRvkTextViewHelper extends AbstractViewHelper {
 
     /**
-     * Replaces RVK with result from RVK API
-     *
-     * @param string $rvk RVK
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('rvk', 'string', 'The rvk value to resolve', FALSE, NULL);
+    }
+
+    /**
      * @return string
      */
-    public function render($rvk = NULL) {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
+        $rvk = $arguments['rvk'];
 
         if ($rvk === NULL) {
-            $rvk = $this->renderChildren();
+            $rvk = $renderChildrenClosure();
         }
 
         $url = 'http://sdvkatalogrvk.slub-dresden.de/api/?rvk='.urlencode(trim($rvk));
 
-        $rvkArray = json_decode($this->getData($url),true);
+        $rvkArray = json_decode(static::getData($url),true);
 
         if ( !empty( $rvkArray["name"] ) ) {
             return trim($rvk) . ' : ' . $rvkArray["name"];
@@ -51,7 +48,7 @@ class GetRvkTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
         return $rvk;
     }
 
-    private function getData($url) {
+    private static function getData($url) {
         $ch = curl_init();
         $timeout = 10;
         curl_setopt($ch,CURLOPT_URL,$url);

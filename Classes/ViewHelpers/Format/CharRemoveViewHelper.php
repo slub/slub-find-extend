@@ -3,21 +3,45 @@
 namespace Slub\SlubFindExtend\ViewHelpers\Format;
 
 /**
- *
+ * Removes chars from string
  *
  */
-class CharRemoveViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class CharRemoveViewHelper extends AbstractViewHelper {
 
     /**
-     * Removes chard from string
+     * As this ViewHelper renders HTML, the output must not be escaped.
      *
-     * @param string $content Content string
-     * @param string $chars Comma seperated list of chars
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content string', FALSE, NULL);
+        $this->registerArgument('chars', 'string', 'Comma seperated list of chars', TRUE, NULL);
+    }
+
+    /**
      * @return string
      */
-    public function render($content = NULL, $chars = NULL) {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $content = $arguments['content'];
+        $chars = $arguments['chars'];
+
         if ($content === NULL) {
-            $content = $this->renderChildren();
+            $content = $renderChildrenClosure();
         }
         $content = trim($content);
         if ($chars !== NULL) {

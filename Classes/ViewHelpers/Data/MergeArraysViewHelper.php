@@ -2,8 +2,14 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
+/**
+ *
+ */
 
-class MergeArraysViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class MergeArraysViewHelper extends AbstractViewHelper {
 
 
 	/**
@@ -16,12 +22,16 @@ class MergeArraysViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 		$this->registerArgument('arrayTwo', 'array', 'The second array', TRUE, array());
 	}
 
-	/**
-	 * @return array
-	 */
-	public function render() {
-		$arrayOne = $this->arguments['arrayOne'];
-		$arrayTwo = $this->arguments['arrayTwo'];
+    /**
+     * @return mixed
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+		$arrayOne = $arguments['arrayOne'];
+		$arrayTwo = $arguments['arrayTwo'];
 
 		if ($arrayOne !== NULL && $arrayTwo !== NULL) {
 			return array_merge($arrayOne, $arrayTwo);

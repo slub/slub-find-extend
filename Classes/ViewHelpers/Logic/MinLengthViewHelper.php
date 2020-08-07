@@ -8,8 +8,14 @@ namespace Slub\SlubFindExtend\ViewHelpers\Logic;
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
-
 class MinLengthViewHelper extends AbstractConditionViewHelper {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
 
     /**
      * Register arguments.
@@ -17,27 +23,25 @@ class MinLengthViewHelper extends AbstractConditionViewHelper {
     public function initializeArguments() {
         parent::initializeArguments();
         $this->registerArgument('string', 'string', 'The string to check against minlength', TRUE, NULL);
-        $this->registerArgument('length', 'int', 'The minlength to check', TRUE, NULL);
+        $this->registerArgument('length', 'int', 'The minlength to check', FALSE, NULL);
     }
 
     /**
-     * Render method
-     *
-     * @param string $string
-     * @param int $length
-     * @return string
+     * evaluate method
+     * @param array $arguments
+     * @return boolean
      */
-    public function render() {
+    protected static function evaluateCondition($arguments = null) {
 
-        $string = $this->arguments['string'];
-        $length = $this->arguments['length'];
+        $string = $arguments['string'];
+        $length = $arguments['length'];
 
-        if($length === NULL) { return TRUE; }
+        if($length === NULL) { return true; }
 
-        if (FALSE !== (strlen($string) >= $length) ) {
-            return TRUE;
+        if (false !== (strlen($string) >= $length) ) {
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 

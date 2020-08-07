@@ -2,10 +2,16 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
+/**
+ *
+ */
 
-class NotAssignedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-	private $notAssignedStrings = ['No subject assigned', 'not assigned', 'Not assigned'];
+class NotAssignedViewHelper extends AbstractViewHelper {
+
+	private static $notAssignedStrings = ['No subject assigned', 'not assigned', 'Not assigned'];
 
 	/**
 	 * Register arguments.
@@ -13,22 +19,26 @@ class NotAssignedViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->registerArgument('data', 'array|string', 'The data to test', FALSE, NULL);
+		$this->registerArgument('data', 'mixed', 'The data to test', FALSE, NULL);
 	}
 
-	/**
-	 * @return boolean
-	 */
-	public function render() {
+    /**
+     * @return boolean
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-		$data = $this->arguments['data'];
+		$data = $arguments['data'];
 
-		if(in_array($data, $this->notAssignedStrings)) {
+		if(in_array($data, static::$notAssignedStrings)) {
 			return false;
 		}
 
 		if(is_array($data)) {
-			if(in_array($data[0], $this->notAssignedStrings)) {
+			if(in_array($data[0], static::$notAssignedStrings)) {
 				return false;
 			}
 		}

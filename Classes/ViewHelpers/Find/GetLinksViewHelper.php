@@ -2,23 +2,29 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
+/**
+ *
+ */
 
-use Slub\SlubFindExtend\Services\HoldingStatusService;
+use Slub\SlubFindExtend\Services\LinksFromMarcFullrecordService;
+use Slub\SlubFindExtend\Services\LinksFromAiFullrecordService;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class GetLinksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class GetLinksViewHelper extends AbstractViewHelper
 {
 
     /**
-     * @var \Slub\SlubFindExtend\Services\LinksFromMarcFullrecordService
-     * @inject
+     * @var LinksFromMarcFullrecordService
      */
-    protected $linksFromMarcFullrecordService;
+    protected static $linksFromMarcFullrecordService;
 
     /**
-     * @var \Slub\SlubFindExtend\Services\LinksFromAiFullrecordService
-     * @inject
+     * @var LinksFromAiFullrecordService
      */
-    protected $linksFromAiFullrecordService;
+    protected static $linksFromAiFullrecordService;
 
     public function initializeArguments()
     {
@@ -34,23 +40,26 @@ class GetLinksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHe
     /**
      * @return array
      */
-    public function render()
-    {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-        if (($this->arguments['document']['recordtype'] === 'ai') && (!$this->arguments['index'])) {
+        if (($arguments['document']['recordtype'] === 'ai') && (!$arguments['index'])) {
 
-            return $this->linksFromAiFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil'], true);
+            return static::getLinksFromAiFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], true);
 
         } else {
 
-            switch ($this->arguments['document']['recordtype']) {
+            switch ($arguments['document']['recordtype']) {
                 case 'marc':
                 case 'marcfinc':
-                    return $this->linksFromMarcFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil'], $this->arguments['unique'], $this->arguments['merged']);
+                    return static::getLinksFromMarcFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], $arguments['unique'], $arguments['merged']);
                     break;
                 case 'ai':
                 case 'is':
-                    return $this->linksFromAiFullrecordService->getLinks($this->arguments['fullrecord'], $this->arguments['isil'], false);
+                    return static::getLinksFromAiFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], false);
                 default:
                     return [];
             }
@@ -58,6 +67,24 @@ class GetLinksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHe
 
     }
 
-}
+    private static function getLinksFromMarcFullrecordService()
+    {
+        if (null === static::$linksFromMarcFullrecordService) {
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            static::$linksFromMarcFullrecordService = $objectManager->get(LinksFromMarcFullrecordService::class);
+        }
 
-?>
+        return static::$linksFromMarcFullrecordService;
+    }
+
+    private static function getLinksFromAiFullrecordService()
+    {
+        if (null === static::$linksFromAiFullrecordService) {
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            static::$linksFromAiFullrecordService = $objectManager->get(LinksFromAiFullrecordService::class);
+        }
+
+        return static::$linksFromAiFullrecordService;
+    }
+
+}

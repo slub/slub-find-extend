@@ -3,10 +3,21 @@
 namespace Slub\SlubFindExtend\ViewHelpers\Format;
 
 /**
- *
+ * Removes any text inside a parentheses including the parentheses
  *
  */
-class RemoveParenthesesTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class RemoveParenthesesTextViewHelper extends AbstractViewHelper {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
 
     /**
      * Register arguments.
@@ -18,21 +29,22 @@ class RemoveParenthesesTextViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\A
         $this->registerArgument('limit', 'int', 'Limit replacments', FALSE, -1);
     }
 
-
     /**
-     * Removes any text inside a parentheses including the parentheses
-     *
      * @return string
      */
-    public function render() {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-        $content = $this->arguments['content'];
+        $content = $arguments['content'];
 
         if ($content === NULL) {
-            $content = $this->renderChildren();
+            $content = $renderChildrenClosure();
         }
 
-        return preg_replace("/\([^)]+\)/","",$content, $this->arguments['limit']);
+        return preg_replace("/\([^)]+\)/","",$content, $arguments['limit']);
     }
 
 }

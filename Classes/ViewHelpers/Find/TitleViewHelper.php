@@ -57,7 +57,12 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
  * @package Vhs
  * @subpackage ViewHelpers\Page\Header
  */
-class TitleViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+
+class TitleViewHelper extends AbstractViewHelper {
 
     /**
      * Arguments initialization
@@ -65,25 +70,29 @@ class TitleViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelpe
      * @return void
      */
     public function initializeArguments() {
+
+        parent::initializeArguments();
         $this->registerArgument('title', 'string', 'Title tag content');
         $this->registerArgument('whitespaceString', 'string', 'String used to replace groups of white space characters, one replacement inserted per group', FALSE, ' ');
     }
 
     /**
-     * Render method
-     *
      * @return void
      */
-    public function render() {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
         if (TYPO3_MODE == 'BE') {
             return;
         }
-        if (!empty($this->arguments['title'])) {
-            $title = $this->arguments['title'];
+        if (!empty($arguments['title'])) {
+            $title = $arguments['title'];
         } else {
-            $title = $this->renderChildren();
+            $title = $renderChildrenClosure();
         }
-        $title = trim(preg_replace( '/\s+/', $this->arguments['whitespaceString'], $title), $this->arguments['whitespaceString']);
+        $title = trim(preg_replace( '/\s+/', $arguments['whitespaceString'], $title), $arguments['whitespaceString']);
 
         $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
         $pageRenderer->setTitle($title);

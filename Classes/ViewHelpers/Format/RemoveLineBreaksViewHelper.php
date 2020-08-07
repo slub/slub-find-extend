@@ -2,17 +2,44 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Format;
 
-class RemoveLineBreaksViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
+/**
+ * Removes line breaks inside content
+ *
+ */
 
-	/**
-	 * Removes line breaks inside content
-	 *
-	 * @param string $content
-	 * @return string
-	 */
-	public function render($content = NULL) {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class RemoveLineBreaksViewHelper extends AbstractViewHelper  {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content string', TRUE, NULL);
+    }
+
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $content = $arguments['content'];
 		if ($content === NULL) {
-			$content = $this->renderChildren();
+			$content = $renderChildrenClosure();
 		}
 
 		if ($content && (strlen($content) > 0)){

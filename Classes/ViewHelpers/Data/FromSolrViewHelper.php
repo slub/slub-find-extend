@@ -24,8 +24,7 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 use Solarium\QueryType\Select\Result\Result;
 use Solarium\QueryType\Update\Query\Document\DocumentInterface;
-
-require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('find') . 'vendor/autoload.php');
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
  * FromSolrViewHelper
@@ -33,7 +32,7 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('find')
  * Gets a field value from a Solr record
  *
  */
-class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+class FromSolrViewHelper extends AbstractConditionViewHelper {
 
 	/**
 	 * @var \Solarium\Client
@@ -62,7 +61,7 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->registerArgument('query', 'string|array', 'Solr querystring or array of query fields and their query values.', TRUE);
+		$this->registerArgument('query', 'mixed', 'Solr querystring or array of query fields and their query values.', TRUE);
 		$this->registerArgument('operator', 'string', 'Solr query operator.', FALSE, 'AND');
 		$this->registerArgument('sortField', 'string', 'Sort field.', FALSE);
 		$this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', FALSE, 'asc');

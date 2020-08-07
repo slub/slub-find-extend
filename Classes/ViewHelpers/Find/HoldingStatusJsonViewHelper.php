@@ -2,15 +2,16 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
+/**
+ *
+ */
+
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use Slub\SlubFindExtend\Services\HoldingStatusService;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class HoldingStatusJsonViewHelper
- * @package Slub\SlubFindExtend\ViewHelpers\Find
- */
-class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class HoldingStatusJsonViewHelper extends AbstractViewHelper {
 
     /**
      * @var \Slub\SlubFindExtend\Services\HoldingStatusService
@@ -23,7 +24,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 	 */
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->registerArgument('data', 'array|string|int|float', 'The holding data', FALSE, NULL);
+		$this->registerArgument('data', 'mixed', 'The holding data', FALSE, NULL);
 		$this->registerArgument('index', 'int', 'Its called from index view', FALSE, 0);
 	}
 

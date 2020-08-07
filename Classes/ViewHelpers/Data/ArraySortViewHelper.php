@@ -5,7 +5,11 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 /**
 
  */
-class ArraySortViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ArraySortViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -17,19 +21,23 @@ class ArraySortViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
 		$this->registerArgument('flag', 'string', 'The flags to sort', FALSE, NULL);
 	}
 
-	/**
-	 * @return boolean
-	 */
-	public function render() {
-        $array = $this->arguments['array'];
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+        $array = $arguments['array'];
 
         if ($array === NULL) {
-            $array = $this->renderChildren();
+            $array = $renderChildrenClosure();
         }
 
         if(!is_array($array)) return NULL;
 
-        ksort($array, $this->arguments['flag']);
+        ksort($array, $arguments['flag']);
 
         return $array;
 	}

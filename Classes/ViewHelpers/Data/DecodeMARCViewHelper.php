@@ -5,7 +5,11 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 /**
 
  */
-class DecodeMARCViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class DecodeMARCViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -19,13 +23,17 @@ class DecodeMARCViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
 	/**
 	 * @return array
 	 */
-	public function render() {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-        $raw = $this->arguments['raw'];
-        $field = $this->arguments['field'];
+        $raw = $arguments['raw'];
+        $field = $arguments['field'];
 
         if ($raw === NULL) {
-            $raw = $this->renderChildren();
+            $raw = $renderChildrenClosure();
         }
 
         $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();

@@ -1,34 +1,17 @@
 <?php
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
-	/***************************************************************
-	 *
-	 *  Copyright notice
-	 *
-	 *  This script is part of the TYPO3 project. The TYPO3 project is
-	 *  free software; you can redistribute it and/or modify
-	 *  it under the terms of the GNU General Public License as published by
-	 *  the Free Software Foundation; either version 3 of the License, or
-	 *  (at your option) any later version.
-	 *
-	 *  The GNU General Public License can be found at
-	 *  http://www.gnu.org/copyleft/gpl.html.
-	 *
-	 *  This script is distributed in the hope that it will be useful,
-	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 *  GNU General Public License for more details.
-	 *
-	 *  This copyright notice MUST APPEAR in all copies of the script!
-	 ***************************************************************/
-
 /**
  * PrefixedValueFromArrayViewHelper
  *
  * Gets a vlaue from an array when it is prefixed
  *
  */
-class PrefixedValueFromArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class PrefixedValueFromArrayViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -41,17 +24,22 @@ class PrefixedValueFromArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\
 		$this->registerArgument('array', 'array', 'values', TRUE);
 	}
 
-	/**
-	 */
-	public function render() {
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-		if(!is_array($this->arguments['array'])) {
+		if(!is_array($arguments['array'])) {
 			return '';
 		}
 
-		$prefix = sprintf($this->arguments['prefixSprint'], $this->arguments['prefix']);
+		$prefix = sprintf($arguments['prefixSprint'], $arguments['prefix']);
 
-		foreach($this->arguments['array'] as $data) {
+		foreach($arguments['array'] as $data) {
 
 			if(substr($data,0,strlen($prefix)) === $prefix) {
 				return substr($data,strlen($prefix));

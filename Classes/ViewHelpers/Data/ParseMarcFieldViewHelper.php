@@ -1,31 +1,14 @@
 <?php
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
-    /***************************************************************
-     *
-     *  Copyright notice
-     *
-     *  This script is part of the TYPO3 project. The TYPO3 project is
-     *  free software; you can redistribute it and/or modify
-     *  it under the terms of the GNU General Public License as published by
-     *  the Free Software Foundation; either version 3 of the License, or
-     *  (at your option) any later version.
-     *
-     *  The GNU General Public License can be found at
-     *  http://www.gnu.org/copyleft/gpl.html.
-     *
-     *  This script is distributed in the hope that it will be useful,
-     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     *  GNU General Public License for more details.
-     *
-     *  This copyright notice MUST APPEAR in all copies of the script!
-     ***************************************************************/
-
 /**
  * ParseMarcFieldViewHelper
  */
-class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ParseMarcFieldViewHelper extends AbstractViewHelper {
 
     /**
      * Register arguments.
@@ -42,13 +25,17 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
     /**
      * @return array
      */
-    public function render (){
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
         $output = [];
 
-        if(is_array($this->arguments['field'])) {
+        if(is_array($arguments['field'])) {
 
-            foreach($this->arguments['field'] as $field) {
+            foreach($arguments['field'] as $field) {
                 $fieldData = explode('',$field);
 
                 if(strlen(trim($fieldData[0])) > 0) {
@@ -59,13 +46,13 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
                         $output[$index] = [];
                     }
 
-                    if($this->arguments['subfieldasarray'] === TRUE) {
-                        $dataCleaned = $this->cleanedArrayData($fieldData, TRUE, $this->arguments['orderedarray']);
+                    if($arguments['subfieldasarray'] === TRUE) {
+                        $dataCleaned = static::cleanedArrayData($fieldData, TRUE, $arguments['orderedarray']);
                     } else {
-                        $dataCleaned = $this->cleanedArrayData(array_slice($fieldData,1), FALSE, $this->arguments['orderedarray']);
+                        $dataCleaned = static::cleanedArrayData(array_slice($fieldData,1), FALSE, $arguments['orderedarray']);
                     }
 
-                    if($this->arguments['getindicators'] === TRUE) {
+                    if($arguments['getindicators'] === TRUE) {
 
                         $dataCleaned['ind1'] = substr($fieldData[0], 0, 1);
                         $dataCleaned['ind2'] = substr($fieldData[0], 1, 1);
@@ -76,7 +63,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
 
                 } else {
-                    $output[] = $this->cleanedArrayData($fieldData, TRUE);
+                    $output[] = static::cleanedArrayData($fieldData, TRUE);
                 }
 
             }
@@ -93,7 +80,7 @@ class ParseMarcFieldViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
      * @param $orderedarray
      * @return array
      */
-    private function cleanedArrayData($arr, $subfieldasarray = FALSE, $orderedarray = FALSE) {
+    private static function cleanedArrayData($arr, $subfieldasarray = FALSE, $orderedarray = FALSE) {
 
         $return = [];
         $ordered = [];

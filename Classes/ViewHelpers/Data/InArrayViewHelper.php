@@ -2,13 +2,14 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
-
 /**
- * Test whether needle is in an haystack array
  *
  */
-class InArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
 
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class InArrayViewHelper extends AbstractViewHelper {
 
     /**
      * Register arguments.
@@ -21,13 +22,20 @@ class InArrayViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
         $this->registerArgument('strict', 'boolean', 'Strict mode?', FALSE, FALSE);
     }
 
-    public function render() {
+    /**
+     * @return mixed
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-        if(!is_array($this->arguments['haystack'])) {
+        if(!is_array($arguments['haystack'])) {
             return FALSE;
         }
 
-        return in_array ( $this->arguments['needle'] , $this->arguments['haystack'], $this->arguments['strict'] );
+        return in_array ( $arguments['needle'] , $arguments['haystack'], $targuments['strict'] );
 
     }
 

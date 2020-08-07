@@ -34,18 +34,43 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
  * @package Vhs
  * @subpackage ViewHelpers\Format
  */
-class TrimViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
 
-	/**
-	 * Trims content by stripping off $characters
-	 *
-	 * @param string $content
-	 * @param string $characters
-	 * @return string
-	 */
-	public function render($content = NULL, $characters = NULL) {
-		if ($content === NULL) {
-			$content = $this->renderChildren();
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class TrimViewHelper extends AbstractViewHelper  {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content string to trim', FALSE, NULL);
+        $this->registerArgument('characters', 'string', 'What to trim', FALSE, NULL);
+    }
+
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $content = $arguments['content'];
+        $characters = $arguments['characters'];
+
+        if ($content === NULL) {
+			$content = $renderChildrenClosure();
 		}
 		if ($characters !== NULL) {
 			$content = trim($content, $characters);

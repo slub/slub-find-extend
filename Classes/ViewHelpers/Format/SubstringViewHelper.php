@@ -33,19 +33,38 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
  * @package Vhs
  * @subpackage ViewHelpers\Format
  */
-class SubstringViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class SubstringViewHelper extends AbstractViewHelper {
 
     /**
-     * Substrings a string or string-compatible value
-     *
-     * @param string $content Content string to substring
-     * @param integer $start Positive or negative offset
-     * @param integer $length Positive or negative length
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content string to substring', FALSE, NULL);
+        $this->registerArgument('start', 'integer', 'Positive or negative offset', FALSE, NULL);
+        $this->registerArgument('length', 'integer', 'Positive or negative length', FALSE, NULL);
+    }
+
+    /**
      * @return string
      */
-    public function render($content = NULL, $start = 0, $length = NULL) {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $content = $arguments['content'];
+        $start = $arguments['start'];
+        $length = $arguments['length'];
+
         if ($content === NULL) {
-            $content = $this->renderChildren();
+            $content = $renderChildrenClosure();
         }
         if ($length !== NULL) {
             return substr($content, $start, $length);

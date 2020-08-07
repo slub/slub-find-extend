@@ -6,17 +6,31 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
  * Gets splitted URL via parse_url
  *
  */
-class ParseUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ParseUrlViewHelper extends AbstractViewHelper {
 
     /**
-     * Splits a string with parse_url
-     *
-     * @param string $url URL string
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('url', 'string', 'URL string', TRUE, NULL);
+    }
+
+    /**
      * @return array
      */
-    public function render($url = NULL) {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-        $url = parse_url($url);
+        $url = parse_url($arguments['url']);
 
         $url['ext'] = pathinfo($url['path'], PATHINFO_EXTENSION);
 

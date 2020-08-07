@@ -35,7 +35,7 @@ class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
      */
     public function initializeArguments() {
         parent::initializeArguments();
-        $this->registerArgument('record', '\File_MARC_Record|boolean', 'The decoded MARC record', FALSE, NULL);
+        $this->registerArgument('record', 'mixed', 'The decoded MARC record', FALSE, NULL);
     }
 
     public function render (){

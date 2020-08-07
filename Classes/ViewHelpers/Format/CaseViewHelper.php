@@ -6,22 +6,38 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
  *
  *
  */
-class CaseViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class CaseViewHelper extends AbstractViewHelper {
+
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content string', TRUE, NULL);
+        $this->registerArgument('mode', 'string', 'lower or upper', TRUE, NULL);
+   }
 
     /**
      * Changes case of string
-     *
-     * @param string $content Content string
-     * @param string $mode lower or upper
      * @return string
      */
-    public function render($content = NULL, $mode = NULL) {
-        if ($content === NULL) {
-            $content = $this->renderChildren();
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        if ($arguments['content'] === NULL) {
+            $content = $renderChildrenClosure();
         }
         $content = trim($content);
-        if ($mode !== NULL) {
-            switch ($mode) {
+        if ($arguments['mode'] !== NULL) {
+            switch ($arguments['mode']) {
                 case 'lower':
                     return strtolower($content);
                     break;

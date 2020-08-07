@@ -2,8 +2,15 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Link;
 
-class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+/**
+ *
+ *
+ */
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+
+class Get3DModelLinkViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -20,13 +27,17 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	 *
 	 * @return string
 	 */
-	public function render() {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
-		$pickupDesc = $this->arguments['pickupdesc'];
-		$pickupID;
+		$pickupDesc = $arguments['pickupdesc'];
+		$pickupID = '';
 
 		// There are certain media types that have to be handed out at the service desk but whose pickup destination cannot be set more specific than `Zentralbibliothek` in LIBERO
-		$mediatype =  $this->arguments['mediatype'];
+		$mediatype =  $arguments['mediatype'];
 		switch ($mediatype){
 			case "CD":
 			case "DVD":
@@ -87,5 +98,3 @@ class Get3DModelLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 
 	}
 }
-
-?>

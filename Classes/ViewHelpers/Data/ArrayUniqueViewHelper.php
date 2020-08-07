@@ -5,7 +5,11 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 /**
 
  */
-class ArrayUniqueViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ArrayUniqueViewHelper extends AbstractViewHelper {
 
 	/**
 	 * Register arguments.
@@ -18,11 +22,15 @@ class ArrayUniqueViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 	/**
 	 * @return array
 	 */
-	public function render() {
-        $array = $this->arguments['array'];
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+        $array = $arguments['array'];
 
         if ($array === NULL) {
-            $array = $this->renderChildren();
+            $array = $renderChildrenClosure();
         }
 
         if(!is_array($array)) return NULL;

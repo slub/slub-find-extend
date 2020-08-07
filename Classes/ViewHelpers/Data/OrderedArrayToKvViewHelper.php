@@ -2,25 +2,47 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
+/**
+ *
+ */
 
-class OrderedArrayToKvViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class OrderedArrayToKvViewHelper extends AbstractViewHelper  {
 
     /**
-     * Combines ordered Keys and values to kv. Possible to translate.
-     *
-     * @param array $array
-     * @param boolean $translate
-     * @param string $translatekey
-     * @param string $translatekeyextension
-     * @param boolean $keeporiginalvalue
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('array', 'array', 'Array with keys and values', FALSE, NULL);
+        $this->registerArgument('translate', 'boolean', 'Should we try to translate data?', FALSE, FALSE);
+        $this->registerArgument('translatekey', 'string', 'Where to find translation?', FALSE);
+        $this->registerArgument('translatekeyextension', 'string', 'Where to find translation?', FALSE);
+        $this->registerArgument('keeporiginalvalue', 'boolean', 'Should we keep original value?', FALSE);
+    }
+
+    /**
      * @return array
      */
-    public function render($array = NULL, $translate = FALSE, $translatekey = '', $translatekeyextension = '', $keeporiginalvalue = FALSE) {
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
 
 		$result = [];
 
+		$array = $arguments['array'];
+        $translate = $arguments['translate'];
+        $translatekey = $arguments['translatekey'];
+        $translatekeyextension = $arguments['translatekeyextension'];
+        $keeporiginalvalue = $arguments['keeporiginalvalue'];
+
 		if ($array === NULL) {
-			$array = $this->renderChildren();
+			$array = $renderChildrenClosure;
 		}
 
 		if(count($array) === 0) {

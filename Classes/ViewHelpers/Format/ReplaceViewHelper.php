@@ -2,19 +2,49 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Format;
 
-class ReplaceViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
+/**
+ * Replaces chars inside content
+ *
+ */
 
-	/**
-	 * Replaces chars inside content
-	 *
-	 * @param string $content
-	 * @param string $needle
-	 * @param string $replace
-	 * @return string
-	 */
-	public function render($content = NULL, $needle = NULL, $replace = NULL) {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ReplaceViewHelper extends AbstractViewHelper  {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content', FALSE, NULL);
+        $this->registerArgument('needle', 'string', 'Needle', FALSE, NULL);
+        $this->registerArgument('replace', 'string', 'Replace', FALSE, NULL);
+    }
+
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+	    $content = $arguments['content'];
+	    $needle = $arguments['needle'];
+	    $replace = $arguments['replace'];
+
 		if ($content === NULL) {
-			$content = $this->renderChildren();
+			$content = $renderChildrenClosure();
 		}
 
 		if ($content && $needle && $replace && (count($content) > 0) && (count($needle) > 0) && (count($replace) > 0)){

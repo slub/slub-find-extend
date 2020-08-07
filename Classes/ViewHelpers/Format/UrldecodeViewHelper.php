@@ -26,18 +26,45 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+/**
+ * urldecodes content
+ *
+ */
 
-class UrldecodeViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper  {
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-	/**
-	 * urldecodes content
-	 *
-	 * @param string $content
-	 * @return string
-	 */
-	public function render($content = NULL) {
+class UrldecodeViewHelper extends AbstractViewHelper  {
+
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments() {
+        parent::initializeArguments();
+        $this->registerArgument('content', 'string', 'Content string to decode', FALSE, NULL);
+     }
+
+    /**
+     * @return string
+     */
+    public static function renderStatic(
+        array $arguments,
+        \Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ) {
+
+        $content = $arguments['content'];
+
 		if ($content === NULL) {
-			$content = $this->renderChildren();
+			$content = $renderChildrenClosure();
 		}
 
 		return urldecode($content);
