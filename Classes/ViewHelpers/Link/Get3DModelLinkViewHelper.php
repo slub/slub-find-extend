@@ -12,7 +12,14 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class Get3DModelLinkViewHelper extends AbstractViewHelper {
 
-	/**
+    /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
 	 * Register arguments.
 	 * @return void
 	 */
