@@ -1,5 +1,5 @@
 <?php
-namespace Slub\SlubFindExtend\\Routing\Aspect;
+namespace Slub\SlubFindExtend\Routing\Aspect;
 
 /**
  * simple dummy class to remove cHashes from routing
