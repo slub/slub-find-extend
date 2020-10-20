@@ -67,7 +67,9 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 		$this->registerArgument('sortField', 'string', 'Sort field.', FALSE);
 		$this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', FALSE, 'asc');
 		$this->registerArgument('rows', 'integer', 'Number of rows to be returned.', FALSE);
+		$this->registerArgument('start', 'integer', 'Number of leading documents to skip.', FALSE);
 		$this->registerArgument('fields', 'string', 'Fields to be returned, comma seperated if more than one field.', FALSE);
+		$this->registerArgument('numFoundOnly', 'integer', 'Return numFound only, do not fetch Documents.', FALSE, FALSE);
 	}
 
 	/**
@@ -93,6 +95,10 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 			$query->setRows($this->arguments['rows']);
 		}
 
+		if(!is_null($this->arguments['start'])) {
+			$query->setStart($this->arguments['start']);
+		}
+
 		if(!is_null($this->arguments['fields'])) {
 			$query->clearFields();
 			$query->addFields($this->arguments['fields']);
@@ -101,35 +107,39 @@ class FromSolrViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCondit
 		/** @var Result $resultSet */
 		$resultSet = $this->solr->select($query);
 
-		/** @var DocumentInterface $result */
-		$results = $resultSet->getDocuments();
-
 		$out = '';
 
-		if($results) {
-
-			$iterator = ["iterator" => 0, "cycle" => 1, "isFirst" => TRUE, "total" => count($results)];
-
-			foreach ($results as $result) {
-
-				if ($this->templateVariableContainer->exists('solr')) {
-					$this->templateVariableContainer->remove('solr');
-				}
-				if ($this->templateVariableContainer->exists('iterator')) {
-					$this->templateVariableContainer->remove('iterator');
-				}
-				$this->templateVariableContainer->add('solr', $result);
-				$this->templateVariableContainer->add('iterator', $iterator);
-				$out .= $this->renderThenChild();
-
-				$iterator["iterator"]++;
-				$iterator["cycle"]++;
-				$iterator["isFirst"] = FALSE;
-			}
+		if($this->arguments['numFoundOnly']) {
+			$out = $resultSet->getNumFound();
 		} else {
-			$out .= $this->renderElseChild();
-		}
+			/** @var DocumentInterface $result */
+			$results = $resultSet->getDocuments();
 
+
+			if($results) {
+
+				$iterator = ["iterator" => 0, "cycle" => 1, "isFirst" => TRUE, "total" => count($results)];
+
+				foreach ($results as $result) {
+
+					if ($this->templateVariableContainer->exists('solr')) {
+						$this->templateVariableContainer->remove('solr');
+					}
+					if ($this->templateVariableContainer->exists('iterator')) {
+						$this->templateVariableContainer->remove('iterator');
+					}
+					$this->templateVariableContainer->add('solr', $result);
+					$this->templateVariableContainer->add('iterator', $iterator);
+					$out .= $this->renderThenChild();
+
+					$iterator["iterator"]++;
+					$iterator["cycle"]++;
+					$iterator["isFirst"] = FALSE;
+				}
+			} else {
+				$out .= $this->renderElseChild();
+			}
+		}
 
 		return $out;
 	}
