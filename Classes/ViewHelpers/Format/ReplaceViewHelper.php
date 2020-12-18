@@ -27,7 +27,7 @@ class ReplaceViewHelper extends AbstractViewHelper  {
         parent::initializeArguments();
         $this->registerArgument('content', 'string', 'Content', FALSE, NULL);
         $this->registerArgument('needle', 'string', 'Needle', FALSE, NULL);
-        $this->registerArgument('replace', 'string', 'Replace', FALSE, NULL);
+        $this->registerArgument('replace', 'string', 'Replace', FALSE, '');
     }
 
     /**
@@ -47,7 +47,7 @@ class ReplaceViewHelper extends AbstractViewHelper  {
 			$content = $renderChildrenClosure();
 		}
 
-		if ($content && $needle && $replace && (count($content) > 0) && (count($needle) > 0) && (count($replace) > 0)){
+		if ( !empty($content) && !empty($needle) ){
 			return str_replace($needle, $replace, $content);
 		} else {
 			return '';

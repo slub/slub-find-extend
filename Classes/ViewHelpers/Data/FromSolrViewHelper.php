@@ -50,19 +50,21 @@ class FromSolrViewHelper extends AbstractViewHelper {
      */
     protected static $solr = null;
 
-    /**
-     * Register arguments.
-     * @return void
-     */
-    public function initializeArguments() {
-        parent::initializeArguments();
-        $this->registerArgument('query', 'mixed', 'Solr querystring or array of query fields and their query values.', TRUE);
-        $this->registerArgument('operator', 'string', 'Solr query operator.', FALSE, 'AND');
-        $this->registerArgument('sortField', 'string', 'Sort field.', FALSE);
-        $this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', FALSE, 'asc');
-        $this->registerArgument('rows', 'integer', 'Number of rows to be returned.', FALSE);
-        $this->registerArgument('fields', 'string', 'Fields to be returned, comma seperated if more than one field.', FALSE);
-    }
+	/**
+	 * Register arguments.
+	 * @return void
+	 */
+	public function initializeArguments() {
+		parent::initializeArguments();
+		$this->registerArgument('query', 'mixed', 'Solr querystring or array of query fields and their query values.', TRUE);
+		$this->registerArgument('operator', 'string', 'Solr query operator.', FALSE, 'AND');
+		$this->registerArgument('sortField', 'string', 'Sort field.', FALSE);
+		$this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', FALSE, 'asc');
+		$this->registerArgument('rows', 'integer', 'Number of rows to be returned.', FALSE);
+		$this->registerArgument('start', 'integer', 'Number of leading documents to skip.', FALSE);
+		$this->registerArgument('fields', 'string', 'Fields to be returned, comma seperated if more than one field.', FALSE);
+		$this->registerArgument('numFoundOnly', 'integer', 'Return numFound only, do not fetch Documents.', FALSE, FALSE);
+	}
 
     /**
      * @return string
@@ -95,6 +97,10 @@ class FromSolrViewHelper extends AbstractViewHelper {
 
         if(!is_null($arguments['rows'])) {
             $query->setRows($arguments['rows']);
+        }
+
+        if(!is_null($arguments['start'])) {
+            $query->setStart($arguments['start']);
         }
 
         if(!is_null($arguments['fields'])) {

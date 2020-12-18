@@ -32,6 +32,7 @@ class CaseViewHelper extends AbstractViewHelper {
         RenderingContextInterface $renderingContext
     ) {
 
+        $content = $arguments['content'];
         if ($arguments['content'] === NULL) {
             $content = $renderChildrenClosure();
         }
