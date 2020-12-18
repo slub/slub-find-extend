@@ -74,7 +74,6 @@ class FromSolrViewHelper extends AbstractViewHelper {
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-        echo "evaluateC".static::class;
 
         $templateVariableContainer = $renderingContext->getVariableProvider();
 
@@ -117,10 +116,18 @@ class FromSolrViewHelper extends AbstractViewHelper {
         $results = $resultSet->getDocuments();
 
         if($results) {
-            if ($templateVariableContainer->exists('documents')) {
-                $templateVariableContainer->remove('documents');
+
+            if ($templateVariableContainer->exists('numFound')) {
+                $templateVariableContainer->remove('numFound');
             }
-            $templateVariableContainer->add('documents', $results);
+            $templateVariableContainer->add('numFound', $resultSet->getNumFound());
+
+            if(!$arguments['numFoundOnly']) {
+                if ($templateVariableContainer->exists('documents')) {
+                    $templateVariableContainer->remove('documents');
+                }
+                $templateVariableContainer->add('documents', $results);
+            }
         }
 
         return $renderChildrenClosure();
