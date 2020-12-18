@@ -9,7 +9,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Logic;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * ### Condition: String contains substring
@@ -33,15 +34,12 @@ class ContainsViewHelper extends AbstractConditionViewHelper {
         $this->registerArgument('needle', 'string', 'Needle to be searched', TRUE);
     }
 
-    /**
-     * Render method
-     *
-     * @return string
-     */
-    public function render() {
+    public static function verdict(array $arguments, \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
 
-        $haystacks = $this->arguments['haystacks'];
-        $needle = $this->arguments['needle'];
+        $templateVariableContainer = $renderingContext->getVariableProvider();
+
+        $haystacks = $arguments['haystacks'];
+        $needle = $arguments['needle'];
 
         if(!is_array($haystacks)) {
             $haystacks = [$haystacks];
@@ -50,16 +48,16 @@ class ContainsViewHelper extends AbstractConditionViewHelper {
         foreach ($haystacks as $haystack) {
             if (FALSE !== strpos($haystack, $needle)) {
 
-                if ($this->templateVariableContainer->exists('hit')) {
-                    $this->templateVariableContainer->remove('hit');
+                if ($templateVariableContainer->exists('hit')) {
+                    $templateVariableContainer->remove('hit');
                 }
-                $this->templateVariableContainer->add('hit', $haystack);
+                $templateVariableContainer->add('hit', $haystack);
 
-                return $this->renderThenChild();
+                return TRUE;
             }
         }
 
-        return $this->renderElseChild();
+        return FALSE;
         
     }
 

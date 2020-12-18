@@ -6,7 +6,7 @@ namespace Slub\SlubFindExtend\ViewHelpers\Logic;
  * Checks minimum length of string
  */
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 class MinLengthViewHelper extends AbstractConditionViewHelper {
 
