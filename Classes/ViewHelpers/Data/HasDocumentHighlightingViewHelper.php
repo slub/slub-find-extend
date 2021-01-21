@@ -24,18 +24,20 @@ class HasDocumentHighlightingViewHelper extends AbstractConditionViewHelper {
 
 	/**
 	 */
-	public function render() {
+    public static function verdict(array $arguments, \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+
+        $templateVariableContainer = $renderingContext->getVariableProvider();
 
 		$highlights = [];
 
-		$resultFields = explode(',',$this->templateVariableContainer->get('settings')['highlightingCheckFields']);
-		$resultIgnoreFields = explode(',',$this->templateVariableContainer->get('settings')['highlightingCheckFieldsIgnore']);
-		$resultExclusiveFields = explode(',',$this->templateVariableContainer->get('settings')['highlightingCheckFieldsExclusive']);
+		$resultFields = explode(',',$templateVariableContainer->get('settings')['highlightingCheckFields']);
+		$resultIgnoreFields = explode(',',$templateVariableContainer->get('settings')['highlightingCheckFieldsIgnore']);
+		$resultExclusiveFields = explode(',',$templateVariableContainer->get('settings')['highlightingCheckFieldsExclusive']);
 		$exclusiveHit = false;
 
 
-		if($this->arguments['highlighting'][$this->arguments['id']]->getFields()) {
-			foreach($this->arguments['highlighting'][$this->arguments['id']]->getFields() as $key => $hit) {
+		if($arguments['highlighting'][$arguments['id']]->getFields()) {
+			foreach($arguments['highlighting'][$arguments['id']]->getFields() as $key => $hit) {
 				if($exclusiveHit) { break; }
 
 				if(!in_array($key, $resultIgnoreFields)) {
@@ -48,13 +50,13 @@ class HasDocumentHighlightingViewHelper extends AbstractConditionViewHelper {
 				}
 
 				if(in_array($key, $resultFields)) {
-					return $this->renderThenChild();
+					return true;
 				}
 			}
 		}
 
-		$this->templateVariableContainer->add('highlights', $highlights);
-		return $this->renderElseChild();
+		$templateVariableContainer->add('highlights', $highlights);
+		return false;
 
 	}
 
