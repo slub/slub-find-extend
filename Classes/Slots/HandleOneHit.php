@@ -56,7 +56,12 @@ class HandleOneHit {
         if($this->settings['handleOnHit'] == "0")
             return;
 
-        if ($resultSet && ( $resultSet->getNumFound() === 1) && (count($_GET['tx_find_find']['facet']) === 0) && (!$_GET['type'] > 0)) {
+        if ( 
+            $resultSet 
+            && ($resultSet->getNumFound() === 1) 
+            && ((is_array($_GET['tx_find_find']['facet'])) && (count($_GET['tx_find_find']['facet']) === 0))
+            && (!$_GET['type'] > 0)
+        ) {
 
             /* @var $document Document */
             $document = $resultSet->getDocuments()[0];

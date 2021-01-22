@@ -9,7 +9,7 @@ namespace Slub\SlubFindExtend\ViewHelpers\Logic;
  * LICENSE.md file that was distributed with this source code.
  */
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
  * ### Condition: String contains substring
@@ -34,19 +34,18 @@ class EqualsViewHelper extends AbstractConditionViewHelper {
     }
 
     /**
-     * Render method
-     *
-     * @return string
+     * @param array $arguments
+     * @return bool
      */
-    public function render() {
+    protected static function evaluateCondition($arguments = null) {
 
-        $string = $this->arguments['string'];
-        $test = $this->arguments['test'];
+        $string = $arguments['string'];
+        $test = $arguments['test'];
 
         if (FALSE !== ($string === $test)) {
-            return $this->renderThenChild();
+            return TRUE;
         } else {
-            return $this->renderElseChild();
+            return FALSE;
         }
     }
 
