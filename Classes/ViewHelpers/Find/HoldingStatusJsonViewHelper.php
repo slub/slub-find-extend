@@ -53,7 +53,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 		$firstAuthorAulast = $firstAuthor['rft.aulast'];
 		$firstAuthorAufirst = $firstAuthor['rft.aufirst'];
 
-		$url = 'http://www-fr.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
+		$url = 'http://www-s.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
 			'&issn='.urlencode($firstISSN).
 			'&volume='.urlencode($volume).
 			'&spage='.urlencode($spage).
@@ -199,7 +199,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
 
 				$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
 				$cacheIdentifier = sha1($data['documents'][0]['id']);
-				//$entry = $cache->get($cacheIdentifier);
+				$entry = $cache->get($cacheIdentifier);
 				if (!$entry) {
 
 					// Try to resolve article against holdings
