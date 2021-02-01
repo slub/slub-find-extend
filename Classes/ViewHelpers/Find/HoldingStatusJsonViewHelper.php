@@ -244,6 +244,7 @@ class HoldingStatusJsonViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstr
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
         curl_setopt($ch,CURLOPT_TIMEOUT,$timeout);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
