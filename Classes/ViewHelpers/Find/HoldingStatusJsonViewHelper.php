@@ -61,7 +61,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
 		$firstAuthorAulast = $firstAuthor['rft.aulast'];
 		$firstAuthorAufirst = $firstAuthor['rft.aufirst'];
 
-		$url = 'http://www-fr.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
+		$url = 'http://www-s.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
 			'&issn='.urlencode($firstISSN).
 			'&volume='.urlencode($volume).
 			'&spage='.urlencode($spage).
@@ -252,6 +252,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
         curl_setopt($ch,CURLOPT_TIMEOUT,$timeout);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
