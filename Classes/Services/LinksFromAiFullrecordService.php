@@ -19,7 +19,7 @@ class LinksFromAiFullrecordService {
      */
     public function getLinks($fullrecord, $isil = '', $resolve = FALSE) {
 
-
+        return [];
 
     }
 
