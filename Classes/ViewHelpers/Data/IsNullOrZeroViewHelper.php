@@ -46,6 +46,6 @@ class IsNullOrZeroViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractCo
      */
     public function render() {
         $value = $this->arguments['value'];
-		return ($value === '0' || $value === 0 || $value === NULL) ? true : false;
+		return ($value === '0' || $value === 0 || $value === NULL | $value === '') ? true : false;
     }
 }
