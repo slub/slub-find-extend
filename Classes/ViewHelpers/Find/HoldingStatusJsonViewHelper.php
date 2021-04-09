@@ -14,6 +14,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 class HoldingStatusJsonViewHelper extends AbstractViewHelper {
 
     /**
+     * As this ViewHelper renders HTML, the output must not be escaped.
+     *
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
      * @var \Slub\SlubFindExtend\Services\HoldingStatusService
      * @inject
      */
@@ -54,7 +61,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
 		$firstAuthorAulast = $firstAuthor['rft.aulast'];
 		$firstAuthorAufirst = $firstAuthor['rft.aufirst'];
 
-		$url = 'http://www-fr.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
+		$url = 'http://www-s.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
 			'&issn='.urlencode($firstISSN).
 			'&volume='.urlencode($volume).
 			'&spage='.urlencode($spage).
@@ -200,7 +207,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
 
 				$cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
 				$cacheIdentifier = sha1($data['documents'][0]['id']);
-				//$entry = $cache->get($cacheIdentifier);
+				$entry = $cache->get($cacheIdentifier);
 				if (!$entry) {
 
 					// Try to resolve article against holdings
@@ -245,6 +252,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
         curl_setopt($ch,CURLOPT_TIMEOUT,$timeout);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;

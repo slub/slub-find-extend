@@ -6,6 +6,7 @@ $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TY
 
 // register routing configs
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects']['SlubCatalogId'] = \Slub\SlubFindExtend\Routing\Aspect\SlubCatalogId::class;
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects']['SlubNothing'] = \Slub\SlubFindExtend\Routing\Aspect\SlubCatalogId::class;
 
 // Hook into \Subugoe\Find\Controller
 $signalSlotDispatcher->connect(
