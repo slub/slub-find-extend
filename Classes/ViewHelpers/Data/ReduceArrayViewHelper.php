@@ -43,7 +43,10 @@ class ReduceArrayViewHelper extends AbstractViewHelper  {
             return [];
         }
 
-        $remaining = json_decode($remaining, TRUE);
+        if(is_string($remaining)) {
+            $remaining = json_decode($remaining, TRUE);
+        }
+
         if(is_array($remaining) && (count($remaining) === 0)) {
             return [];
         }
