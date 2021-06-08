@@ -31,6 +31,6 @@ class IsNullOrZeroViewHelper extends AbstractViewHelper {
         RenderingContextInterface $renderingContext
     ) {
         $value = $arguments['value'];
-		return ($value === 0 || $value === NULL) ? true : false;
+        return ($value === '0' || $value === 0 || $value === NULL | $value === '') ? true : false;
     }
 }
