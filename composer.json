@@ -1,7 +1,7 @@
 {
     "name": "slub/slub-find-extend",
     "description": "Extension extending Find functionality",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "typo3-cms-extension",
     "homepage": "",
     "keywords" : ["TYPO3 CMS"],
@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "typo3/cms-core": ">=6.2.11,<=9.5.99"
+        "typo3/cms-core": "^9.5.0"
     },
     "replace": {
         "typo3-ter/slub-find-extend": "*"
@@ -22,6 +22,11 @@
     "autoload": {
         "psr-4": {
             "Slub\\SlubFindExtend\\": "Classes"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "slub_find_extend"
         }
     }
 }
