@@ -25,7 +25,7 @@ class RemoveLineBreaksViewHelper extends AbstractViewHelper  {
      */
     public function initializeArguments() {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string', TRUE, NULL);
+        $this->registerArgument('content', 'string', 'Content string', FALSE, NULL);
     }
 
     /**
