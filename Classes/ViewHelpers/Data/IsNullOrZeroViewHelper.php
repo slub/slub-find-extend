@@ -20,7 +20,7 @@ class IsNullOrZeroViewHelper extends AbstractViewHelper
      */
     public function initializeArguments() {
         parent::initializeArguments();
-        $this->registerArgument('value', 'mixed', 'The value to check', TRUE, NULL);
+        $this->registerArgument('value', 'mixed', 'The value to check', true, null);
     }
 
     /**
@@ -32,6 +32,6 @@ class IsNullOrZeroViewHelper extends AbstractViewHelper
         RenderingContextInterface $renderingContext
     ) {
         $value = $arguments['value'];
-        return ($value === '0' || $value === 0 || $value === NULL | $value === '') ? true : false;
+        return ($value === '0' || $value === 0 || $value === null || $value === '') ? true : false;
     }
 }
