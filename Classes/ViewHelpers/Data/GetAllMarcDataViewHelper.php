@@ -27,7 +27,8 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
 /**
  * GetAllMarcDataViewHelper
  */
-class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+{
 
     /**
      * Register arguments.

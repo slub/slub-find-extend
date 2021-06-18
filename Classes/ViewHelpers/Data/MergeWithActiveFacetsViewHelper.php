@@ -12,7 +12,8 @@ use Solarium\QueryType\Select\Result\Facet\Field;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class MergeWithActiveFacetsViewHelper extends AbstractViewHelper {
+class MergeWithActiveFacetsViewHelper extends AbstractViewHelper
+{
 
 	/**
 	 * Register arguments.

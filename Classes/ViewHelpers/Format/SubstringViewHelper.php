@@ -37,7 +37,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class SubstringViewHelper extends AbstractViewHelper {
+class SubstringViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.

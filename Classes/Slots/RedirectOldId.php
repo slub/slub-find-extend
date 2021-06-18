@@ -11,7 +11,8 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  * @category    Slots
  * @package     TYPO3
  */
-class RedirectOldId {
+class RedirectOldId
+{
 
      /**
      * Contains the settings of the current extension
@@ -65,7 +66,5 @@ class RedirectOldId {
 
 
     }
-
-
 
 }

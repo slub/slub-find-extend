@@ -8,7 +8,8 @@ use Solarium\QueryType\Select\Result\Document;
  * Class FulltextService
  * @package Slub\SlubFindExtend\Services
  */
-class FulltextService {
+class FulltextService
+{
 
     const RESOLVER_BASE = '//wwwdb.dbod.de/login?url=%s';
 

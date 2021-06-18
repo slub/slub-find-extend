@@ -34,7 +34,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class UrldecodeViewHelper extends AbstractViewHelper  {
+class UrldecodeViewHelper extends AbstractViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.

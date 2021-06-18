@@ -11,7 +11,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * GetRvkTextViewHelper
  */
-class GetRvkTextViewHelper extends AbstractViewHelper {
+class GetRvkTextViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.

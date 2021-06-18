@@ -11,7 +11,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * GetUsernameViewHelper
  */
-class GetUsernameViewHelper extends AbstractViewHelper {
+class GetUsernameViewHelper extends AbstractViewHelper
+{
 
     /**
      * @return string

@@ -10,7 +10,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
-class HasDocumentHighlightingViewHelper extends AbstractConditionViewHelper {
+class HasDocumentHighlightingViewHelper extends AbstractConditionViewHelper
+{
 
 	/**
 	 * Register arguments.

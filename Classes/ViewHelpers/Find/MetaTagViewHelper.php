@@ -9,7 +9,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class MetaTagViewHelper extends AbstractViewHelper  {
+class MetaTagViewHelper extends AbstractViewHelper
+{
 
     public function initializeArguments()
     {

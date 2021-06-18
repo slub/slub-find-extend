@@ -43,7 +43,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class HighlightFieldViewHelper extends AbstractViewHelper {
+class HighlightFieldViewHelper extends AbstractViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
@@ -198,5 +199,3 @@ class HighlightFieldViewHelper extends AbstractViewHelper {
 	}
 
 }
-
-?>

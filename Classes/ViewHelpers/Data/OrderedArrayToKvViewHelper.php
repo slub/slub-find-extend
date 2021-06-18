@@ -9,7 +9,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class OrderedArrayToKvViewHelper extends AbstractViewHelper  {
+class OrderedArrayToKvViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.
@@ -45,7 +46,7 @@ class OrderedArrayToKvViewHelper extends AbstractViewHelper  {
 			$array = $renderChildrenClosure();
 		}
 
-        if(is_array($array) && (count($array) === 0)) {
+        if (is_array($array) && (count($array) === 0)) {
 			return [];
 		}
 
@@ -80,7 +81,7 @@ class OrderedArrayToKvViewHelper extends AbstractViewHelper  {
 
 			}
 
-			if($keeporiginalvalue) {
+			if ($keeporiginalvalue) {
 				$result[$key] = [];
 				$result[$key]['translation'] = $keyValue;
 				$result[$key]['values'] = $innerresult;

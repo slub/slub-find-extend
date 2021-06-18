@@ -8,7 +8,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Logic;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
-class MinLengthViewHelper extends AbstractConditionViewHelper {
+class MinLengthViewHelper extends AbstractConditionViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.

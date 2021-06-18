@@ -7,7 +7,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class RenderUserViewHelper extends AbstractViewHelper {
+class RenderUserViewHelper extends AbstractViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.

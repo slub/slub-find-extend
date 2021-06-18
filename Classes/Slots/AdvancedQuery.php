@@ -24,7 +24,8 @@ use Solarium\QueryType\Select\Query\Query;
  * @category    Slots
  * @package     TYPO3
  */
-class AdvancedQuery {
+class AdvancedQuery
+{
 
     /**
      * @var \Slub\SlubFindExtend\Services\StopWordService
@@ -93,7 +94,7 @@ class AdvancedQuery {
 
         $originalQuerystring = trim($originalQuerystring, $settings['queryModifier']['isilQueryTrim']);
         $originalQuerystring = str_replace([' ', ')', '('], ['\\\ ', '\\\)', '\\\('], $originalQuerystring);
-        
+
         $return = ' OR ' . sprintf($this->settings['queryModifier']['isilQueryString'], $originalQuerystring).'^500000';
 
         return $return;
@@ -213,6 +214,5 @@ class AdvancedQuery {
         }
 
     }
-
 
 }

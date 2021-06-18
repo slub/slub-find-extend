@@ -9,7 +9,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class DecodeMARCViewHelper extends AbstractViewHelper {
+class DecodeMARCViewHelper extends AbstractViewHelper
+{
 
 	/**
 	 * Register arguments.
@@ -47,9 +48,7 @@ class DecodeMARCViewHelper extends AbstractViewHelper {
         }
 
         return $return;
-	    
+
 	}
 
 }
-
-?>

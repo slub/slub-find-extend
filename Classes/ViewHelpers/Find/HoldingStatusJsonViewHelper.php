@@ -11,7 +11,8 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use Slub\SlubFindExtend\Services\HoldingStatusService;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class HoldingStatusJsonViewHelper extends AbstractViewHelper {
+class HoldingStatusJsonViewHelper extends AbstractViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
@@ -125,7 +126,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
 
 		$oa_url = $xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item(0)->nodeValue;
 
-		if(strlen($oa_url) > 0) {
+		if (strlen($oa_url) > 0) {
             $oa_via = trim($xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p")->item(0)->nodeValue);
             $oa_via = substr($oa_via, strpos($oa_via, 'via')+4, strlen($oa_via)-strpos($oa_via, ',')-5);
         }
@@ -259,5 +260,3 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper {
     }
 
 }
-
-?>

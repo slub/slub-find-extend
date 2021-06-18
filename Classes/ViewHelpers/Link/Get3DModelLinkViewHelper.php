@@ -10,7 +10,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Link;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class Get3DModelLinkViewHelper extends AbstractViewHelper {
+class Get3DModelLinkViewHelper extends AbstractViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
@@ -91,12 +92,12 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper {
 				$pickupID = 'dsm3h';
 				break;
 			case "ZwB Medizin":
-				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-fiedlerstrasse-medizin/'>Zweigbibliothek Medizin</a>";
+				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-fiedlerstrasse-medizin'>Zweigbibliothek Medizin</a>";
 			case "ZwB Forst":
 			case "ZwB Forstwissenschaft":
-				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-tharandt-forstwesen/'>Zweigbibliothek Forst</a>";
+				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-tharandt-forstwesen'>Zweigbibliothek Forst</a>";
 			case "ZwB Erziehungswissenschaften":
-				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-august-bebel-strasse-textlab/'>Zweigbibliothek Erziehungswissenschaften</a>";
+				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-august-bebel-strasse-textlab'>Zweigbibliothek Erziehungswissenschaften</a>";
 			default:
 				return $pickupDesc;
 		}

@@ -2,7 +2,8 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Form;
 
-class FormNoHiddenFieldsViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FormViewHelper {
+class FormNoHiddenFieldsViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FormViewHelper
+{
     protected function renderHiddenReferrerFields(){
         return '';
     }
