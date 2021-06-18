@@ -10,7 +10,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class CleanUrnLinkViewHelper extends AbstractViewHelper {
+class CleanUrnLinkViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.

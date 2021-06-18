@@ -11,7 +11,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * GetRootPageViewHelper
  */
-class GetNextRootPageViewHelper extends AbstractViewHelper {
+class GetNextRootPageViewHelper extends AbstractViewHelper
+{
 
     /**
      * @return array

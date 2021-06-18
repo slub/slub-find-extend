@@ -27,7 +27,8 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
  * @package     TYPO3
  */
 
-class Marc21 {
+class Marc21
+{
 
     /**
      * Decodes raw Marc21 to File_MARC_Record

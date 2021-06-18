@@ -62,7 +62,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class TitleViewHelper extends AbstractViewHelper {
+class TitleViewHelper extends AbstractViewHelper
+{
 
     /**
      * Arguments initialization

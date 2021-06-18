@@ -8,7 +8,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class ParseMarcFieldViewHelper extends AbstractViewHelper {
+class ParseMarcFieldViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.
@@ -33,26 +34,26 @@ class ParseMarcFieldViewHelper extends AbstractViewHelper {
 
         $output = [];
 
-        if(is_array($arguments['field'])) {
+        if (is_array($arguments['field'])) {
 
-            foreach($arguments['field'] as $field) {
+            foreach ($arguments['field'] as $field) {
                 $fieldData = explode('',$field);
 
                 if(strlen(trim($fieldData[0])) > 0) {
 
                     $index = intval(substr($fieldData[0], 0, 1));
 
-                    if(!is_array($output[$index])) {
+                    if (!is_array($output[$index])) {
                         $output[$index] = [];
                     }
 
-                    if($arguments['subfieldasarray'] === TRUE) {
+                    if ($arguments['subfieldasarray'] === TRUE) {
                         $dataCleaned = static::cleanedArrayData($fieldData, TRUE, $arguments['orderedarray']);
                     } else {
                         $dataCleaned = static::cleanedArrayData(array_slice($fieldData,1), FALSE, $arguments['orderedarray']);
                     }
 
-                    if($arguments['getindicators'] === TRUE) {
+                    if ($arguments['getindicators'] === TRUE) {
 
                         $dataCleaned['ind1'] = substr($fieldData[0], 0, 1);
                         $dataCleaned['ind2'] = substr($fieldData[0], 1, 1);
@@ -80,7 +81,8 @@ class ParseMarcFieldViewHelper extends AbstractViewHelper {
      * @param $orderedarray
      * @return array
      */
-    private static function cleanedArrayData($arr, $subfieldasarray = FALSE, $orderedarray = FALSE) {
+    private static function cleanedArrayData($arr, $subfieldasarray = FALSE, $orderedarray = FALSE)
+    {
 
         $return = [];
         $ordered = [];

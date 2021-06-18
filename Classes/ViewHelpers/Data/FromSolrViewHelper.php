@@ -35,7 +35,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Gets a field value from a Solr record
  *
  */
-class FromSolrViewHelper extends AbstractViewHelper {
+class FromSolrViewHelper extends AbstractViewHelper
+{
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.

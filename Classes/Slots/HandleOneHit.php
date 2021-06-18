@@ -11,7 +11,8 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  * @category    Slots
  * @package     TYPO3
  */
-class HandleOneHit {
+class HandleOneHit
+{
 
     const IDFIELDS = ['record_id', 'barcode', 'rsn', 'isbn', 'ismn', 'issn', 'zdb', 'signatur', 'title', 'title_full', 'kxp_id_str', 'swb_id_str', 'finc_id_str'];
 
@@ -56,9 +57,9 @@ class HandleOneHit {
         if($this->settings['handleOnHit'] == "0")
             return;
 
-        if ( 
-            $resultSet 
-            && ($resultSet->getNumFound() === 1) 
+        if (
+            $resultSet
+            && ($resultSet->getNumFound() === 1)
             && ((is_array($_GET['tx_find_find']['facet'])) && (count($_GET['tx_find_find']['facet']) === 0))
             && (!$_GET['type'] > 0)
         ) {
@@ -82,7 +83,5 @@ class HandleOneHit {
         }
 
     }
-
-
 
 }

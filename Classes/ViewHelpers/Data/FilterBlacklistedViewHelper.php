@@ -11,7 +11,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class FilterBlacklistedViewHelper extends AbstractViewHelper {
+class FilterBlacklistedViewHelper extends AbstractViewHelper
+{
 	/**
 	 * Register arguments.
 	 * @return void

@@ -14,7 +14,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * GetRsnViewHelper
  */
-class GetRsnViewHelper extends AbstractViewHelper {
+class GetRsnViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.

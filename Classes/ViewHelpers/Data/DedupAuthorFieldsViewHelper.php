@@ -11,7 +11,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class DedupAuthorFieldsViewHelper extends AbstractViewHelper {
+class DedupAuthorFieldsViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.
@@ -49,7 +50,7 @@ class DedupAuthorFieldsViewHelper extends AbstractViewHelper {
         $newauthor2 = [];
         $newauthor2_role = [];
 
-        if($author) {
+        if ($author) {
             $i = 0;
             foreach ($author as $author_iterate) {
                 $authorcache[] = $author_iterate . $author_role[$i];
@@ -58,7 +59,7 @@ class DedupAuthorFieldsViewHelper extends AbstractViewHelper {
             }
         }
 
-        if($author2) {
+        if ($author2) {
             $i = 0;
 
             foreach ($author2 as $author2_iterate) {

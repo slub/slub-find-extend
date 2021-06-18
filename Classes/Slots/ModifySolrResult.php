@@ -23,7 +23,8 @@ use Solarium\QueryType\Select\Result\Document;
  * @category    Slots
  * @package     TYPO3
  */
-class ModifySolrResult {
+class ModifySolrResult
+{
 
     /**
      * Contains the settings of the current extension
@@ -95,21 +96,21 @@ class ModifySolrResult {
      * @param array &$assignments
      */
     public function blacklist(&$assignments) {
-        
+
         $document = $assignments['document'];
 
-        if($document && $this->settings['blacklist']) {
+        if ($document && $this->settings['blacklist']) {
 
             $fields = $document->getFields();
-        
+
             foreach($this->settings['blacklist'] as $blacklistName => $blacklistValues) {
-        
+
                 if(isset($fields[$blacklistName]) && is_array($fields[$blacklistName]) && is_array($blacklistValues)) {
 
                     $fields[$blacklistName] = preg_grep('/^(' . str_replace('/', '\/', implode('|', $blacklistValues)) . ')$/', $fields[$blacklistName], PREG_GREP_INVERT);
                     $fields[$blacklistName] = array_values($fields[$blacklistName]);
                 }
-        
+
             }
 
             $assignments['document'] = new \Solarium\QueryType\Select\Result\Document($fields);
@@ -124,6 +125,5 @@ class ModifySolrResult {
     public function index(&$resultSet) {
 
     }
-
 
 }

@@ -6,7 +6,8 @@ namespace Slub\SlubFindExtend\Services;
  * Class StopWordService
  * @package Slub\SlubFindExtend\Services
  */
-class StopWordService {
+class StopWordService
+{
 
     /**
      * @return array

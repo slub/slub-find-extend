@@ -9,7 +9,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class NotAssignedViewHelper extends AbstractViewHelper {
+class NotAssignedViewHelper extends AbstractViewHelper
+
 
 	private static $notAssignedStrings = ['No subject assigned', 'not assigned', 'Not assigned'];
 

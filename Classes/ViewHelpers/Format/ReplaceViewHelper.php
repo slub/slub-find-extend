@@ -10,7 +10,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Format;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class ReplaceViewHelper extends AbstractViewHelper  {
+class ReplaceViewHelper extends AbstractViewHelper
+ {
 
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.

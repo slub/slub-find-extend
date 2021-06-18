@@ -21,7 +21,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  * @package Vhs
  * @subpackage ViewHelpers\Condition\String
  */
-class EqualsViewHelper extends AbstractConditionViewHelper {
+class EqualsViewHelper extends AbstractConditionViewHelper
+{
 
     /**
      * Register arguments.

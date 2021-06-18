@@ -9,7 +9,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class ArrayUniqueViewHelper extends AbstractViewHelper {
+class ArrayUniqueViewHelper extends AbstractViewHelper
+{
 
 	/**
 	 * Register arguments.
@@ -39,5 +40,3 @@ class ArrayUniqueViewHelper extends AbstractViewHelper {
 	}
 
 }
-
-?>

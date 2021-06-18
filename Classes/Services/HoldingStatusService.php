@@ -8,7 +8,8 @@ use Solarium\QueryType\Select\Result\Document;
  * Class StatusService
  * @package Slub\SlubFindExtend\Services
  */
-class HoldingStatusService {
+class HoldingStatusService
+{
 
     /**
      * Returns the holding state

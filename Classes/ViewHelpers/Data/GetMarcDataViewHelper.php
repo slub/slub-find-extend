@@ -14,7 +14,8 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
 /**
  * GetMarcDataViewHelper
  */
-class GetMarcDataViewHelper extends AbstractViewHelper {
+class GetMarcDataViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.

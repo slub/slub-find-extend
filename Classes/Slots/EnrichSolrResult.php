@@ -23,7 +23,8 @@ use Solarium\QueryType\Select\Result\Document;
  * @category    Slots
  * @package     TYPO3
  */
-class EnrichSolrResult {
+class EnrichSolrResult
+{
 
     /**
      * Contains the settings of the current extension
@@ -178,6 +179,5 @@ class EnrichSolrResult {
         curl_close($ch);
         return $data;
     }
-
 
 }

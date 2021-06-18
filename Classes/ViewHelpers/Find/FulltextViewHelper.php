@@ -13,7 +13,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class FulltextViewHelper extends AbstractViewHelper {
+class FulltextViewHelper extends AbstractViewHelper
+{
 
 	/**
 	 * @var FulltextService

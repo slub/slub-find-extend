@@ -7,7 +7,8 @@ namespace Slub\SlubFindExtend\Services;
  * Class StatusService
  * @package Slub\SlubFindExtend\Services
  */
-class LinksFromAiFullrecordService {
+class LinksFromAiFullrecordService
+{
 
     /**
      * Returns the links from the AI fullrecord

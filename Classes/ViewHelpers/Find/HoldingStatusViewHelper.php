@@ -12,7 +12,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
-class HoldingStatusViewHelper extends AbstractViewHelper {
+class HoldingStatusViewHelper extends AbstractViewHelper
+{
 
 	/**
 	 * @var \Slub\SlubFindExtend\Services\HoldingStatusService
@@ -52,5 +53,3 @@ class HoldingStatusViewHelper extends AbstractViewHelper {
 
 
 }
-
-?>

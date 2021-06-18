@@ -12,7 +12,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * GetUsernameViewHelper
  */
-class GetDataFromWebserviceViewHelper extends AbstractViewHelper {
+class GetDataFromWebserviceViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.

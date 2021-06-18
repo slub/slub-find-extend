@@ -12,9 +12,8 @@ use TYPO3\CMS\Core\SingletonInterface;
  * Class SessionHandlerService
  * @package Slub\SlubFindExtend\Services
  */
-class SessionHandlerService implements SingletonInterface {
-
-
+class SessionHandlerService implements SingletonInterface
+{
     private $prefixKey = 'slub_find_extend_';
 
     /**

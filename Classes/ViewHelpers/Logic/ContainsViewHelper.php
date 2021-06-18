@@ -22,7 +22,8 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * @package Vhs
  * @subpackage ViewHelpers\Condition\String
  */
-class ContainsViewHelper extends AbstractConditionViewHelper {
+class ContainsViewHelper extends AbstractConditionViewHelper
+{
 
     /**
      * Registers own arguments.
@@ -58,7 +59,7 @@ class ContainsViewHelper extends AbstractConditionViewHelper {
         }
 
         return FALSE;
-        
+
     }
 
 }

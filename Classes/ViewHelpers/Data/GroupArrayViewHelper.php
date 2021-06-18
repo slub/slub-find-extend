@@ -8,7 +8,8 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-class GroupArrayViewHelper extends AbstractViewHelper {
+class GroupArrayViewHelper extends AbstractViewHelper
+{
 
     /**
      * Register arguments.
@@ -75,5 +76,3 @@ class GroupArrayViewHelper extends AbstractViewHelper {
     }
 
 }
-
-?>
