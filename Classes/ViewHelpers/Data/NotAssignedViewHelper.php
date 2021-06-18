@@ -10,7 +10,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class NotAssignedViewHelper extends AbstractViewHelper
-
+{
 
 	private static $notAssignedStrings = ['No subject assigned', 'not assigned', 'Not assigned'];
 
@@ -49,5 +49,3 @@ class NotAssignedViewHelper extends AbstractViewHelper
 	}
 
 }
-
-?>
