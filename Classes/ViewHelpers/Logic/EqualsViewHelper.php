@@ -30,8 +30,8 @@ class EqualsViewHelper extends AbstractConditionViewHelper
      */
     public function initializeArguments() {
         parent::initializeArguments();
-        $this->registerArgument('string', 'string', 'The string to check against', TRUE, NULL);
-        $this->registerArgument('test', 'string', 'The string to check', TRUE, NULL);
+        $this->registerArgument('string', 'string', 'The string to check against', true);
+        $this->registerArgument('test', 'string', 'The string to check', true);
     }
 
     /**
@@ -40,13 +40,13 @@ class EqualsViewHelper extends AbstractConditionViewHelper
      */
     protected static function evaluateCondition($arguments = null) {
 
-        $string = $arguments['string'];
-        $test = $arguments['test'];
+        $string = (string) $arguments['string'];
+        $test = (string) $arguments['test'];
 
-        if (FALSE !== ($string === $test)) {
-            return TRUE;
+        if (false !== ($string === $test)) {
+            return true;
         } else {
-            return FALSE;
+            return false;
         }
     }
 

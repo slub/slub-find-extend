@@ -19,7 +19,7 @@ class ArrayAccessViewHelper extends AbstractViewHelper
 	public function initializeArguments() {
 		parent::initializeArguments();
 		$this->registerArgument('data', 'array', 'The data to access', true);
-		$this->registerArgument('index', 'int', 'The index to acces', false, 0);
+		$this->registerArgument('index', 'int', 'The index to access', false, 0);
 	}
 
     /**
