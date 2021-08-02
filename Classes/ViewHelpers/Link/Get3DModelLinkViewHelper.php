@@ -94,6 +94,7 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
 			case "ZwB Medizin":
 				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-fiedlerstrasse-medizin'>Zweigbibliothek Medizin</a>";
 			case "ZwB Forst":
+			case "ZwB Tharandt":
 			case "ZwB Forstwissenschaft":
 				return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-tharandt-forstwesen'>Zweigbibliothek Forst</a>";
 			case "ZwB Erziehungswissenschaften":
