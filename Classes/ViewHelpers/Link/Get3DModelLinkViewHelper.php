@@ -56,11 +56,11 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
 		switch ($pickupDesc) {
 			case "Zentralbibliothek":
 				$pickupDesc = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
-				$pickupID = 'ol3tb';
+				$pickupID = 'eklkb';
 				break;
 			case "Zentralbibliothek Ebene 0 SB-Regal":
 				$pickupDesc = "Zentralbibliothek<br>Ebene 0<br>SB-Regal";
-				$pickupID = 'ol3tb';
+				$pickupID = 'eklkb';
 				break;
 			case "Zentralbibliothek Ebene -1 SB-Regal Zeitungen":
 				$pickupDesc = "Zentralbibliothek<br>Ebene -1<br>SB-Regal Zeitungen";
