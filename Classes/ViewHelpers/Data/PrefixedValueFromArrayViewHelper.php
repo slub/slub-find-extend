@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -13,17 +14,17 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class PrefixedValueFromArrayViewHelper extends AbstractViewHelper
 {
-
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('prefix', 'string', 'prefix', TRUE);
-		$this->registerArgument('prefixSprint', 'string', 'prefix sprintf string', TRUE);
-		$this->registerArgument('array', 'array', 'values', TRUE);
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('prefix', 'string', 'prefix', true);
+        $this->registerArgument('prefixSprint', 'string', 'prefix sprintf string', true);
+        $this->registerArgument('array', 'array', 'values', true);
+    }
 
     /**
      * @return string
@@ -33,22 +34,18 @@ class PrefixedValueFromArrayViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
+        if (!is_array($arguments['array'])) {
+            return '';
+        }
 
-		if (!is_array($arguments['array'])) {
-			return '';
-		}
+        $prefix = sprintf($arguments['prefixSprint'], $arguments['prefix']);
 
-		$prefix = sprintf($arguments['prefixSprint'], $arguments['prefix']);
+        foreach ($arguments['array'] as $data) {
+            if (substr($data, 0, strlen($prefix)) === $prefix) {
+                return substr($data, strlen($prefix));
+            }
+        }
 
-		foreach ($arguments['array'] as $data) {
-
-			if(substr($data,0,strlen($prefix)) === $prefix) {
-				return substr($data,strlen($prefix));
-			}
-		}
-
-		return '';
-
-	}
-
+        return '';
+    }
 }

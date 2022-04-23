@@ -13,17 +13,17 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class SplitFixedDataViewHelper extends AbstractViewHelper
 {
-
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('string', 'string', 'The string to split into components', FALSE, NULL);
-		$this->registerArgument('lengths', 'string', 'The lengths seperated, by an "," to seperate the string', FALSE);
-        $this->registerArgument('placeholder', 'string', 'The string that is used to mark a offset as not used', FALSE, '|');
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('string', 'string', 'The string to split into components', false, null);
+        $this->registerArgument('lengths', 'string', 'The lengths seperated, by an "," to seperate the string', false);
+        $this->registerArgument('placeholder', 'string', 'The string that is used to mark a offset as not used', false, '|');
+    }
 
     /**
      * @return array
@@ -33,22 +33,19 @@ class SplitFixedDataViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
-	    $string = $arguments['string'];
-        if ($string === NULL) {
+        $string = $arguments['string'];
+        if ($string === null) {
             $string = $renderChildrenClosure();
         }
 
-		$lengths = explode(',',$arguments['lengths']);
+        $lengths = explode(',', $arguments['lengths']);
 
         if (sizeof($lengths) == 0) {
             return $lengths;
         } else {
-
             $splittedString = [];
 
             foreach ($lengths as $length) {
-
                 if (substr($string, 0, 1) === $arguments['placeholder']) {
                     $splittedString[] = '';
                     $string = substr($string, 1);
@@ -56,12 +53,9 @@ class SplitFixedDataViewHelper extends AbstractViewHelper
                     $splittedString[] = substr($string, 0, $length);
                     $string = substr($string, $length);
                 }
-
             }
 
             return $splittedString;
-
         }
-	}
-
+    }
 }

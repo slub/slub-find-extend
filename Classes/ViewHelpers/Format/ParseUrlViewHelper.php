@@ -12,14 +12,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ParseUrlViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('url', 'string', 'URL string', TRUE, NULL);
+        $this->registerArgument('url', 'string', 'URL string', true, null);
     }
 
     /**
@@ -30,12 +30,10 @@ class ParseUrlViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $url = parse_url($arguments['url']);
 
         $url['ext'] = pathinfo($url['path'], PATHINFO_EXTENSION);
 
         return $url;
     }
-
 }

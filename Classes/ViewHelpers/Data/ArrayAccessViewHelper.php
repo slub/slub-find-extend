@@ -11,16 +11,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ArrayAccessViewHelper extends AbstractViewHelper
 {
-
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('data', 'array', 'The data to access', true);
-		$this->registerArgument('index', 'int', 'The index to access', false, 0);
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('data', 'array', 'The data to access', true);
+        $this->registerArgument('index', 'int', 'The index to access', false, 0);
+    }
 
     /**
      * @param array $arguments
@@ -29,13 +29,12 @@ class ArrayAccessViewHelper extends AbstractViewHelper
 
      * @return string
      */
-	public static function renderStatic(
+    public static function renderStatic(
         array $arguments,
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-		$data = $arguments['data'];
-		return $data[$arguments['index']];
-	}
-
+        $data = $arguments['data'];
+        return $data[$arguments['index']];
+    }
 }

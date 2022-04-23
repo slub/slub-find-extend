@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -13,7 +14,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class GetUsernameViewHelper extends AbstractViewHelper
 {
-
     /**
      * @return string
      */
@@ -24,5 +24,4 @@ class GetUsernameViewHelper extends AbstractViewHelper
     ) {
         return strval($GLOBALS['TSFE']->fe_user->user['username']);
     }
-
 }

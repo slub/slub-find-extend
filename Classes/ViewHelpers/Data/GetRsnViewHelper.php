@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -16,15 +17,15 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class GetRsnViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('rsns', 'array', 'The RSNs to search', FALSE, NULL);
-        $this->registerArgument('isil', 'string', 'ISIL to match', FALSE, NULL);
+        $this->registerArgument('rsns', 'array', 'The RSNs to search', false, null);
+        $this->registerArgument('isil', 'string', 'ISIL to match', false, null);
     }
 
     /**
@@ -35,8 +36,7 @@ class GetRsnViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
-        if($arguments['rsns']) {
+        if ($arguments['rsns']) {
             foreach ($arguments['rsns'] as $rsn) {
                 if (preg_match('/^.*'.$arguments['isil'].'.?(.*?)$/', $rsn, $matches) === 1) {
                     return $matches[1];
@@ -45,7 +45,5 @@ class GetRsnViewHelper extends AbstractViewHelper
         }
 
         return '';
-
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -16,16 +17,16 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
  */
 class GetMarcDataViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('record', 'mixed', 'The decoded MARC record', FALSE, NULL);
-        $this->registerArgument('path', 'string', 'The MARC path', FALSE, NULL);
-        $this->registerArgument('index', 'integer', 'If return data might be an array, define which index should be returned', FALSE, NULL);
+        $this->registerArgument('record', 'mixed', 'The decoded MARC record', false, null);
+        $this->registerArgument('path', 'string', 'The MARC path', false, null);
+        $this->registerArgument('index', 'integer', 'If return data might be an array, define which index should be returned', false, null);
     }
 
     /**
@@ -36,21 +37,16 @@ class GetMarcDataViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
-        if($arguments['record']) {
-
+        if ($arguments['record']) {
             $reference = new File_MARC_Reference((string)$arguments['path'], $arguments['record']);
 
-            if($arguments['index'] !== NULL && is_array($reference->content)) {
+            if ($arguments['index'] !== null && is_array($reference->content)) {
                 return $reference->content[$arguments['index']];
             } else {
                 return $reference->content;
             }
-
         }
 
-        return NULL;
-
+        return null;
     }
-
 }

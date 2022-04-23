@@ -12,7 +12,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class RemoveParenthesesTextViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -24,10 +23,11 @@ class RemoveParenthesesTextViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string', FALSE);
-        $this->registerArgument('limit', 'int', 'Limit replacments', FALSE, -1);
+        $this->registerArgument('content', 'string', 'Content string', false);
+        $this->registerArgument('limit', 'int', 'Limit replacments', false, -1);
     }
 
     /**
@@ -38,14 +38,12 @@ class RemoveParenthesesTextViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
 
-        if ($content === NULL) {
+        if ($content === null) {
             $content = $renderChildrenClosure();
         }
 
-        return preg_replace("/\([^)]+\)/","",$content, $arguments['limit']);
+        return preg_replace("/\([^)]+\)/", "", $content, $arguments['limit']);
     }
-
 }

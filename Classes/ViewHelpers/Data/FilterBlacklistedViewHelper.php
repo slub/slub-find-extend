@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -13,16 +14,17 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class FilterBlacklistedViewHelper extends AbstractViewHelper
 {
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('data', 'array', 'The data checked against the blacklist', TRUE, NULL);
-		$this->registerArgument('blacklist', 'array', 'The blacklist to be parsed', TRUE, NULL);
-		$this->registerArgument('blacklistOnKeys', 'boolean', 'Blacklist on array values (default: false) or array keys (true)', FALSE, FALSE);
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('data', 'array', 'The data checked against the blacklist', true, null);
+        $this->registerArgument('blacklist', 'array', 'The blacklist to be parsed', true, null);
+        $this->registerArgument('blacklistOnKeys', 'boolean', 'Blacklist on array values (default: false) or array keys (true)', false, false);
+    }
 
     /**
      * @return array
@@ -32,16 +34,16 @@ class FilterBlacklistedViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-		if (is_array($arguments['data']) && is_array($arguments['blacklist'])) {
-			if( $arguments['blacklistOnKeys'] === FALSE ) {
-				return preg_grep('/^(' . str_replace('/', '\/', implode('|', $arguments['blacklist'])) . ')$/', $arguments['data'], PREG_GREP_INVERT);
-			} else {
-				return array_flip(preg_grep('/^(' . str_replace('/', '\/', implode('|', $arguments['blacklist'])) . ')$/', array_flip($arguments['data']), PREG_GREP_INVERT));
-			}
-		} elseif (is_array($arguments['data'])) {
-			return $arguments['data'];
-		} else {
-			return array();
-		}
-	}
+        if (is_array($arguments['data']) && is_array($arguments['blacklist'])) {
+            if ($arguments['blacklistOnKeys'] === false) {
+                return preg_grep('/^(' . str_replace('/', '\/', implode('|', $arguments['blacklist'])) . ')$/', $arguments['data'], PREG_GREP_INVERT);
+            } else {
+                return array_flip(preg_grep('/^(' . str_replace('/', '\/', implode('|', $arguments['blacklist'])) . ')$/', array_flip($arguments['data']), PREG_GREP_INVERT));
+            }
+        } elseif (is_array($arguments['data'])) {
+            return $arguments['data'];
+        } else {
+            return array();
+        }
+    }
 }

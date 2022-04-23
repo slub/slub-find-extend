@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\Slots;
 
 /*
@@ -17,7 +18,6 @@ use Slub\SlubFindExtend\Services\SessionHandlerService;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use Solarium\QueryType\Select\Result\Document;
 
-
 /**
  * Slot implementation before the
  *
@@ -26,7 +26,6 @@ use Solarium\QueryType\Select\Result\Document;
  */
 class ModifyArguments
 {
-
     /**
      * Contains the settings of the current extension
      *
@@ -44,7 +43,8 @@ class ModifyArguments
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager) {
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+    {
         $this->configurationManager = $configurationManager;
         $this->settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
     }
@@ -59,7 +59,8 @@ class ModifyArguments
      *
      * @param SessionHandlerService $sessionHandler
      */
-    public function injectSessionHandler(SessionHandlerService $sessionHandler) {
+    public function injectSessionHandler(SessionHandlerService $sessionHandler)
+    {
         $this->sessionHandler = $sessionHandler;
     }
 
@@ -68,17 +69,17 @@ class ModifyArguments
      *
      * @param array &$assignments
      */
-    public function modify(&$arguments) {
+    public function modify(&$arguments)
+    {
         if (strlen($arguments['id']) > 0) {
             if (is_array($arguments['underlyingQuery']) && (count($arguments['underlyingQuery']) > 0)) {
                 $this->sessionHandler->writeToSession($arguments['underlyingQuery'], $arguments['id'].'_underlyingQuery');
             } else {
                 $storedUnderlyingQuery = $this->sessionHandler->restoreFromSession($arguments['id'].'_underlyingQuery');
-                if($storedUnderlyingQuery) {
+                if ($storedUnderlyingQuery) {
                     $arguments['underlyingQuery'] = $storedUnderlyingQuery;
                 }
             }
         }
     }
-
 }

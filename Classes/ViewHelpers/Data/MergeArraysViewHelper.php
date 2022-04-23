@@ -11,17 +11,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class MergeArraysViewHelper extends AbstractViewHelper
 {
-
-
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('arrayOne', 'array', 'The first array.', TRUE, array());
-		$this->registerArgument('arrayTwo', 'array', 'The second array', TRUE, array());
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('arrayOne', 'array', 'The first array.', true, array());
+        $this->registerArgument('arrayTwo', 'array', 'The second array', true, array());
+    }
 
     /**
      * @return mixed
@@ -31,22 +30,19 @@ class MergeArraysViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-		$arrayOne = $arguments['arrayOne'];
-		$arrayTwo = $arguments['arrayTwo'];
+        $arrayOne = $arguments['arrayOne'];
+        $arrayTwo = $arguments['arrayTwo'];
 
-		if ($arrayOne !== NULL && $arrayTwo !== NULL) {
-			return array_merge($arrayOne, $arrayTwo);
-		}
+        if ($arrayOne !== null && $arrayTwo !== null) {
+            return array_merge($arrayOne, $arrayTwo);
+        }
 
-		if ($arrayOne === NULL) {
-			return $arrayTwo;
-		} else if ($arrayTwo === NULL) {
-			return $arrayOne;
-		}
+        if ($arrayOne === null) {
+            return $arrayTwo;
+        } elseif ($arrayTwo === null) {
+            return $arrayOne;
+        }
 
-		return NULL;
-	}
-
+        return null;
+    }
 }
-
-?>

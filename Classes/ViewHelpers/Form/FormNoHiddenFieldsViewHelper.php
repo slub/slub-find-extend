@@ -4,10 +4,12 @@ namespace Slub\SlubFindExtend\ViewHelpers\Form;
 
 class FormNoHiddenFieldsViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FormViewHelper
 {
-    protected function renderHiddenReferrerFields(){
+    protected function renderHiddenReferrerFields()
+    {
         return '';
     }
-    protected function renderTrustedPropertiesField(){
+    protected function renderTrustedPropertiesField()
+    {
         return '';
     }
 }

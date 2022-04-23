@@ -11,18 +11,18 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ArrayUniqueViewHelper extends AbstractViewHelper
 {
+    /**
+     * Register arguments.
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('array', 'string', 'The array to filter', false, null);
+    }
 
-	/**
-	 * Register arguments.
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('array', 'string', 'The array to filter', FALSE, NULL);
-	}
-
-	/**
-	 * @return array
-	 */
+    /**
+     * @return array
+     */
     public static function renderStatic(
         array $arguments,
         \Closure $renderChildrenClosure,
@@ -30,13 +30,14 @@ class ArrayUniqueViewHelper extends AbstractViewHelper
     ) {
         $array = $arguments['array'];
 
-        if ($array === NULL) {
+        if ($array === null) {
             $array = $renderChildrenClosure();
         }
 
-        if(!is_array($array)) return NULL;
+        if (!is_array($array)) {
+            return null;
+        }
 
-		return array_unique($array);
-	}
-
+        return array_unique($array);
+    }
 }

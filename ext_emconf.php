@@ -11,24 +11,24 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Find configuration for SLUB Catalog',
-	'description' => '',
-	'category' => 'plugin',
-	'author' => 'Christof Rodejohann',
-	'author_email' => 'typo3@slub-dresden.de',
-	'state' => 'stable',
-	'internal' => '',
-	'uploadfolder' => '0',
-	'createDirs' => '',
-	'clearCacheOnLoad' => 0,
-	'version' => '1.0.6',
-	'constraints' => array(
-		'depends' => array(
+    'title' => 'Find configuration for SLUB Catalog',
+    'description' => '',
+    'category' => 'plugin',
+    'author' => 'Christof Rodejohann',
+    'author_email' => 'typo3@slub-dresden.de',
+    'state' => 'stable',
+    'internal' => '',
+    'uploadfolder' => '0',
+    'createDirs' => '',
+    'clearCacheOnLoad' => 0,
+    'version' => '1.0.6',
+    'constraints' => array(
+        'depends' => array(
             'typo3' => '9.5.0-9.5.99'
-		),
-		'conflicts' => array(
-		),
-		'suggests' => array(
-		),
-	),
+        ),
+        'conflicts' => array(
+        ),
+        'suggests' => array(
+        ),
+    ),
 );

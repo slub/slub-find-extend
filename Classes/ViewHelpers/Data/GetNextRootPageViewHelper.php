@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -13,7 +14,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class GetNextRootPageViewHelper extends AbstractViewHelper
 {
-
     /**
      * @return array
      */
@@ -28,13 +28,11 @@ class GetNextRootPageViewHelper extends AbstractViewHelper
         array_reverse($rootline);
 
         foreach ($rootline as $page) {
-            if($page['is_siteroot'] === 1) {
+            if ($page['is_siteroot'] === 1) {
                 return $page;
             }
         }
 
         return [];
-
     }
-
 }

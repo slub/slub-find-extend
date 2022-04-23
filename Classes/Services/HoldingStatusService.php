@@ -10,27 +10,25 @@ use Solarium\QueryType\Select\Result\Document;
  */
 class HoldingStatusService
 {
-
     /**
      * Returns the holding state
      *
      * @param $exemplare
      * @return int
      */
-    private function getLocalHoldingStatusFromArray($exemplare) {
-
+    private function getLocalHoldingStatusFromArray($exemplare)
+    {
         $status = 9999;
 
-        if(!is_array($exemplare)) {
+        if (!is_array($exemplare)) {
             return 0;
         }
 
         foreach ($exemplare as $exemplar) {
-
-            if(!is_array($exemplar)) {
+            if (!is_array($exemplar)) {
                 $exemplar = (array)$exemplar;
             }
-            if ( $status != 1) {
+            if ($status != 1) {
                 if ($exemplar['elements'] && is_array($exemplar['elements'])) {
                     $status = $this->getLocalHoldingStatusFromArray($exemplar['elements']);
                 } elseif ($exemplar['_calc_colorcode'] < $status) {
@@ -42,12 +40,11 @@ class HoldingStatusService
         }
 
         // 0 = (i)nfo
-        if($status === 9999) {
+        if ($status === 9999) {
             $status = 0;
         }
 
         return $status;
-
     }
 
     /**
@@ -57,15 +54,14 @@ class HoldingStatusService
      * @param mixed $copies NULL
      * @return int
      */
-    public function getStatus(Document $document, $copies = []) {
+    public function getStatus(Document $document, $copies = [])
+    {
 
         // Electronic Resource are always accessible. Might needs fine tuning further on.
-        if($document['access_facet'] === 'Electronic Resources') {
+        if ($document['access_facet'] === 'Electronic Resources') {
             return 1;
         } else {
             return $this->getLocalHoldingStatusFromArray($copies);
         }
-
     }
-
 }

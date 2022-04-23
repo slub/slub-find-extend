@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\Slots\Decoder;
 
 /*
@@ -29,17 +30,18 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
 
 class Marc21
 {
-
     /**
      * Decodes raw Marc21 to File_MARC_Record
      *
      * @param string $marc
      * @return File_MARC_Record
      */
-    public function decode($marc) {
-
+    public function decode($marc)
+    {
         $marc = str_replace(
-            ['#29;', '#30;', '#31;'], ["\x1D", "\x1E", "\x1F"], $marc
+            ['#29;', '#30;', '#31;'],
+            ["\x1D", "\x1E", "\x1F"],
+            $marc
         );
 
         $records = new File_MARC($marc, File_MARC::SOURCE_STRING);
@@ -48,7 +50,5 @@ class Marc21
         $record = $records->next();
 
         return $record;
-
     }
-
 }

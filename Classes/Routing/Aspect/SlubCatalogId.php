@@ -1,9 +1,10 @@
 <?php
+
 namespace Slub\SlubFindExtend\Routing\Aspect;
 
 /**
  * simple dummy class to remove cHashes from routing
- * 
+ *
 */
 
 use TYPO3\CMS\Core\Routing\Aspect\StaticMappableAspectInterface;

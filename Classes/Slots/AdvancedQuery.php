@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\Slots;
 
 /*
@@ -17,7 +18,6 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use Slub\SlubFindExtend\Backend\Solr\SearchHandler;
 use Solarium\QueryType\Select\Query\Query;
 
-
 /**
  * Slot implementation before the
  *
@@ -26,7 +26,6 @@ use Solarium\QueryType\Select\Query\Query;
  */
 class AdvancedQuery
 {
-
     /**
      * @var \Slub\SlubFindExtend\Services\StopWordService
      * @inject
@@ -50,7 +49,8 @@ class AdvancedQuery
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager) {
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+    {
         $this->configurationManager = $configurationManager;
         $this->settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
     }
@@ -60,9 +60,9 @@ class AdvancedQuery
      *
      * @param $parameter
      */
-    private function handleNumeric($parameter) {
-
-        if(is_numeric($parameter)) {
+    private function handleNumeric($parameter)
+    {
+        if (is_numeric($parameter)) {
             $parameter = sprintf($this->settings['queryModifier']['numeric'], $parameter);
         }
 
@@ -76,21 +76,26 @@ class AdvancedQuery
      * @param array $settings
      * @return string
      */
-    public function handlePhraseMatch($originalQuerystring, $searchHandler, $settings) {
-
-        if(preg_match('/^".*"$/', trim($originalQuerystring))) { return ''; }
+    public function handlePhraseMatch($originalQuerystring, $searchHandler, $settings)
+    {
+        if (preg_match('/^".*"$/', trim($originalQuerystring))) {
+            return '';
+        }
 
         $boost = ($settings['queryModifier']['phraseMatchBoost']) ? '^'.$settings['queryModifier']['phraseMatchBoost'] : '';
 
         return ' OR ' . $searchHandler->createAdvancedQueryString('"'.$originalQuerystring.'"') . $boost;
-
     }
 
-    public function handleIsilMatch($originalQuerystring, $searchHandler, $settings) {
+    public function handleIsilMatch($originalQuerystring, $searchHandler, $settings)
+    {
+        if (preg_match('/^".*"$/', trim($originalQuerystring))) {
+            return '';
+        }
 
-        if(preg_match('/^".*"$/', trim($originalQuerystring))) { return ''; }
-
-        if(!$settings['queryModifier']['isilQueryString']) { return ''; }
+        if (!$settings['queryModifier']['isilQueryString']) {
+            return '';
+        }
 
         $originalQuerystring = trim($originalQuerystring, $settings['queryModifier']['isilQueryTrim']);
         $originalQuerystring = str_replace([' ', ')', '('], ['\\\ ', '\\\)', '\\\('], $originalQuerystring);
@@ -98,22 +103,20 @@ class AdvancedQuery
         $return = ' OR ' . sprintf($this->settings['queryModifier']['isilQueryString'], $originalQuerystring).'^500000';
 
         return $return;
-
     }
 
     /**
      * @param array $settings Settings Array
      */
-    private function handleStripIntFields(&$settings, $queryParameter) {
-
-        if(!is_numeric(substr($queryParameter, 0, 2))) {
+    private function handleStripIntFields(&$settings, $queryParameter)
+    {
+        if (!is_numeric(substr($queryParameter, 0, 2))) {
             foreach ($settings['DismaxFields'] as $key => $value) {
                 if (intval($key) >= 800) {
                     unset($settings['DismaxFields'][$key], $queryParameter);
                 }
             }
         }
-
     }
 
     /**
@@ -121,8 +124,9 @@ class AdvancedQuery
      *
      * @param string $queryParameter Settings Array
      */
-    private function stripCharsFromQuery($queryParameter) {
-            return str_replace(['/','\\'],[' '],$queryParameter);
+    private function stripCharsFromQuery($queryParameter)
+    {
+        return str_replace(['/','\\'], [' '], $queryParameter);
     }
 
     /**
@@ -130,8 +134,9 @@ class AdvancedQuery
      *
      * @param string $queryParameter Settings Array
      */
-    private function cleanParameter($queryParameter) {
-            return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'],' ',$queryParameter);
+    private function cleanParameter($queryParameter)
+    {
+        return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'], ' ', $queryParameter);
     }
 
     /**
@@ -140,19 +145,16 @@ class AdvancedQuery
      * @param Query &$query
      * @param array $arguments request arguments
      */
-    public function build(&$query, $arguments) {
-
+    public function build(&$query, $arguments)
+    {
         $queryParameter = trim(is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default']);
         $originalQueryParameter = $queryParameter;
 
         $settings = $this->settings['components'];
 
-        if($settings) {
-
+        if ($settings) {
             if (strlen($queryParameter) > 0) {
-
                 if ($this->settings['queryModifier']) {
-
                     if (!$this->settings['queryModifier']['phraseMatch']) {
                         $queryParameter = $this->stripCharsFromQuery($queryParameter);
                     }
@@ -168,7 +170,6 @@ class AdvancedQuery
                     if ($this->settings['queryModifier']['numeric']) {
                         $queryParameter = $this->handleNumeric($queryParameter);
                     }
-
                 }
 
                 if ($this->settings['queryModifier'] && $this->settings['queryModifier']['stripIntFields']) {
@@ -190,9 +191,7 @@ class AdvancedQuery
                 }
 
                 $query->setQuery($querystring);
-
             } else {
-
                 if ($settings['DismaxHandler'] === 'edismax') {
                     $dismax = $query->getEDisMax();
                 } else {
@@ -209,10 +208,7 @@ class AdvancedQuery
                         }
                     }
                 }
-
             }
         }
-
     }
-
 }

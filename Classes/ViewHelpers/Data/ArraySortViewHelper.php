@@ -11,16 +11,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ArraySortViewHelper extends AbstractViewHelper
 {
-
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('array', 'array', 'The data to access', FALSE, NULL);
-		$this->registerArgument('flag', 'string', 'The flags to sort', FALSE, NULL);
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('array', 'array', 'The data to access', false, null);
+        $this->registerArgument('flag', 'string', 'The flags to sort', false, null);
+    }
 
     /**
      * @return string
@@ -32,15 +32,16 @@ class ArraySortViewHelper extends AbstractViewHelper
     ) {
         $array = $arguments['array'];
 
-        if ($array === NULL) {
+        if ($array === null) {
             $array = $renderChildrenClosure();
         }
 
-        if(!is_array($array)) return NULL;
+        if (!is_array($array)) {
+            return null;
+        }
 
         ksort($array, $arguments['flag']);
 
         return $array;
-	}
-
+    }
 }

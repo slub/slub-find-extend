@@ -11,7 +11,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class MetaTagViewHelper extends AbstractViewHelper
 {
-
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -27,9 +26,8 @@ class MetaTagViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         if (empty($arguments['property'])) {
-          return;
+            return;
         }
 
         if (!empty($arguments['content'])) {

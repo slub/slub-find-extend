@@ -45,7 +45,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class HighlightFieldViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -53,149 +52,148 @@ class HighlightFieldViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
-	/**
-	 * Registers own arguments.
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('results', '\Solarium\QueryType\Select\Result\Result', 'Query results', TRUE);
-		$this->registerArgument('document', 'array', 'Array of document fields', TRUE);
-		$this->registerArgument('field', 'string', 'name of field in document to highlight', TRUE);
-		$this->registerArgument('alternateField', 'string', 'name of alternate field in document to use for highlighting', FALSE, NULL);
-		$this->registerArgument('index', 'int', 'if the field is an array: index of the single element to highlight', FALSE);
-		$this->registerArgument('idKey', 'string', 'name of the field in document that is its ID', FALSE, 'id');
-		$this->registerArgument('highlightTagOpen', 'string', 'opening tag to insert to begin highlighting', FALSE, '<em class="highlight">');
-		$this->registerArgument('highlightTagClose', 'string', 'closing tag to insert to end highlighting', FALSE, '</em>');
-		$this->registerArgument('raw', 'boolean', 'whether to not HTML escape the output', FALSE, FALSE);
-		$this->registerArgument('translate', 'array', 'translate path and extension', FALSE, FALSE);
-	}
+    /**
+     * Registers own arguments.
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('results', '\Solarium\QueryType\Select\Result\Result', 'Query results', true);
+        $this->registerArgument('document', 'array', 'Array of document fields', true);
+        $this->registerArgument('field', 'string', 'name of field in document to highlight', true);
+        $this->registerArgument('alternateField', 'string', 'name of alternate field in document to use for highlighting', false, null);
+        $this->registerArgument('index', 'int', 'if the field is an array: index of the single element to highlight', false);
+        $this->registerArgument('idKey', 'string', 'name of the field in document that is its ID', false, 'id');
+        $this->registerArgument('highlightTagOpen', 'string', 'opening tag to insert to begin highlighting', false, '<em class="highlight">');
+        $this->registerArgument('highlightTagClose', 'string', 'closing tag to insert to end highlighting', false, '</em>');
+        $this->registerArgument('raw', 'boolean', 'whether to not HTML escape the output', false, false);
+        $this->registerArgument('translate', 'array', 'translate path and extension', false, false);
+    }
 
 
-	/**
-	 * @return string
-	 */
-	public function render() {
-		if ($this->arguments['document']) {
-			$fields = $this->arguments['document'];
-			$fieldContent = $fields[$this->arguments['field']];
-			if ($this->arguments['index'] !== NULL) {
-				if (is_array($fieldContent) && count($fieldContent) > $this->arguments['index']) {
-					$fieldContent = $fieldContent[$this->arguments['index']];
-				} else {
-					// TODO: error message
-					$fieldContent = '';
-				}
-			}
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        if ($this->arguments['document']) {
+            $fields = $this->arguments['document'];
+            $fieldContent = $fields[$this->arguments['field']];
+            if ($this->arguments['index'] !== null) {
+                if (is_array($fieldContent) && count($fieldContent) > $this->arguments['index']) {
+                    $fieldContent = $fieldContent[$this->arguments['index']];
+                } else {
+                    // TODO: error message
+                    $fieldContent = '';
+                }
+            }
 
-			return $this->highlightField($fieldContent);
-		}
-	}
-
-
-	/**
-	 * Returns string or array of strings with highlighted areas enclosed
-	 * by \ueeee and \ueeef.
-	 *
-	 * @param array|string $fieldContent content of the field to highlight
-	 * @return array|string
-	 */
-	private function highlightField($fieldContent) {
-		$highlightInfo = $this->getHighlightInfo();
-
-		if (is_array($fieldContent)) {
-			$result = array();
-			foreach ($fieldContent as $singleField) {
-
-				if($this->arguments['translate']) {
-					$singleField = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']) ?
-						\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']) : $singleField;
-				}
-
-				$result[] = $this->highlightSingleField($singleField, $highlightInfo);
-			}
-		} else {
+            return $this->highlightField($fieldContent);
+        }
+    }
 
 
-			if($this->arguments['translate']) {
-				$fieldContent = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']) ?
-					\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']) : $fieldContent;
-			}
+    /**
+     * Returns string or array of strings with highlighted areas enclosed
+     * by \ueeee and \ueeef.
+     *
+     * @param array|string $fieldContent content of the field to highlight
+     * @return array|string
+     */
+    private function highlightField($fieldContent)
+    {
+        $highlightInfo = $this->getHighlightInfo();
 
-			$result = $this->highlightSingleField($fieldContent, $highlightInfo);
-		}
+        if (is_array($fieldContent)) {
+            $result = array();
+            foreach ($fieldContent as $singleField) {
+                if ($this->arguments['translate']) {
+                    $singleField = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']) ?
+                        \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$singleField, $this->arguments['translate']['extension']) : $singleField;
+                }
 
-		return $result;
-	}
+                $result[] = $this->highlightSingleField($singleField, $highlightInfo);
+            }
+        } else {
+            if ($this->arguments['translate']) {
+                $fieldContent = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']) ?
+                    \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($this->arguments['translate']['path'].'.'.$fieldContent, $this->arguments['translate']['extension']) : $fieldContent;
+            }
 
+            $result = $this->highlightSingleField($fieldContent, $highlightInfo);
+        }
 
-	/**
-	 * Returns $fieldString with highlighted areas enclosed by \ueeee and \ueeef.
-	 *
-	 * @param string $fieldString the string to highlight
-	 * @param type $highlightInfo information provided by the index’ highlighter
-	 * @return string
-	 */
-	private function highlightSingleField($fieldString, $highlightInfo) {
-		$result = NULL;
-
-		foreach ($highlightInfo as $highlightItem) {
-			$highlightItemStripped = str_replace(array('\ueeee', '\ueeef'), array('', ''), $highlightItem);
-			if (strpos($fieldString, $highlightItemStripped) !== NULL) {
-				// HTML escape the text here if not explicitly configured to not do so.
-				// Use f:format.raw in the template to avoid double escaping the HTML tags.
-				if (!$this->arguments['raw']) {
-					$highlightItem = htmlspecialchars($highlightItem);
-				}
-
-				$highlightItemMarkedUp = str_replace(
-						array('\ueeee', '\ueeef'),
-						array($this->arguments['highlightTagOpen'], $this->arguments['highlightTagClose']),
-						$highlightItem);
-				$result = str_replace($highlightItemStripped, $highlightItemMarkedUp, $fieldString);
-				break;
-			}
-		}
-
-		// If no highlighted string is present, use the original one.
-		if ($result === NULL) {
-			if ($this->arguments['raw']) {
-				$result = $fieldString;
-			} else {
-				$result = htmlspecialchars($fieldString);
-			}
-		}
-
-		return $result;
-	}
+        return $result;
+    }
 
 
-	/**
-	 * Returns highlight information for the document and field configured in
-	 * our arguments.
-	 *
-	 * @return array
-	 */
-	private function getHighlightInfo() {
-		$highlightInfo = array();
-		$documentID = $this->arguments['document'][$this->arguments['idKey']];
-		if ($documentID) {
-			$highlighting = $this->arguments['results']->getHighlighting();
+    /**
+     * Returns $fieldString with highlighted areas enclosed by \ueeee and \ueeef.
+     *
+     * @param string $fieldString the string to highlight
+     * @param type $highlightInfo information provided by the index’ highlighter
+     * @return string
+     */
+    private function highlightSingleField($fieldString, $highlightInfo)
+    {
+        $result = null;
 
-			if ($highlighting) {
+        foreach ($highlightInfo as $highlightItem) {
+            $highlightItemStripped = str_replace(array('\ueeee', '\ueeef'), array('', ''), $highlightItem);
+            if (strpos($fieldString, $highlightItemStripped) !== null) {
+                // HTML escape the text here if not explicitly configured to not do so.
+                // Use f:format.raw in the template to avoid double escaping the HTML tags.
+                if (!$this->arguments['raw']) {
+                    $highlightItem = htmlspecialchars($highlightItem);
+                }
 
-			    if($highlighting->getResult($documentID)) {
+                $highlightItemMarkedUp = str_replace(
+                    array('\ueeee', '\ueeef'),
+                    array($this->arguments['highlightTagOpen'], $this->arguments['highlightTagClose']),
+                    $highlightItem
+                );
+                $result = str_replace($highlightItemStripped, $highlightItemMarkedUp, $fieldString);
+                break;
+            }
+        }
 
+        // If no highlighted string is present, use the original one.
+        if ($result === null) {
+            if ($this->arguments['raw']) {
+                $result = $fieldString;
+            } else {
+                $result = htmlspecialchars($fieldString);
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Returns highlight information for the document and field configured in
+     * our arguments.
+     *
+     * @return array
+     */
+    private function getHighlightInfo()
+    {
+        $highlightInfo = array();
+        $documentID = $this->arguments['document'][$this->arguments['idKey']];
+        if ($documentID) {
+            $highlighting = $this->arguments['results']->getHighlighting();
+
+            if ($highlighting) {
+                if ($highlighting->getResult($documentID)) {
                     if ($this->arguments['alternateField']) {
                         $highlightInfo += $highlighting->getResult($documentID)->getField($this->arguments['alternateField']);
                     } else {
                         $highlightInfo += $highlighting->getResult($documentID)->getField($this->arguments['field']);
                     }
-
                 }
-			}
-		}
+            }
+        }
 
-		return $highlightInfo;
-	}
-
+        return $highlightInfo;
+    }
 }

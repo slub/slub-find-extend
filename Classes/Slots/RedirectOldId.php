@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\Slots;
 
 use Solarium\QueryType\Select\Result\Document;
@@ -13,7 +14,6 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
  */
 class RedirectOldId
 {
-
      /**
      * Contains the settings of the current extension
      *
@@ -36,12 +36,14 @@ class RedirectOldId
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager) {
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+    {
         $this->configurationManager = $configurationManager;
         $this->settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
     }
 
-    public function injectUriBuilder(UriBuilder $uriBuilder) {
+    public function injectUriBuilder(UriBuilder $uriBuilder)
+    {
         $this->uriBuilder = $uriBuilder;
     }
     /**
@@ -51,20 +53,14 @@ class RedirectOldId
      */
     public function redirect(&$result)
     {
-        if($this->settings['redirectOldId'] && $this->settings['redirectOldId']['active'] == 1) {
-
-            if($result['document'] && ($result['document']->getFields()['id'] !== $result['document']->getFields()[$this->settings['redirectOldId']['oldField']] )
+        if ($this->settings['redirectOldId'] && $this->settings['redirectOldId']['active'] == 1) {
+            if ($result['document'] && ($result['document']->getFields()['id'] !== $result['document']->getFields()[$this->settings['redirectOldId']['oldField']])
                 && ($_GET['tx_find_find']['id']) === $result['document']->getFields()[$this->settings['redirectOldId']['oldField']]) {
-
                 $uri = $this->uriBuilder->setUseCacheHash(0)->uriFor("detail", ['id' => $result['document']->getFields()['id']], "Search", "find", "Find");
 
-                header("Location: " . $uri, TRUE, 301);
+                header("Location: " . $uri, true, 301);
                 die();
             }
-
         }
-
-
     }
-
 }
