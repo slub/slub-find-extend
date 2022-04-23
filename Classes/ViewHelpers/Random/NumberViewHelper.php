@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Random;
 
 /*
@@ -70,13 +71,14 @@ class NumberViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
      * @param RenderingContextInterface $renderingContext
      * @return integer|float
      */
-    public function render() {
+    public function render()
+    {
         $minimum = $this->arguments['minimum'];
         $maximum = $this->arguments['maximum'];
         $minimumDecimals = $this->arguments['minimumDecimals'];
         $maximumDecimals = $this->arguments['maximumDecimals'];
         $natural = random_int($minimum, $maximum);
-        if (0 === (integer) $minimumDecimals && 0 === (integer) $maximumDecimals) {
+        if (0 === (int) $minimumDecimals && 0 === (int) $maximumDecimals) {
             return $natural;
         }
         $decimals = array_fill(0, random_int($minimumDecimals, $maximumDecimals), 0);

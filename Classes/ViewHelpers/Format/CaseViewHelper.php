@@ -12,16 +12,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class CaseViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string', TRUE, NULL);
-        $this->registerArgument('mode', 'string', 'lower or upper', TRUE, NULL);
-   }
+        $this->registerArgument('content', 'string', 'Content string', true, null);
+        $this->registerArgument('mode', 'string', 'lower or upper', true, null);
+    }
 
     /**
      * Changes case of string
@@ -32,13 +32,12 @@ class CaseViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
-        if ($arguments['content'] === NULL) {
+        if ($arguments['content'] === null) {
             $content = $renderChildrenClosure();
         }
         $content = trim($content);
-        if ($arguments['mode'] !== NULL) {
+        if ($arguments['mode'] !== null) {
             switch ($arguments['mode']) {
                 case 'lower':
                     return strtolower($content);
@@ -55,5 +54,4 @@ class CaseViewHelper extends AbstractViewHelper
         }
         return $content;
     }
-
 }

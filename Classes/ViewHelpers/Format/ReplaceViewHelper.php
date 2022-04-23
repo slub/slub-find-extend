@@ -11,8 +11,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ReplaceViewHelper extends AbstractViewHelper
- {
-
+{
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -24,11 +23,12 @@ class ReplaceViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content', FALSE, NULL);
-        $this->registerArgument('needle', 'string', 'Needle', FALSE, NULL);
-        $this->registerArgument('replace', 'string', 'Replace', FALSE, '');
+        $this->registerArgument('content', 'string', 'Content', false, null);
+        $this->registerArgument('needle', 'string', 'Needle', false, null);
+        $this->registerArgument('replace', 'string', 'Replace', false, '');
     }
 
     /**
@@ -39,20 +39,18 @@ class ReplaceViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
+        $content = $arguments['content'];
+        $needle = $arguments['needle'];
+        $replace = $arguments['replace'];
 
-	    $content = $arguments['content'];
-	    $needle = $arguments['needle'];
-	    $replace = $arguments['replace'];
+        if ($content === null) {
+            $content = $renderChildrenClosure();
+        }
 
-		if ($content === NULL) {
-			$content = $renderChildrenClosure();
-		}
-
-		if ( !empty($content) && !empty($needle) ){
-			return str_replace($needle, $replace, $content);
-		} else {
-			return '';
-		}
-	}
-
+        if (!empty($content) && !empty($needle)) {
+            return str_replace($needle, $replace, $content);
+        } else {
+            return '';
+        }
+    }
 }

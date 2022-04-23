@@ -11,7 +11,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class CharRemoveViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -23,10 +22,11 @@ class CharRemoveViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string', FALSE, NULL);
-        $this->registerArgument('chars', 'string', 'Comma seperated list of chars', TRUE, NULL);
+        $this->registerArgument('content', 'string', 'Content string', false, null);
+        $this->registerArgument('chars', 'string', 'Comma seperated list of chars', true, null);
     }
 
     /**
@@ -37,19 +37,17 @@ class CharRemoveViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
         $chars = $arguments['chars'];
 
-        if ($content === NULL) {
+        if ($content === null) {
             $content = $renderChildrenClosure();
         }
         $content = trim($content);
-        if ($chars !== NULL) {
+        if ($chars !== null) {
             $chars = explode(',', $chars);
             return trim(str_replace($chars, '', $content));
         }
         return $content;
     }
-
 }

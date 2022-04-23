@@ -13,7 +13,6 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
  */
 class MarcRefrenceResolverService
 {
-
     /**
      * Resiolves a reference against raw data
      *
@@ -22,20 +21,18 @@ class MarcRefrenceResolverService
      * @param boolean $index
      * @return array|boolean
      */
-    public function resolveReference($path, $record, $index = NULL)
+    public function resolveReference($path, $record, $index = null)
     {
-
         if (!$record instanceof \File_MARC_Record) {
-            return FALSE;
+            return false;
         }
 
         $reference = new File_MARC_Reference($path, $record);
 
-        if ($index !== NULL && is_array($reference->content)) {
+        if ($index !== null && is_array($reference->content)) {
             return $reference->content[$index];
         } else {
             return $reference;
         }
-
     }
 }

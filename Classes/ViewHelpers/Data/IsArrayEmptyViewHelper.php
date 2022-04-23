@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -13,14 +14,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 class IsArrayEmptyViewHelper extends AbstractConditionViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('array', 'array', 'The array to check', TRUE, NULL);
+        $this->registerArgument('array', 'array', 'The array to check', true, null);
     }
 
     /**
@@ -32,6 +33,6 @@ class IsArrayEmptyViewHelper extends AbstractConditionViewHelper
         RenderingContextInterface $renderingContext
     ) {
         $array = $arguments['array'];
-		return empty($array);
+        return empty($array);
     }
 }

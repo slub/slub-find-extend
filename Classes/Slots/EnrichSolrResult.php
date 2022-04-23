@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\Slots;
 
 /*
@@ -16,7 +17,6 @@ namespace Slub\SlubFindExtend\Slots;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use Solarium\QueryType\Select\Result\Document;
 
-
 /**
  * Slot implementation before the
  *
@@ -25,7 +25,6 @@ use Solarium\QueryType\Select\Result\Document;
  */
 class EnrichSolrResult
 {
-
     /**
      * Contains the settings of the current extension
      *
@@ -43,7 +42,8 @@ class EnrichSolrResult
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
      * @return void
      */
-    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager) {
+    public function injectConfigurationManager(ConfigurationManagerInterface $configurationManager)
+    {
         $this->configurationManager = $configurationManager;
         $this->settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
     }
@@ -53,21 +53,19 @@ class EnrichSolrResult
      *
      * @param array &$assignments
      */
-    public function detail(&$assignments) {
-
+    public function detail(&$assignments)
+    {
         $assignments['enriched'] = array('fields' => array());
 
         $document = $assignments['document'];
         /* @var $document Document */
 
-        if($document) {
-
+        if ($document) {
             $fields = $document->getFields();
             $pageType = (int)\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('type');
 
-            if($this->settings['enrich'] && $this->settings['enrich']['detail']) {
+            if ($this->settings['enrich'] && $this->settings['enrich']['detail']) {
                 foreach ($this->settings['enrich']['detail'] as $enrichment) {
-
                     $field_data = '';
                     $user_data = ($GLOBALS['TSFE']->fe_user->user['username']) ? $GLOBALS['TSFE']->fe_user->user['username'] : '';
 
@@ -103,11 +101,9 @@ class EnrichSolrResult
                     }
                 }
             }
-
         }
 
         $assignments['show_detaildata'] = $_COOKIE["show_detaildata"];
-
     }
 
     /**
@@ -115,8 +111,8 @@ class EnrichSolrResult
      *
      * @param array &$resultSet
      */
-    public function index(&$resultSet) {
-
+    public function index(&$resultSet)
+    {
     }
 
     /**
@@ -124,7 +120,8 @@ class EnrichSolrResult
      * @param $value
      * @return mixed|string
      */
-    private function safe_json_decode($value){
+    private function safe_json_decode($value)
+    {
         $original_value = $value;
 
         $decoded = json_decode($value, true);
@@ -138,8 +135,8 @@ class EnrichSolrResult
             case JSON_ERROR_SYNTAX:
 
                 // Fix double ,, syntax error
-                if (strpos($original_value,',,') !== FALSE) {
-                    $value = str_replace(',,', ',', $original_value );
+                if (strpos($original_value, ',,') !== false) {
+                    $value = str_replace(',,', ',', $original_value);
                     $decoded = json_decode($value, true);
                     return $decoded;
                 }
@@ -156,28 +153,28 @@ class EnrichSolrResult
      * @param $mixed
      * @return array|string
      */
-    private function unutf8ize($mixed) {
-
+    private function unutf8ize($mixed)
+    {
         if (is_array($mixed)) {
             foreach ($mixed as $key => $value) {
                 $mixed[$key] = $this->unutf8ize($value);
             }
-        } else if (is_string ($mixed)) {
+        } elseif (is_string($mixed)) {
             return utf8_decode($mixed);
         }
         return $mixed;
     }
 
-    private function getData($url) {
+    private function getData($url)
+    {
         $ch = curl_init();
         $timeout = 10;
-        curl_setopt($ch,CURLOPT_URL,$url);
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-        curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
-        curl_setopt($ch,CURLOPT_TIMEOUT,$timeout);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
     }
-
 }

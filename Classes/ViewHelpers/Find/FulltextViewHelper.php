@@ -15,19 +15,19 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class FulltextViewHelper extends AbstractViewHelper
 {
+    /**
+     * @var FulltextService
+     */
+    protected static $fulltextService = null;
 
-	/**
-	 * @var FulltextService
-	 */
-	protected static $fulltextService = null;
-
-	/**
-	 * Registers own arguments.
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('document', '\Solarium\QueryType\Select\Result\Document', 'Result document', TRUE);
-	}
+    /**
+     * Registers own arguments.
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('document', '\Solarium\QueryType\Select\Result\Document', 'Result document', true);
+    }
 
     /**
      * @return string
@@ -49,5 +49,4 @@ class FulltextViewHelper extends AbstractViewHelper
 
         return static::$fulltextService;
     }
-
 }

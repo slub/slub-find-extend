@@ -11,15 +11,15 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ReduceArrayViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('array', 'array', 'array to reduce', FALSE);
-        $this->registerArgument('remaining', 'string', 'remaining string to decode', FALSE);
+        $this->registerArgument('array', 'array', 'array to reduce', false);
+        $this->registerArgument('remaining', 'string', 'remaining string to decode', false);
     }
 
     /**
@@ -30,45 +30,42 @@ class ReduceArrayViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $array = $arguments['array'];
         $remaining = $arguments['remaining'];
 
         $result = [];
 
-        if ($array === NULL) {
+        if ($array === null) {
             $array = $renderChildrenClosure();
         }
 
-        if(is_array($array) && (count($array) === 0)) {
+        if (is_array($array) && (count($array) === 0)) {
             return [];
         }
 
-        if(is_string($remaining)) {
-            $remaining = json_decode($remaining, TRUE);
+        if (is_string($remaining)) {
+            $remaining = json_decode($remaining, true);
         }
 
-        if(is_array($remaining) && (count($remaining) === 0)) {
+        if (is_array($remaining) && (count($remaining) === 0)) {
             return [];
         }
 
         foreach ($array as $part) {
-
             $newPart = [];
 
             foreach ($remaining as $key => $value) {
-
                 $valueKeys = array_map('trim', explode(',', $value));
 
-                if(is_array($valueKeys) && (count($valueKeys) === 1)) {
+                if (is_array($valueKeys) && (count($valueKeys) === 1)) {
                     $newPart[$key] = $part[$valueKeys[0]];
                 } elseif (count($valueKeys) > 0) {
                     foreach ($valueKeys as $valueKey) {
-                        if(!is_array($newPart[$key])) {
+                        if (!is_array($newPart[$key])) {
                             $newPart[$key] = [];
                         }
 
-                        if(array_key_exists($valueKey, $part)) {
+                        if (array_key_exists($valueKey, $part)) {
                             if (!is_array($part[$valueKey])) {
                                 $part[$valueKey] = [$part[$valueKey]];
                             }
@@ -78,14 +75,11 @@ class ReduceArrayViewHelper extends AbstractViewHelper
                 } else {
                     $newPart[$key] = '';
                 }
-
             }
 
             $result[] = $newPart;
-
         }
 
         return $result;
     }
-
 }

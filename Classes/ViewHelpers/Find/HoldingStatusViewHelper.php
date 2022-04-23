@@ -14,16 +14,16 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class HoldingStatusViewHelper extends AbstractViewHelper
 {
+    /**
+     * @var \Slub\SlubFindExtend\Services\HoldingStatusService
+     */
+    protected static $holdingStatusService;
 
-	/**
-	 * @var \Slub\SlubFindExtend\Services\HoldingStatusService
-	 */
-	protected static $holdingStatusService;
-
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('document', 'object', 'The index document', TRUE);
-        $this->registerArgument('copies', 'array', 'The the holded copies', FALSE, []);
+        $this->registerArgument('document', 'object', 'The index document', true);
+        $this->registerArgument('copies', 'array', 'The the holded copies', false, []);
     }
 
     /**
@@ -34,12 +34,12 @@ class HoldingStatusViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-		if ($arguments['document']) {
-			return static::getHoldingStatusService()->getStatus($arguments['document'], $arguments['copies']);
-		} else {
-			return 0;
-		}
-	}
+        if ($arguments['document']) {
+            return static::getHoldingStatusService()->getStatus($arguments['document'], $arguments['copies']);
+        } else {
+            return 0;
+        }
+    }
 
     private static function getHoldingStatusService()
     {
@@ -50,6 +50,4 @@ class HoldingStatusViewHelper extends AbstractViewHelper
 
         return static::$holdingStatusService;
     }
-
-
 }

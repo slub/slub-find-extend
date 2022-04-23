@@ -23,12 +23,12 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  */
 class EqualsViewHelper extends AbstractConditionViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
         $this->registerArgument('string', 'string', 'The string to check against', true);
         $this->registerArgument('test', 'string', 'The string to check', true);
@@ -38,8 +38,8 @@ class EqualsViewHelper extends AbstractConditionViewHelper
      * @param array $arguments
      * @return bool
      */
-    protected static function evaluateCondition($arguments = null) {
-
+    protected static function evaluateCondition($arguments = null)
+    {
         $string = (string) $arguments['string'];
         $test = (string) $arguments['test'];
 
@@ -49,5 +49,4 @@ class EqualsViewHelper extends AbstractConditionViewHelper
             return false;
         }
     }
-
 }

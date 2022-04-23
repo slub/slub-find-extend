@@ -12,7 +12,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class MinifyViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -24,9 +23,10 @@ class MinifyViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string', FALSE, NULL);
+        $this->registerArgument('content', 'string', 'Content string', false, null);
     }
 
     /**
@@ -37,14 +37,12 @@ class MinifyViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
 
-        if ($content === NULL) {
+        if ($content === null) {
             $content = $renderChildrenClosure();
         }
 
         return str_replace(array("\n", "\t"), '', $content);
     }
-
 }

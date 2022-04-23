@@ -12,14 +12,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class CleanUrnLinkViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('link', 'string', 'URL string', TRUE, NULL);
+        $this->registerArgument('link', 'string', 'URL string', true, null);
     }
 
     /**
@@ -30,26 +30,26 @@ class CleanUrnLinkViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $link = $arguments['link'];
 
-        if($link === NULL) return '';
+        if ($link === null) {
+            return '';
+        }
 
-        if(substr( $link, 0, 4 ) === "urn:") {
+        if (substr($link, 0, 4) === "urn:") {
             return 'http://nbn-resolving.de/'.$link;
         }
 
         // HOTFIX
-        if (strpos($link,'lynda.com') !== FALSE) {
+        if (strpos($link, 'lynda.com') !== false) {
             return $link.'?org=slub-dresden.de';
         }
 
         // HOTFIX
-        if (strpos($link,'ezeit') !== FALSE) {
+        if (strpos($link, 'ezeit') !== false) {
             return $link.'&bibid=SLUB';
         }
 
         return 'http://wwwdb.dbod.de/login?url='.$link;
     }
-
 }

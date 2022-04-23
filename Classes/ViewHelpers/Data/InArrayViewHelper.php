@@ -11,16 +11,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class InArrayViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('haystack', 'array', 'Array to search', TRUE);
-        $this->registerArgument('needle', 'string', 'Needle to search', TRUE);
-        $this->registerArgument('strict', 'boolean', 'Strict mode?', FALSE, FALSE);
+        $this->registerArgument('haystack', 'array', 'Array to search', true);
+        $this->registerArgument('needle', 'string', 'Needle to search', true);
+        $this->registerArgument('strict', 'boolean', 'Strict mode?', false, false);
     }
 
     /**
@@ -31,13 +31,10 @@ class InArrayViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
-        if(!is_array($arguments['haystack'])) {
-            return FALSE;
+        if (!is_array($arguments['haystack'])) {
+            return false;
         }
 
-        return in_array ( $arguments['needle'] , $arguments['haystack'], $targuments['strict'] );
-
+        return in_array($arguments['needle'], $arguments['haystack'], $targuments['strict']);
     }
-
 }

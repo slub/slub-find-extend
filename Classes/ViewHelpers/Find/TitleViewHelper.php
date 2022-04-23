@@ -64,17 +64,16 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class TitleViewHelper extends AbstractViewHelper
 {
-
     /**
      * Arguments initialization
      *
      * @return void
      */
-    public function initializeArguments() {
-
+    public function initializeArguments()
+    {
         parent::initializeArguments();
         $this->registerArgument('title', 'string', 'Title tag content');
-        $this->registerArgument('whitespaceString', 'string', 'String used to replace groups of white space characters, one replacement inserted per group', FALSE, ' ');
+        $this->registerArgument('whitespaceString', 'string', 'String used to replace groups of white space characters, one replacement inserted per group', false, ' ');
     }
 
     /**
@@ -93,12 +92,11 @@ class TitleViewHelper extends AbstractViewHelper
         } else {
             $title = $renderChildrenClosure();
         }
-        $title = trim(preg_replace( '/\s+/', $arguments['whitespaceString'], $title), $arguments['whitespaceString']);
+        $title = trim(preg_replace('/\s+/', $arguments['whitespaceString'], $title), $arguments['whitespaceString']);
 
         $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
         $pageRenderer->setTitle($title);
 
         $GLOBALS['TSFE']->altPageTitle = $title;
     }
-
 }

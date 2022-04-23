@@ -39,16 +39,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class SubstringViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string to substring', FALSE, NULL);
-        $this->registerArgument('start', 'integer', 'Positive or negative offset', FALSE, NULL);
-        $this->registerArgument('length', 'integer', 'Positive or negative length', FALSE, NULL);
+        $this->registerArgument('content', 'string', 'Content string to substring', false, null);
+        $this->registerArgument('start', 'integer', 'Positive or negative offset', false, null);
+        $this->registerArgument('length', 'integer', 'Positive or negative length', false, null);
     }
 
     /**
@@ -59,18 +59,16 @@ class SubstringViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
         $start = $arguments['start'];
         $length = $arguments['length'];
 
-        if ($content === NULL) {
+        if ($content === null) {
             $content = $renderChildrenClosure();
         }
-        if ($length !== NULL) {
+        if ($length !== null) {
             return substr($content, $start, $length);
         }
         return substr($content, $start);
     }
-
 }

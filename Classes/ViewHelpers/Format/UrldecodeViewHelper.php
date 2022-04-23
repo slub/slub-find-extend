@@ -36,7 +36,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class UrldecodeViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -48,10 +47,11 @@ class UrldecodeViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string to decode', FALSE, NULL);
-     }
+        $this->registerArgument('content', 'string', 'Content string to decode', false, null);
+    }
 
     /**
      * @return string
@@ -61,14 +61,12 @@ class UrldecodeViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
 
-		if ($content === NULL) {
-			$content = $renderChildrenClosure();
-		}
+        if ($content === null) {
+            $content = $renderChildrenClosure();
+        }
 
-		return urldecode($content);
-	}
-
+        return urldecode($content);
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
     /***************************************************************
@@ -29,40 +30,36 @@ require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_f
  */
 class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
-
     /**
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('record', 'mixed', 'The decoded MARC record', FALSE, NULL);
+        $this->registerArgument('record', 'mixed', 'The decoded MARC record', false, null);
     }
 
-    public function render (){
-
+    public function render()
+    {
         $lines = [];
 
         /** @var \File_MARC_Record $record */
         $record = $this->arguments['record'];
 
-        if($record) {
-
+        if ($record) {
             $leader = $record->getLeader();
-            if($leader) {
+            if ($leader) {
                 $lines[] = $leader;
             }
 
             foreach ($record->getFields() as $tag=>$value) {
-
                 $line = "";
                 $line .= "$tag ";
 
                 if ($value instanceof \File_MARC_Control_Field) {
                     $line .= $value->getData();
-                }
-
-                else {
+                } else {
 
                     // Iterate through the subfields in this data field
                     $line .= $value->getIndicator(1);
@@ -74,21 +71,16 @@ class GetAllMarcDataViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
                         /** \File_MARC_Subfield $subdata */
                         $line .= $subdata->getData();
                     }
-
                 }
 
 
 
                 $lines[] = $line;
-
             }
 
             $this->templateVariableContainer->add('lines', $lines);
-
         }
 
         return $this->renderChildren();
-
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /**
@@ -13,13 +14,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class DedupAuthorFieldsViewHelper extends AbstractViewHelper
 {
-
     /**
      * Register arguments.
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('document', 'mixed', 'The document to dedup authors within', FALSE, NULL);
+        $this->registerArgument('document', 'mixed', 'The document to dedup authors within', false, null);
     }
 
     /**
@@ -35,7 +36,7 @@ class DedupAuthorFieldsViewHelper extends AbstractViewHelper
     ) {
         $document = $arguments['document'];
 
-        if ($document === NULL) {
+        if ($document === null) {
             $document = $renderChildrenClosure();
         }
 
@@ -79,5 +80,4 @@ class DedupAuthorFieldsViewHelper extends AbstractViewHelper
 
         return $documentcopy;
     }
-
 }

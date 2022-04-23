@@ -14,16 +14,16 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 class HoldingLocationViewHelper extends AbstractViewHelper
 {
+    /**
+     * @var \Slub\SlubFindExtend\Services\HoldingStatusService
+     */
+    protected static $holdingStatusService;
 
-	/**
-	 * @var \Slub\SlubFindExtend\Services\HoldingStatusService
-	 */
-	protected static $holdingStatusService;
-
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('document', 'object', 'The index document', TRUE);
-        $this->registerArgument('copies', 'array', 'The the holded copies', FALSE, []);
+        $this->registerArgument('document', 'object', 'The index document', true);
+        $this->registerArgument('copies', 'array', 'The the holded copies', false, []);
     }
 
     /**
@@ -34,14 +34,12 @@ class HoldingLocationViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
+        if ($arguments['document']) {
+            $document = $arguments['document'];
 
-		if ($arguments['document']) {
+            $status = static::getHoldingStatusService()->getStatus($document, $arguments['copies']);
 
-		    $document = $arguments['document'];
-
-			$status = static::getHoldingStatusService()->getStatus($document, $arguments['copies']);
-
-            if(($status === 1) && ($document['access_facet'] === 'Local Holdings')) {
+            if (($status === 1) && ($document['access_facet'] === 'Local Holdings')) {
                 foreach ($arguments['copies'] as $exemplar) {
                     if ($exemplar['_calc_colorcode'] == 1) {
                         return $exemplar['Regalstandort'];
@@ -49,10 +47,10 @@ class HoldingLocationViewHelper extends AbstractViewHelper
                 }
             }
             return '';
-		} else {
-			return '';
-		}
-	}
+        } else {
+            return '';
+        }
+    }
 
     private static function getHoldingStatusService()
     {
@@ -63,6 +61,4 @@ class HoldingLocationViewHelper extends AbstractViewHelper
 
         return static::$holdingStatusService;
     }
-
-
 }

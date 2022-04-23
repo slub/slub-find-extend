@@ -1,4 +1,5 @@
 <?php
+
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
 /***************************************************************
@@ -37,7 +38,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class FromSolrViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -51,21 +51,22 @@ class FromSolrViewHelper extends AbstractViewHelper
      */
     protected static $solr = null;
 
-	/**
-	 * Register arguments.
-	 * @return void
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('query', 'mixed', 'Solr querystring or array of query fields and their query values.', TRUE);
-		$this->registerArgument('operator', 'string', 'Solr query operator.', FALSE, 'AND');
-		$this->registerArgument('sortField', 'string', 'Sort field.', FALSE);
-		$this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', FALSE, 'asc');
-		$this->registerArgument('rows', 'integer', 'Number of rows to be returned.', FALSE);
-		$this->registerArgument('start', 'integer', 'Number of leading documents to skip.', FALSE);
-		$this->registerArgument('fields', 'string', 'Fields to be returned, comma seperated if more than one field.', FALSE);
-		$this->registerArgument('numFoundOnly', 'integer', 'Return numFound only, do not fetch Documents.', FALSE, FALSE);
-	}
+    /**
+     * Register arguments.
+     * @return void
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('query', 'mixed', 'Solr querystring or array of query fields and their query values.', true);
+        $this->registerArgument('operator', 'string', 'Solr query operator.', false, 'AND');
+        $this->registerArgument('sortField', 'string', 'Sort field.', false);
+        $this->registerArgument('sortOrder', 'string', 'Sort order ("asc" or "desc").', false, 'asc');
+        $this->registerArgument('rows', 'integer', 'Number of rows to be returned.', false);
+        $this->registerArgument('start', 'integer', 'Number of leading documents to skip.', false);
+        $this->registerArgument('fields', 'string', 'Fields to be returned, comma seperated if more than one field.', false);
+        $this->registerArgument('numFoundOnly', 'integer', 'Return numFound only, do not fetch Documents.', false, false);
+    }
 
     /**
      * @return string
@@ -75,35 +76,36 @@ class FromSolrViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $templateVariableContainer = $renderingContext->getVariableProvider();
 
         $solrClient = static::getSolariumClient($templateVariableContainer);
 
-        switch(gettype($arguments['query'])) {
+        switch (gettype($arguments['query'])) {
             case 'string':
                 $query = static::createQuery($solrClient, $arguments['query'], $templateVariableContainer);
                 break;
             case 'array':
-                $query = static::createQuery($solrClient, implode(' ' . $arguments['operator'] . ' ', array_map( function($k,$v) { return $k . ':' . $v; }, array_keys($arguments['query']), array_values($arguments['query']))), $templateVariableContainer);
+                $query = static::createQuery($solrClient, implode(' ' . $arguments['operator'] . ' ', array_map(function ($k, $v) {
+                    return $k . ':' . $v;
+                }, array_keys($arguments['query']), array_values($arguments['query']))), $templateVariableContainer);
                 break;
             default:
                 $query = static::createQuery($solrClient, '*:*', $templateVariableContainer);
         }
 
-        if(!is_null($arguments['sortField'])) {
+        if (!is_null($arguments['sortField'])) {
             $query->addSort($arguments['sortField'], $arguments['sortOrder']);
         }
 
-        if(!is_null($arguments['rows'])) {
+        if (!is_null($arguments['rows'])) {
             $query->setRows($arguments['rows']);
         }
 
-        if(!is_null($arguments['start'])) {
+        if (!is_null($arguments['start'])) {
             $query->setStart($arguments['start']);
         }
 
-        if(!is_null($arguments['fields'])) {
+        if (!is_null($arguments['fields'])) {
             $query->clearFields();
             $query->addFields($arguments['fields']);
         }
@@ -116,14 +118,13 @@ class FromSolrViewHelper extends AbstractViewHelper
         /** @var DocumentInterface $result */
         $results = $resultSet->getDocuments();
 
-        if($results) {
-
+        if ($results) {
             if ($templateVariableContainer->exists('numFound')) {
                 $templateVariableContainer->remove('numFound');
             }
             $templateVariableContainer->add('numFound', $resultSet->getNumFound());
 
-            if(!$arguments['numFoundOnly']) {
+            if (!$arguments['numFoundOnly']) {
                 if ($templateVariableContainer->exists('documents')) {
                     $templateVariableContainer->remove('documents');
                 }
@@ -138,12 +139,13 @@ class FromSolrViewHelper extends AbstractViewHelper
      * Check configuration for shards and when found create Distributed Search
      * @param \Solarium\QueryType\Select\Query\Query $query
      */
-    private static function createQueryComponents(&$query, &$templateVariableContainer) {
+    private static function createQueryComponents(&$query, &$templateVariableContainer)
+    {
 
         // Shards
-        if(is_array($templateVariableContainer->get('settings')['shards']) && count($templateVariableContainer->get('settings')['shards'])) {
+        if (is_array($templateVariableContainer->get('settings')['shards']) && count($templateVariableContainer->get('settings')['shards'])) {
             $distributedSearch = $query->getDistributedSearch();
-            foreach($templateVariableContainer->get('settings')['shards'] as $name => $shard) {
+            foreach ($templateVariableContainer->get('settings')['shards'] as $name => $shard) {
                 $distributedSearch->addShard($name, $shard);
             }
         }
@@ -154,9 +156,10 @@ class FromSolrViewHelper extends AbstractViewHelper
      *
      * @param \Solarium\QueryType\Select\Query\Query $query
      */
-    private static function addTypoScriptFilters (&$query, &$templateVariableContainer) {
+    private static function addTypoScriptFilters(&$query, &$templateVariableContainer)
+    {
         if (!empty($templateVariableContainer->get('settings')['additionalFilters'])) {
-            foreach($templateVariableContainer->get('settings')['additionalFilters'] as $key => $filterQuery) {
+            foreach ($templateVariableContainer->get('settings')['additionalFilters'] as $key => $filterQuery) {
                 $query->createFilterQuery('additionalFilter-' . $key)
                     ->setQuery($filterQuery);
             }
@@ -170,8 +173,8 @@ class FromSolrViewHelper extends AbstractViewHelper
      * @param string $idfield the document id field
      * @return \Solarium\QueryType\Select\Query\Query
      */
-    private static function createQuery ($solrClient, $query, &$templateVariableContainer) {
-
+    private static function createQuery($solrClient, $query, &$templateVariableContainer)
+    {
         $queryObject = $solrClient->createSelect();
         static::addTypoScriptFilters($queryObject, $templateVariableContainer);
 
@@ -212,5 +215,4 @@ class FromSolrViewHelper extends AbstractViewHelper
 
         return $configuration;
     }
-
 }

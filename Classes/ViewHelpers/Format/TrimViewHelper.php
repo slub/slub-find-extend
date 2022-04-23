@@ -40,7 +40,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class TrimViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -52,10 +51,11 @@ class TrimViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string to trim', FALSE, NULL);
-        $this->registerArgument('characters', 'string', 'What to trim', FALSE, NULL);
+        $this->registerArgument('content', 'string', 'Content string to trim', false, null);
+        $this->registerArgument('characters', 'string', 'What to trim', false, null);
     }
 
     /**
@@ -66,19 +66,17 @@ class TrimViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
         $characters = $arguments['characters'];
 
-        if ($content === NULL) {
-			$content = $renderChildrenClosure();
-		}
-		if ($characters !== NULL) {
-			$content = trim($content, $characters);
-		} else {
-			$content = trim($content);
-		}
-		return $content;
-	}
-
+        if ($content === null) {
+            $content = $renderChildrenClosure();
+        }
+        if ($characters !== null) {
+            $content = trim($content, $characters);
+        } else {
+            $content = trim($content);
+        }
+        return $content;
+    }
 }

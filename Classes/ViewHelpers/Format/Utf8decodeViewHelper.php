@@ -36,7 +36,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class Utf8decodeViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -48,9 +47,10 @@ class Utf8decodeViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string to decode', FALSE, NULL);
+        $this->registerArgument('content', 'string', 'Content string to decode', false, null);
     }
 
     /**
@@ -61,14 +61,12 @@ class Utf8decodeViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
 
-		if ($content === NULL) {
-			$content = $renderChildrenClosure();
-		}
+        if ($content === null) {
+            $content = $renderChildrenClosure();
+        }
 
-		return utf8_decode($content);
-	}
-
+        return utf8_decode($content);
+    }
 }

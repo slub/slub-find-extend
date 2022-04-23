@@ -11,14 +11,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class DecodeJSONViewHelper extends AbstractViewHelper
 {
-
-	/**
-	 * Register arguments.
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-		$this->registerArgument('json', 'string', 'The json string to decode', FALSE, NULL);
-	}
+    /**
+     * Register arguments.
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('json', 'string', 'The json string to decode', false, null);
+    }
 
     /**
      * @return array
@@ -28,8 +28,7 @@ class DecodeJSONViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-		$json = json_decode($arguments['json'], true);
-		return $json;
-	}
-
+        $json = json_decode($arguments['json'], true);
+        return $json;
+    }
 }

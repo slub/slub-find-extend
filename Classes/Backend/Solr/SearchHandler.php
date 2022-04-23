@@ -136,10 +136,9 @@ class SearchHandler
         $boostQuery = [];
         if ($this->hasDismax()) {
             foreach ($this->getDismaxParams() as $param) {
-
                 if ($param['name'] === 'bq') {
                     $boostQuery[] = $param['value'];
-                } else if ($param['name'] === 'bf') {
+                } elseif ($param['name'] === 'bf') {
                     // BF parameter may contain multiple space-separated functions
                     // with individual boosts.  We need to parse this into _val_
                     // query components:
@@ -160,7 +159,8 @@ class SearchHandler
         if ($boostQuery) {
             return sprintf(
                 '(%s) AND (*:* OR %s)',
-                $search, implode(' OR ', $boostQuery)
+                $search,
+                implode(' OR ', $boostQuery)
             );
         } else {
             return $search;
@@ -262,7 +262,9 @@ class SearchHandler
         $dismaxParams = [];
         foreach ($this->specs['DismaxParams'] as $param) {
             $dismaxParams[] = sprintf(
-                "%s='%s'", $param['name'], addcslashes($param['value'], "'")
+                "%s='%s'",
+                $param['name'],
+                addcslashes($param['value'], "'")
             );
         }
 
@@ -293,7 +295,8 @@ class SearchHandler
 
             $mungeValues = [
                 'onephrase' => sprintf(
-                    '"%s"', str_replace('"', '', implode(' ', $tokens))
+                    '"%s"',
+                    str_replace('"', '', implode(' ', $tokens))
                 ),
                 'and' => implode(' AND ', $tokens),
                 'or'  => implode(' OR ', $tokens),
@@ -335,7 +338,9 @@ class SearchHandler
                         break;
                     case 'preg_replace':
                         $mungeValues[$mungeName] = preg_replace(
-                            $operation[1], $operation[2], $mungeValues[$mungeName]
+                            $operation[1],
+                            $operation[2],
+                            $mungeValues[$mungeName]
                         );
                         break;
                     case 'uppercase':
@@ -409,11 +414,8 @@ class SearchHandler
      */
     protected function munge(array $mungeRules, array $mungeValues, $joiner = 'OR')
     {
-
         $clauses = [];
         foreach ($mungeRules as $clauseident => $clausearray) {
-
-
             $field = $clausearray['field'];
 
             if (is_numeric($field)) {
@@ -427,7 +429,6 @@ class SearchHandler
                 foreach ($sw['operators'] as $operator_name => $operator_weight) {
                     $operator = $operator_name;
                     $weight = $operator_weight;
-
                 }
 
                 $internalJoin = ' ' . $operator . ' ';
@@ -477,7 +478,9 @@ class SearchHandler
         // Tokenize on spaces and quotes (but ignore escaped quotes)
         $phrases = [];
         preg_match_all(
-            '/"(?:\\\\"|.)*?"[~[0-9]+]*|"(?:\\\\"|.)*?"|[^ ]+/', $string, $phrases
+            '/"(?:\\\\"|.)*?"[~[0-9]+]*|"(?:\\\\"|.)*?"|[^ ]+/',
+            $string,
+            $phrases
         );
         $phrases = $phrases[0];
 

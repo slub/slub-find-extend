@@ -1,4 +1,5 @@
 <?php
+
 defined('TYPO3_MODE') or die();
 
 /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
@@ -14,7 +15,7 @@ $signalSlotDispatcher->connect(
     'detailActionBeforeRender',
     'Slub\SlubFindExtend\Slots\EnrichSolrResult',
     'detail',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -23,7 +24,7 @@ $signalSlotDispatcher->connect(
     'indexActionBeforeRender',
     'Slub\SlubFindExtend\Slots\EnrichSolrResult',
     'index',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -32,7 +33,7 @@ $signalSlotDispatcher->connect(
     'indexActionBeforeRender',
     'Slub\SlubFindExtend\Slots\HandleOneHit',
     'index',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -41,7 +42,7 @@ $signalSlotDispatcher->connect(
     'indexActionBeforeSelect',
     'Slub\SlubFindExtend\Slots\AdvancedQuery',
     'build',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -50,7 +51,7 @@ $signalSlotDispatcher->connect(
     'detailActionBeforePagingSelect',
     'Slub\SlubFindExtend\Slots\AdvancedQuery',
     'build',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -59,7 +60,7 @@ $signalSlotDispatcher->connect(
     'detailActionBeforeRender',
     'Slub\SlubFindExtend\Slots\ModifySolrResult',
     'decode',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -68,7 +69,7 @@ $signalSlotDispatcher->connect(
     'detailActionBeforeRender',
     'Slub\SlubFindExtend\Slots\ModifySolrResult',
     'blacklist',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -77,7 +78,7 @@ $signalSlotDispatcher->connect(
     'detailActionBeforeRender',
     'Slub\SlubFindExtend\Slots\RedirectOldId',
     'redirect',
-    FALSE
+    false
 );
 
 // Hook into \Subugoe\Find\Controller
@@ -86,11 +87,11 @@ $signalSlotDispatcher->connect(
     'initializeActionAfterArgumentsFilled',
     'Slub\SlubFindExtend\Slots\ModifyArguments',
     'modify',
-    FALSE
+    false
 );
 
 $cacheKey = 'resolv_link_electronic';
-if( !is_array( $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ] ) ){
+if (!is_array($TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ])) {
     $cacheConfig =  $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ] = array();
     $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['frontend'] = 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend';
     $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend';

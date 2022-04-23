@@ -10,7 +10,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 class MinLengthViewHelper extends AbstractConditionViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -21,10 +20,11 @@ class MinLengthViewHelper extends AbstractConditionViewHelper
     /**
      * Register arguments.
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('string', 'string', 'The string to check against minlength', TRUE, NULL);
-        $this->registerArgument('length', 'int', 'The minlength to check', FALSE, NULL);
+        $this->registerArgument('string', 'string', 'The string to check against minlength', true, null);
+        $this->registerArgument('length', 'int', 'The minlength to check', false, null);
     }
 
     /**
@@ -32,18 +32,19 @@ class MinLengthViewHelper extends AbstractConditionViewHelper
      * @param array $arguments
      * @return boolean
      */
-    protected static function evaluateCondition($arguments = null) {
-
+    protected static function evaluateCondition($arguments = null)
+    {
         $string = $arguments['string'];
         $length = $arguments['length'];
 
-        if($length === NULL) { return true; }
+        if ($length === null) {
+            return true;
+        }
 
-        if (false !== (strlen($string) >= $length) ) {
+        if (false !== (strlen($string) >= $length)) {
             return true;
         } else {
             return false;
         }
     }
-
 }

@@ -24,42 +24,38 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class ContainsViewHelper extends AbstractConditionViewHelper
 {
-
     /**
      * Registers own arguments.
      */
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('haystacks', 'string|array', 'Haystack to search', TRUE);
-        $this->registerArgument('needle', 'string', 'Needle to be searched', TRUE);
+        $this->registerArgument('haystacks', 'string|array', 'Haystack to search', true);
+        $this->registerArgument('needle', 'string', 'Needle to be searched', true);
     }
 
-    public static function verdict(array $arguments, \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
-
+    public static function verdict(array $arguments, \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface $renderingContext)
+    {
         $templateVariableContainer = $renderingContext->getVariableProvider();
 
         $haystacks = $arguments['haystacks'];
         $needle = $arguments['needle'];
 
-        if(!is_array($haystacks)) {
+        if (!is_array($haystacks)) {
             $haystacks = [$haystacks];
         }
 
         foreach ($haystacks as $haystack) {
-            if (FALSE !== strpos($haystack, $needle)) {
-
+            if (false !== strpos($haystack, $needle)) {
                 if ($templateVariableContainer->exists('hit')) {
                     $templateVariableContainer->remove('hit');
                 }
                 $templateVariableContainer->add('hit', $haystack);
 
-                return TRUE;
+                return true;
             }
         }
 
-        return FALSE;
-
+        return false;
     }
-
 }

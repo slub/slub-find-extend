@@ -12,7 +12,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class RemoveLineBreaksViewHelper extends AbstractViewHelper
 {
-
     /**
      * As this ViewHelper renders HTML, the output must not be escaped.
      *
@@ -24,9 +23,10 @@ class RemoveLineBreaksViewHelper extends AbstractViewHelper
      * Register arguments.
      * @return void
      */
-    public function initializeArguments() {
+    public function initializeArguments()
+    {
         parent::initializeArguments();
-        $this->registerArgument('content', 'string', 'Content string', FALSE, NULL);
+        $this->registerArgument('content', 'string', 'Content string', false, null);
     }
 
     /**
@@ -37,17 +37,15 @@ class RemoveLineBreaksViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-
         $content = $arguments['content'];
-		if ($content === NULL) {
-			$content = $renderChildrenClosure();
-		}
+        if ($content === null) {
+            $content = $renderChildrenClosure();
+        }
 
-		if ($content && (strlen($content) > 0)){
-			return str_replace(array("\r\n", "\n", "\r"), ' ', $content);
-		} else {
-			return '';
-		}
-	}
-
+        if ($content && (strlen($content) > 0)) {
+            return str_replace(array("\r\n", "\n", "\r"), ' ', $content);
+        } else {
+            return '';
+        }
+    }
 }
