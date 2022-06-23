@@ -52,7 +52,7 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
                 break;
             case "M":
             case "W":
-                $pickupDesc = "Makerspace";
+                $pickupDesc = "Makerspace M1 DrePunct";
                 break;
         }
 
