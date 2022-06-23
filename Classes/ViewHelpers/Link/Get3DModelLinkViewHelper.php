@@ -102,6 +102,9 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
                 return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-tharandt-forstwesen'>Zweigbibliothek Forst</a>";
             case "ZwB Erziehungswissenschaften":
                 return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-august-bebel-strasse-textlab'>Zweigbibliothek Erziehungswissenschaften</a>";
+            case "Makerspace M1 DrePunct":
+                $pickupID = 'ivn8e';
+                break;
             default:
                 return $pickupDesc;
         }
