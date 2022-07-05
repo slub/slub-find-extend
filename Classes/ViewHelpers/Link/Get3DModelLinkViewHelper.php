@@ -43,12 +43,16 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
         $pickupDesc = $arguments['pickupdesc'];
         $pickupID = '';
 
-        // There are certain media types that have to be handed out at the service desk but whose pickup destination cannot be set more specific than `Zentralbibliothek` in LIBERO
+        // There are certain media types that have to be handed out at a specific location but whose pickup destination cannot be set more specific in LIBERO
         $mediatype =  $arguments['mediatype'];
         switch ($mediatype) {
             case "CD":
             case "DVD":
                 $pickupDesc = "Zentralbibliothek Servicetheke";
+                break;
+            case "M":
+            case "W":
+                $pickupDesc = "Makerspace M1 DrePunct";
                 break;
         }
 
@@ -98,6 +102,9 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
                 return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-tharandt-forstwesen'>Zweigbibliothek Forst</a>";
             case "ZwB Erziehungswissenschaften":
                 return "<a href='https://www.slub-dresden.de/besuchen/oeffnungszeiten-und-standorte/bibliothek-august-bebel-strasse-textlab'>Zweigbibliothek Erziehungswissenschaften</a>";
+            case "Makerspace M1 DrePunct":
+                $pickupID = 'ivn8e';
+                break;
             default:
                 return $pickupDesc;
         }
