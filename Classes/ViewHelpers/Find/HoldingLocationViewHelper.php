@@ -39,7 +39,7 @@ class HoldingLocationViewHelper extends AbstractViewHelper
 
             $status = static::getHoldingStatusService()->getStatus($document, $arguments['copies']);
 
-            if (($status === 1) && ($document['access_facet'] === 'Local Holdings')) {
+            if (($status === 1) && (in_array('Local', $document['facet_avail']))) {
                 foreach ($arguments['copies'] as $exemplar) {
                     if ($exemplar['_calc_colorcode'] == 1) {
                         return $exemplar['Regalstandort'];

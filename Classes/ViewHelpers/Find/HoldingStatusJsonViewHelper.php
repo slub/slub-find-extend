@@ -190,7 +190,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper
     {
         $data = $this->arguments['data'];
 
-        if ($data['documents'][0]['access_facet'] == "Local Holdings") {
+        if (in_array('Local', $data['documents'][0]['facet_avail'])) {
             if ($data['enriched']['fields']['exemplare']) {
                 $status = $this->holdingStatusService->getStatus($data['documents'][0], $data['enriched']['fields']['exemplare']);
                 return json_encode(array('status' => $status));
@@ -198,7 +198,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper
                 // Somehow this is a Local Holdings file with no copies. Send "Action needed" state.
                 return json_encode(array('status' => 0));
             }
-        } elseif (($data['documents'][0]['access_facet'] =="Electronic Resources") || ($data['documents'][0]['physical'] && in_array('Online-Ressource', $data['documents'][0]['physical']))) {
+        } elseif ((in_array('Online', $data['documents'][0]['facet_avail'])) || ($data['documents'][0]['physical'] && in_array('Online-Ressource', $data['documents'][0]['physical']))) {
             if (!$this->arguments['index']) {
                 $cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
                 $cacheIdentifier = sha1($data['documents'][0]['id']);
