@@ -171,7 +171,7 @@ class EnrichSolrResult
         $timeout = 10;
         if ($this->settings['enrich'] && $this->settings['enrich']['timeout']) {
             if(intval($this->settings['enrich']['timeout']) > 0) {
-                $timeout = intval($this->settings['enrich']['timeout'];
+                $timeout = intval($this->settings['enrich']['timeout']);
             }
         }
         curl_setopt($ch, CURLOPT_URL, $url);
