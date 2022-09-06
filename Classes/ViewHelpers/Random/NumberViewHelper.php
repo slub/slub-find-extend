@@ -21,7 +21,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * set to 100000 in order to generate a longer integer string
  * representation. Decimal values can be generated as well.
  */
-class NumberViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class NumberViewHelper extends AbstractViewHelper
 {
     use CompileWithRenderStatic;
 
@@ -78,7 +78,7 @@ class NumberViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
         $minimumDecimals = $this->arguments['minimumDecimals'];
         $maximumDecimals = $this->arguments['maximumDecimals'];
         $natural = random_int($minimum, $maximum);
-        if (0 === (int) $minimumDecimals && 0 === (int) $maximumDecimals) {
+        if (0 === (int)$minimumDecimals && 0 === (int)$maximumDecimals) {
             return $natural;
         }
         $decimals = array_fill(0, random_int($minimumDecimals, $maximumDecimals), 0);
