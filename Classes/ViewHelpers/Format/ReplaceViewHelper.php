@@ -29,6 +29,7 @@ class ReplaceViewHelper extends AbstractViewHelper
         $this->registerArgument('content', 'string', 'Content', false, null);
         $this->registerArgument('needle', 'string', 'Needle', false, null);
         $this->registerArgument('replace', 'string', 'Replace', false, '');
+        $this->registerArgument('regexp', 'booblean', 'Regexp', false, false);
     }
 
     /**
@@ -48,7 +49,12 @@ class ReplaceViewHelper extends AbstractViewHelper
         }
 
         if (!empty($content) && !empty($needle)) {
-            return str_replace($needle, $replace, $content);
+            if($arguments['regexp']) {
+                return preg_replace($needle, $replace, $content);
+            } else {
+                return str_replace($needle, $replace, $content);
+            }
+            
         } else {
             return '';
         }
