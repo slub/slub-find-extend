@@ -130,6 +130,16 @@ class FromSolrViewHelper extends AbstractViewHelper
                 }
                 $templateVariableContainer->add('documents', $results);
             }
+        } else {
+            if ($templateVariableContainer->exists('numFound')) {
+                $templateVariableContainer->remove('numFound');
+            }
+            $templateVariableContainer->add('numFound', 0);
+
+            if ($templateVariableContainer->exists('documents')) {
+                $templateVariableContainer->remove('documents');
+            }
+            $templateVariableContainer->add('documents', NULL);
         }
 
         return $renderChildrenClosure();
