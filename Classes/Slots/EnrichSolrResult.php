@@ -14,6 +14,9 @@ namespace Slub\SlubFindExtend\Slots;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use Solarium\QueryType\Select\Result\Document;
 
@@ -23,8 +26,15 @@ use Solarium\QueryType\Select\Result\Document;
  * @category    Slots
  * @package     TYPO3
  */
-class EnrichSolrResult
+class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
+    public function __construct()
+    {
+        $this->logger = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Log\LogManager::class)->getLogger(__CLASS__);
+    }
+
     /**
      * Contains the settings of the current extension
      *
@@ -32,6 +42,14 @@ class EnrichSolrResult
      * @api
      */
     protected $settings;
+
+    /**
+     * Contains data to be logged on error
+     *
+     * @var string
+     * @api
+     */
+    protected $logData;
 
     /**
      * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
@@ -87,6 +105,7 @@ class EnrichSolrResult
 
                         // HTTP errors won't throw an exception
                         // TODO: Handle with Logging Service
+                        $this->logData = $field_data;
                         $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
 
                         if (is_array($enriched) && count($enriched)) {
@@ -130,17 +149,26 @@ class EnrichSolrResult
             case JSON_ERROR_NONE:
                 return $decoded;
             case JSON_ERROR_UTF8:
+                $this->logger->info('JSON_ERROR_UTF8: '. $this->logData);
                 $clean = $this->unutf8ize($value);
                 return $this->safe_json_decode($clean);
             case JSON_ERROR_SYNTAX:
-
+                $this->logger->info('JSON_ERROR_SYNTAX: '. $this->logData);
                 // Fix double ,, syntax error
                 if (strpos($original_value, ',,') !== false) {
                     $value = str_replace(',,', ',', $original_value);
                     $decoded = json_decode($value, true);
                     return $decoded;
                 }
-
+                return '';
+            case JSON_ERROR_CTRL_CHAR:
+                $this->logger->info('JSON_ERROR_CTRL_CHAR: '. $this->logData);
+                // Fix tab syntax error
+                if (strpos($original_value, "\t") !== false) {
+                    $value = str_replace("\t", '', $original_value);
+                    $decoded = json_decode($value, true);
+                    return $decoded;
+                }
                 return '';
             default:
                 return '';
