@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2014-07-18T07:52:44Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
+		<body>
+		<trans-unit id="tasks.enricherrorlog.name">
+			<source>SLUB Katalog: Send Solr enrichment errors to E-Mail</source>
+		</trans-unit>
+		<trans-unit id="tasks.enricherrorlog.description">
+			<source>SLUB Katalog: This task sends errors occuring while enriching the Solr results</source>
+		</trans-unit>
+		<trans-unit id="tasks.enricherrorlog.emails">
+			<source>E-Mails to send the logs</source>
+		</trans-unit>
+		</body>
+	</file>
+</xliff>
