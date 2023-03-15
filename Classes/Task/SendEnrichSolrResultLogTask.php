@@ -44,6 +44,14 @@ class SendEnrichSolrResultLogTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
 
         $successfullyExecuted = true;
 
+        $to = ''; 
+        if (strpos($this->getEmails(), ',') !== false) 
+        {
+            $to = explode(',', $this->getEmails());
+        } else {
+            $to = $this->getEmails();
+        }
+
         if(file_exists(\TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log/EnrichSolrResult.log')) {
 
             rename(\TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log/EnrichSolrResult.log', \TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log/EnrichSolrResult_process.log');
@@ -52,7 +60,7 @@ class SendEnrichSolrResultLogTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
             $mail
                 ->setSubject('SLUB Katalog: Enrichment Fehler vom '.date("d.m.Y"))
                 ->setFrom(array('typo3@slub-dresden.de' => 'SLUB TYPO3 Server'))
-                ->setTo($this->getEmails())
+                ->setTo($to)
                 ->setBody(file_get_contents(\TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log/EnrichSolrResult_process.log'))
                 ->send();
 
@@ -64,7 +72,7 @@ class SendEnrichSolrResultLogTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask
             $mail
                 ->setSubject('SLUB Katalog: Enrichment Fehler vom '.date("d.m.Y"))
                 ->setFrom(array('typo3@slub-dresden.de' => 'SLUB TYPO3 Server'))
-                ->setTo($this->getEmails())
+                ->setTo($to)
                 ->setBody('Heute keine Fehler .... :)')
                 ->send();
 
