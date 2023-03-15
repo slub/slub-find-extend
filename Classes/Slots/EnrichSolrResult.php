@@ -164,12 +164,26 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
             case JSON_ERROR_CTRL_CHAR:
                 $this->logger->info('JSON_ERROR_CTRL_CHAR: '. $this->logData);
                 // Fix tab syntax error
+                $fixed = 0;
                 if (strpos($original_value, "\t") !== false) {
                     $value = str_replace("\t", '', $original_value);
                     $decoded = json_decode($value, true);
-                    return $decoded;
+                    $fixed = 1;                }
+                if (strpos($original_value, "\n") !== false) {
+                    $value = str_replace("\n", '', $value);
+                    $decoded = json_decode($value, true);
+                    $fixed = 1;
                 }
-                return '';
+                if (strpos($original_value, "\r") !== false) {
+                    $value = str_replace("\r", '', $value);
+                    $decoded = json_decode($value, true);
+                    $fixed = 1;
+                }
+                if($fixed === 1) {
+                    return $decoded;
+                } else {
+                    return '';
+                }
             default:
                 return '';
 
