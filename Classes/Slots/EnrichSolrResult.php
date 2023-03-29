@@ -84,36 +84,53 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
 
             if ($this->settings['enrich'] && $this->settings['enrich']['detail']) {
                 foreach ($this->settings['enrich']['detail'] as $enrichment) {
-                    $field_data = '';
-                    $user_data = ($GLOBALS['TSFE']->fe_user->user['username']) ? $GLOBALS['TSFE']->fe_user->user['username'] : '';
+                    $filter_passed = false;
 
-                    $check_fields = is_array($fields[$enrichment['check_field']]) ? $fields[$enrichment['check_field']] : array($fields[$enrichment['check_field']]);
+                    if (isset($enrichment['filter_field']) && isset($enrichment['filter_pattern'])) {
+                        $filter_fields = is_array($fields[$enrichment['filter_field']]) ? $fields[$enrichment['filter_field']] : array($fields[$enrichment['filter_field']]);
 
-                    $check_typenum = false;
-
-                    if (array_key_exists('check_typenum', $enrichment) && $pageType !== (int)$enrichment['check_typenum']) {
-                        $check_typenum = true;
-                    }
-
-                    foreach ($check_fields as $check_field) {
-                        if (preg_match($enrichment['check_pattern'], $check_field, $matches) === 1) {
-                            $field_data = $matches[1];
+                        foreach ($filter_fields as $filter_field) {
+                            if (preg_match($enrichment['filter_pattern'], $filter_field,) === 1) {
+                                $filter_passed = true;
+                                break;
+                            }
                         }
+                    } else {
+                        $filter_passed = true;
                     }
 
-                    if (strlen($field_data) > 0 && !$check_typenum) {
+                    if ($filter_passed) {
+                        $field_data = '';
+                        $user_data = ($GLOBALS['TSFE']->fe_user->user['username']) ? $GLOBALS['TSFE']->fe_user->user['username'] : '';
 
-                        // HTTP errors won't throw an exception
-                        // TODO: Handle with Logging Service
-                        $this->logData = $field_data;
-                        $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
+                        $check_fields = is_array($fields[$enrichment['check_field']]) ? $fields[$enrichment['check_field']] : array($fields[$enrichment['check_field']]);
 
-                        if (is_array($enriched) && count($enriched)) {
-                            $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
+                        $check_typenum = false;
 
-                            foreach ($assignments['enriched']['fields'] as $key => $value) {
-                                if ($key != str_replace(' ', '', $key)) {
-                                    $assignments['enriched']['fields'][str_replace(' ', '', $key)] = $assignments['enriched']['fields'][$key];
+                        if (array_key_exists('check_typenum', $enrichment) && $pageType !== (int)$enrichment['check_typenum']) {
+                            $check_typenum = true;
+                        }
+
+                        foreach ($check_fields as $check_field) {
+                            if (preg_match($enrichment['check_pattern'], $check_field, $matches) === 1) {
+                                $field_data = $matches[1];
+                            }
+                        }
+
+                        if (strlen($field_data) > 0 && !$check_typenum) {
+
+                            // HTTP errors won't throw an exception
+                            // TODO: Handle with Logging Service
+                            $this->logData = $fields['id'] . ': ' . sprintf($enrichment['ws'], $field_data, $user_data);
+                            $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
+
+                            if (is_array($enriched) && count($enriched)) {
+                                $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
+
+                                foreach ($assignments['enriched']['fields'] as $key => $value) {
+                                    if ($key != str_replace(' ', '', $key)) {
+                                        $assignments['enriched']['fields'][str_replace(' ', '', $key)] = $assignments['enriched']['fields'][$key];
+                                    }
                                 }
                             }
                         }
