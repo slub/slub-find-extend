@@ -23,12 +23,17 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Solarium\QueryType\Select\Query\Query;
+use Solarium\QueryType\Select\Query\Query as SelectQuery;
 use Solarium\QueryType\Select\Result\Result;
 use Solarium\QueryType\Update\Query\Document\DocumentInterface;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\Variables\VariableProviderInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+require_once(ExtensionManagementUtility::extPath('find') . 'vendor/autoload.php');
 
 /**
  * FromSolrViewHelper
@@ -45,11 +50,15 @@ class FromSolrViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
-
     /**
      * @var \Solarium\Client
      */
     protected static $solr = null;
+
+    public function __construct(\Solarium\Client $solrClient)
+    {
+        static::$solr = $solrClient;
+    }
 
     /**
      * Register arguments.
@@ -72,10 +81,11 @@ class FromSolrViewHelper extends AbstractViewHelper
      * @return string
      */
     public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
+        array                     $arguments,
+        \Closure                  $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ) {
+    )
+    {
         $templateVariableContainer = $renderingContext->getVariableProvider();
 
         $solrClient = static::getSolariumClient($templateVariableContainer);
@@ -137,7 +147,7 @@ class FromSolrViewHelper extends AbstractViewHelper
 
     /**
      * Check configuration for shards and when found create Distributed Search
-     * @param \Solarium\QueryType\Select\Query\Query $query
+     * @param Query $query
      */
     private static function createQueryComponents(&$query, &$templateVariableContainer)
     {
@@ -154,7 +164,7 @@ class FromSolrViewHelper extends AbstractViewHelper
     /**
      * Adds filter queries configured in TypoScript to $query.
      *
-     * @param \Solarium\QueryType\Select\Query\Query $query
+     * @param Query $query
      */
     private static function addTypoScriptFilters(&$query, &$templateVariableContainer)
     {
@@ -169,9 +179,10 @@ class FromSolrViewHelper extends AbstractViewHelper
     /**
      * Creates a query for a document
      *
-     * @param string $id the document id
-     * @param string $idfield the document id field
-     * @return \Solarium\QueryType\Select\Query\Query
+     * @param \Solarium\Client $solrClient
+     * @param string $query
+     * @param VariableProviderInterface $templateVariableContainer
+     * @return SelectQuery
      */
     private static function createQuery($solrClient, $query, &$templateVariableContainer)
     {
@@ -191,8 +202,7 @@ class FromSolrViewHelper extends AbstractViewHelper
     private static function getSolariumClient()
     {
         if (null === static::$solr) {
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            static::$solr = $objectManager->get(\Solarium\Client::class);
+            static::$solr = GeneralUtility::makeInstance(\Solarium\Client::class);
         }
 
         return static::$solr;
