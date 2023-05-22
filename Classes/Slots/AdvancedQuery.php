@@ -100,7 +100,7 @@ class AdvancedQuery
         $originalQuerystring = trim($originalQuerystring, $settings['queryModifier']['isilQueryTrim']);
         $originalQuerystring = str_replace([' ', ')', '('], ['\\\ ', '\\\)', '\\\('], $originalQuerystring);
 
-        $return = ' OR ' . sprintf($this->settings['queryModifier']['isilQueryString'], $originalQuerystring).'^500000';
+        $return = ' OR ' . sprintf($this->settings['queryModifier']['isilQueryString'], $originalQuerystring);
 
         return $return;
     }
