@@ -119,11 +119,19 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
 
                         if (strlen($field_data) > 0 && !$check_typenum) {
 
-                            // HTTP errors won't throw an exception
-                            // TODO: Handle with Logging Service
                             $this->logData = $fields['id'] . ': ' . sprintf($enrichment['ws'], $field_data, $user_data);
-                            $enriched = (array)$this->safe_json_decode($this->getData(sprintf($enrichment['ws'], $field_data, $user_data)));
 
+                            try 
+                            {
+                                $enriched = $this->getSafeData(sprintf($enrichment['ws'], $field_data, $user_data));
+                            } catch (\Exception $e) 
+                            {
+                                $assignments['enriched']['error'] = [
+                                    'code' => $e->getMessage(),
+                                    'host' => parse_url($enrichment['ws'], PHP_URL_HOST),
+                                    'host_hash' => md5(parse_url($enrichment['ws'], PHP_URL_HOST))
+                                ];
+                            }
                             if (is_array($enriched) && count($enriched)) {
                                 $assignments['enriched']['fields'] = array_merge($assignments['enriched']['fields'], $enriched);
 
@@ -151,6 +159,17 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
     {
     }
 
+    /** 
+     * A safe way to get data from a webservice
+     * @param $url
+     * @return array
+     */
+
+    private function getSafeData($url)
+    {
+        return (array)$this->safe_json_decode($this->getData($url));
+    }
+
     /**
      * A safe way to decode stringified json data
      * @param $value
@@ -158,6 +177,11 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
      */
     private function safe_json_decode($value)
     {
+
+        if($value === '') {
+            return '';
+        }
+        
         $original_value = $value;
 
         $decoded = json_decode($value, true);
@@ -166,20 +190,20 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
             case JSON_ERROR_NONE:
                 return $decoded;
             case JSON_ERROR_UTF8:
-                $this->logger->info('JSON_ERROR_UTF8: '. $this->logData);
+                $this->logger->error('JSON_ERROR_UTF8: '. $this->logData);
                 $clean = $this->unutf8ize($value);
                 return $this->safe_json_decode($clean);
             case JSON_ERROR_SYNTAX:
-                $this->logger->info('JSON_ERROR_SYNTAX: '. $this->logData);
+                $this->logger->error('JSON_ERROR_SYNTAX: '. $this->logData);
                 // Fix double ,, syntax error
                 if (strpos($original_value, ',,') !== false) {
                     $value = str_replace(',,', ',', $original_value);
                     $decoded = json_decode($value, true);
                     return $decoded;
                 }
-                return '';
+                throw new \Exception('LO-JD');
             case JSON_ERROR_CTRL_CHAR:
-                $this->logger->info('JSON_ERROR_CTRL_CHAR: '. $this->logData);
+                $this->logger->error('JSON_ERROR_CTRL_CHAR: '. $this->logData);
                 // Fix tab syntax error
                 $fixed = 0;
                 if (strpos($original_value, "\t") !== false) {
@@ -199,10 +223,11 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
                 if($fixed === 1) {
                     return $decoded;
                 } else {
-                    return '';
+                    throw new \Exception('LO-JD');
                 }
             default:
-                return '';
+                $this->logger->error('JSON_UNKNOWN_ERROR: '. $this->logData);
+                throw new \Exception('LO-JD');
 
         }
     }
@@ -237,7 +262,21 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+
         $data = curl_exec($ch);
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+
+        if (curl_errno($ch)) {
+            $error = 'Curl error: ' . curl_error($ch);
+            $this->logger->warning($error);
+            throw new \Exception('LO-AC');
+        } elseif ($http_code != 200) {
+            $error = 'Curl error: ' . $http_code . ': '. $url;
+            $this->logger->warning($error);
+            throw new \Exception('LO-AC');
+        }
+
         curl_close($ch);
         return $data;
     }

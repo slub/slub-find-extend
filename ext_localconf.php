@@ -110,9 +110,14 @@ if (TYPO3_MODE === 'BE') {
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['LOG']['Slub']['SlubFindExtend']['Slots']['writerConfiguration'] = [
-    \TYPO3\CMS\Core\Log\LogLevel::INFO => [
+    \TYPO3\CMS\Core\Log\LogLevel::ERROR => [
         \TYPO3\CMS\Core\Log\Writer\FileWriter::class => [
             'logFile' => \TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log/EnrichSolrResult.log'
+        ]
+    ],
+    \TYPO3\CMS\Core\Log\LogLevel::WARNING => [
+        \TYPO3\CMS\Core\Log\Writer\FileWriter::class => [
+            'logFile' => \TYPO3\CMS\Core\Core\Environment::getVarPath() . '/log/EnrichError.log'
         ]
     ]
 ];
