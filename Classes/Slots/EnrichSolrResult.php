@@ -149,6 +149,84 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
      */
     public function index(&$resultSet)
     {
+        if (is_null($resultSet) || !isset($this->settings['enrich']['index'])) {
+            return;
+        }
+
+        $documents = $resultSet->getDocuments();
+
+        if (!empty($documents)) {
+            if (is_array($this->settings['enrich']['index'])) {
+                foreach ($this->settings['enrich']['index'] as $enrichment) {
+                    if (isset($enrichment['check_field']) && isset($enrichment['type']) && isset($enrichment['filter_field'])) {
+                        $field_passed = false;
+                        foreach ($documents as $document) {
+                            if (array_key_exists($enrichment['check_field'], $document->getFields())) {
+                                $field_passed = true;
+                                break;
+                            }
+                        }
+
+                        if ($field_passed) {
+                            $values = [];
+                            foreach ($documents as $document) {
+                                if (!empty($document->getFields()[$enrichment['check_field']])) {
+                                    if (is_array($document->getFields()[$enrichment['check_field']])) {
+                                        $values = array_merge($values, $document->getFields()[$enrichment['check_field']]);
+                                    } else {
+                                        array_push($values, $document->getFields()[$enrichment['check_field']]);
+                                    }
+                                }
+                            }
+
+                            $values = array_values(array_filter(array_unique($values)));
+
+                            if  (!empty($values)) {
+                                $results = [];
+                                switch ($enrichment['type']) {
+                                    case 'solr':
+                                        $results = $this->solrEnrich($documents, $values, $enrichment);
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                if (!empty($results)) {
+                                    $body = json_decode($resultSet->getResponse()->getBody(), true);
+                                    foreach ($body['response']['docs'] as &$document) {
+                                        if (!empty($document[$enrichment['check_field']])) {
+                                            foreach ($results as $item) {
+                                                if ($this->checkForIntersection($document[$enrichment['check_field']], $item->getFields()[$enrichment['filter_field']])) {
+                                                    if (!$document['enriched'] || is_array($document['enriched'])) {
+                                                        $document['enriched'][]['fields'] = $item->getFields();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // rewire the resultSet
+                                    $response = new \Solarium\Core\Client\Response(json_encode($body), $resultSet->getResponse()->getHeaders());
+                                    $config = [
+                                        'endpoint' => [
+                                            'localhost' => [
+                                                'host' => $this->settings['connection']['host'],
+                                                'port' => intval($this->settings['connection']['port']),
+                                                'path' => $this->settings['connection']['path'],
+                                                'timeout' => $this->settings['connection']['timeout'],
+                                                'scheme' => $this->settings['connection']['scheme']
+                                            ]
+                                        ]
+                                    ];
+                                    $result = new \Solarium\QueryType\Select\Result\Result(new \Solarium\Client($config), $resultSet->getQuery(), $response);
+                                    $resultSet = $result;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -240,5 +318,73 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
+    }
+
+    /**
+     *
+     * @param array $documents
+     * @param array $enrichment
+     * @return array
+     */
+    private function solrEnrich($documents, $values, $enrichment)
+    {
+        $results = [];
+        $config = [
+            'endpoint' => [
+                'localhost' => [
+                    'host' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['host'])) ? $enrichment['endpoint']['host'] : $this->settings['connection']['host'],
+                    'port' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['port'])) ? intval($enrichment['endpoint']['port']) : intval($this->settings['connection']['port']),
+                    'path' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['path'])) ? $enrichment['endpoint']['path'] : $this->settings['connection']['path'],
+                    'timeout' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['timeout'])) ? $enrichment['endpoint']['timeout'] : $this->settings['connection']['timeout'],
+                    'scheme' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['scheme'])) ? $enrichment['endpoint']['scheme'] : $this->settings['connection']['scheme'],
+                ]
+            ]
+        ];
+        $solr = new \Solarium\Client($config);
+
+        if ($enrichment['filter_field'] == 'id') {
+            $query = new \Solarium\QueryType\RealtimeGet\Query();
+            $query->addIds($values);
+            $query->setResponseWriter('json');
+
+            try {
+                $response = $solr->realtimeGet($query);
+                $results = $response->getDocuments();
+            } catch (\Exception $e) {
+
+            }
+        } else {
+
+        }
+
+        return $results;
+    }
+
+    /**
+     * Test for variable intersection
+     * @param mixed $data1
+     * @param mixed $data2
+     * @return bool
+     */
+    private function checkForIntersection($data1, $data2)
+    {
+        if (empty($data1) || empty($data2)) {
+            return false;
+        }
+
+        if (is_array($data1) && is_array($data2)) {
+            if (count(array_intersect($data1, $data2)) > 0) {
+                return true;
+            }
+        } else if (is_array($data1) xor is_array($data2)) {
+            if (is_array($data1)) {
+                return in_array($data2, $data2);
+            } else {
+                return in_array($data1, $data2);
+            }
+        } else {
+            return $data1 == $data2;
+        }
+        return false;
     }
 }
