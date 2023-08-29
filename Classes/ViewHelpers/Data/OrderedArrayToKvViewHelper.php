@@ -49,43 +49,46 @@ class OrderedArrayToKvViewHelper extends AbstractViewHelper
             return [];
         }
 
-        foreach ($array as $key => $value) {
-            $innerresult = [];
-            $innerkey = '';
-            $isKey = true;
+        if (is_array($array) || is_object($array))
+        {
+            foreach ($array as $key => $value) {
+                $innerresult = [];
+                $innerkey = '';
+                $isKey = true;
 
-            $keyValue = ($translate) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key, $translatekeyextension) : $key;
-            if (strlen($keyValue) === 0) {
-                $keyValue = $key;
-            }
-
-            foreach ($value as $innervalue) {
-                if ($isKey === true) {
-                    $innerkey = $innervalue;
-                    $isKey = false;
-                } elseif ($isKey === false) {
-                    $innerkeyValue = ($translate) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key.'.'.$innerkey, $translatekeyextension) : $innerkey;
-                    if (strlen($innerkeyValue) === 0) {
-                        $innerkeyValue = $innerkey;
-                    }
-
-                    if ($keeporiginalvalue) {
-                        $innerresult[$innerkey] = [];
-                        $innerresult[$innerkey]['translation'] = $innerkeyValue;
-                        $innerresult[$innerkey]['values'] = $innervalue;
-                    } else {
-                        $innerresult[$innerkeyValue] = $innervalue;
-                    }
-                    $isKey = true;
+                $keyValue = ($translate) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key, $translatekeyextension) : $key;
+                if (strlen($keyValue) === 0) {
+                    $keyValue = $key;
                 }
-            }
 
-            if ($keeporiginalvalue) {
-                $result[$key] = [];
-                $result[$key]['translation'] = $keyValue;
-                $result[$key]['values'] = $innerresult;
-            } else {
-                $result[$keyValue] = $innerresult;
+                foreach ($value as $innervalue) {
+                    if ($isKey === true) {
+                        $innerkey = $innervalue;
+                        $isKey = false;
+                    } elseif ($isKey === false) {
+                        $innerkeyValue = ($translate) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($translatekey.$key.'.'.$innerkey, $translatekeyextension) : $innerkey;
+                        if (strlen($innerkeyValue) === 0) {
+                            $innerkeyValue = $innerkey;
+                        }
+
+                        if ($keeporiginalvalue) {
+                            $innerresult[$innerkey] = [];
+                            $innerresult[$innerkey]['translation'] = $innerkeyValue;
+                            $innerresult[$innerkey]['values'] = $innervalue;
+                        } else {
+                            $innerresult[$innerkeyValue] = $innervalue;
+                        }
+                        $isKey = true;
+                    }
+                }
+
+                if ($keeporiginalvalue) {
+                    $result[$key] = [];
+                    $result[$key]['translation'] = $keyValue;
+                    $result[$key]['values'] = $innerresult;
+                } else {
+                    $result[$keyValue] = $innerresult;
+                }
             }
         }
 
