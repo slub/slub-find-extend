@@ -85,7 +85,8 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper
             return;
         }
 
-        $doc->loadHTML($html);
+        libxml_use_internal_errors(true);
+        @$doc->loadHTML($html);
 
         $xpath = new \DOMXpath($doc);
 
