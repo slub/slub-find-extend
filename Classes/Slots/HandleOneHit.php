@@ -76,7 +76,7 @@ class HandleOneHit
             }
 
             if ($idhit) {
-                $uri = $this->uriBuilder->setUseCacheHash(0)->uriFor("detail", ['id' => $document['id'], 'underlyingQuery' => ['q' => $_GET['tx_find_find']['q'], 'position' => 1]], "Search", "find", "Find");
+                $uri = $this->uriBuilder->uriFor("detail", ['id' => $document['id'], 'underlyingQuery' => ['q' => $_GET['tx_find_find']['q'], 'position' => 1]], "Search", "find", "Find");
 
                 header("Location: " . $uri, true, 302);
                 die();
