@@ -59,7 +59,7 @@ class HoldingStatusService
 
         // Electronic Resource are always accessible. Might needs fine tuning further on.
         if (in_array('Online', $document['facet_avail'])) {
-            return 1;
+            return 4;
         } else {
             return $this->getLocalHoldingStatusFromArray($copies);
         }
