@@ -34,6 +34,7 @@ namespace Slub\SlubFindExtend\Task;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Scheduler\Task\Enumeration\Action;
 
 class SendEnrichSolrResultLogTaskAdditionalFieldProvider implements \TYPO3\CMS\Scheduler\AdditionalFieldProviderInterface
 {
@@ -56,9 +57,9 @@ class SendEnrichSolrResultLogTaskAdditionalFieldProvider implements \TYPO3\CMS\S
         $additionalFields = [];
 
         if (empty($taskInfo['emails'])) {
-            if ($schedulerModule->CMD == 'add') {
+            if ($schedulerModule->getCurrentAction()->equals(Action::ADD)) {
                 $taskInfo['emails'] = '';
-            } elseif ($schedulerModule->CMD == 'edit') {
+            } elseif ($schedulerModule->getCurrentAction()->equals(Action::EDIT)) {
                 $taskInfo['emails'] = $task->getEmails();
             } else {
                 $taskInfo['emails'] = $task->setEmails();
