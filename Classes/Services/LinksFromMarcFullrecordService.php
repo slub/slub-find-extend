@@ -128,7 +128,8 @@ class LinksFromMarcFullrecordService
             return [
                 'isil' => $isilLinks,
                 'resource' => $resourceLinks,
-                'related' => $relatedLinks
+                'related' => $relatedLinks,
+                'count' => sizeof($isilLinks) + sizeof($resourceLinks) + sizeof($relatedLinks)
             ];
         }
     }
