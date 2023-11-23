@@ -43,6 +43,7 @@ class LinksFromMarcFullrecordService
             $prefix = $defaultPrefix;
             $note = '';
             $material = '';
+            $text = '';
             $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
             $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
 
@@ -73,6 +74,12 @@ class LinksFromMarcFullrecordService
                         $material = '';
                     }
                 }
+                if ($reference->cache["856[" . $i . "]"]->getSubfield('y')) {
+                    $text = $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData();
+                    if (in_array($text, $blacklistLabel)) {
+                        $text = '';
+                    }
+                }
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('9') && in_array($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData(), $isil)) {
                     if ($reference->cache["856[" . $i . "]"]->getSubfield('9')->getData() === 'LFER') {
@@ -85,7 +92,7 @@ class LinksFromMarcFullrecordService
                     }
 
                     if ($linkNotInArray) {
-                        $isilLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                        $isilLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "text" => $text, "prefix" => $prefix];
                     }
                 } elseif (($ind1 === '4') && ($ind2 === '2')) {
                     $linkNotInArray = true;
@@ -103,7 +110,7 @@ class LinksFromMarcFullrecordService
                     }
 
                     if ($linkNotInArray) {
-                        $resourceLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                        $relatedLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "text" => $text, "prefix" => ''];
                     }
                 } else {
                     $linkNotInArray = true;
@@ -112,7 +119,7 @@ class LinksFromMarcFullrecordService
                     }
 
                     if ($linkNotInArray) {
-                        $unspecificLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "prefix" => $prefix];
+                        $unspecificLinks[] = ["uri" => $uri, "note" => $note, "material" => $material, "text" => $text, "prefix" => $prefix];
                     }
                 }
             }
