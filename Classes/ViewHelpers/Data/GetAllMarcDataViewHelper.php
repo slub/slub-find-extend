@@ -2,8 +2,6 @@
 
 namespace Slub\SlubFindExtend\ViewHelpers\Data;
 
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-
 /***************************************************************
  *
  *  Copyright notice
@@ -26,6 +24,8 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  ***************************************************************/
 
 require_once(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('slub_find_extend') . 'vendor/autoload.php');
+
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * GetAllMarcDataViewHelper

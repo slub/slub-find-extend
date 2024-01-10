@@ -93,7 +93,7 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
                 break;
             case "ZwB Rechtswissenschaft":
                 $pickupDesc = "Zweigbibliothek Rechtswissenschaft";
-                $pickupID = '0gryf';
+                $pickupID = 'f2ysg';
                 break;
             case "Bereichsbibliothek Drepunct":
                 $pickupID = 'dsm3h';
