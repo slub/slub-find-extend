@@ -32,6 +32,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class GetAllMarcDataViewHelper extends AbstractViewHelper
 {
+
     /**
      * Register arguments.
      * @return void

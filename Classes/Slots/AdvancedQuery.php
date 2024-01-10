@@ -30,7 +30,7 @@ class AdvancedQuery
     /**
      * @var \Slub\SlubFindExtend\Services\StopWordService
      */
-    protected $stopWordService;
+    protected $stopWordService = null;
 
     /**
      * Contains the settings of the current extension
@@ -44,6 +44,14 @@ class AdvancedQuery
      * @var \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
      */
     protected $configurationManager;
+
+    /**
+     * @param \Slub\SlubFindExtend\Services\StopWordService $stopWordService
+     */
+    public function __construct(\Slub\SlubFindExtend\Services\StopWordService $stopWordService)
+    {
+        $this->stopWordService = $stopWordService;
+    }
 
     /**
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
