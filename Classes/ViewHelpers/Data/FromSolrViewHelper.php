@@ -52,11 +52,6 @@ class FromSolrViewHelper extends AbstractViewHelper
      */
     protected static $solr = null;
 
-    public function __construct(\Solarium\Client $solrClient)
-    {
-        static::$solr = $solrClient;
-    }
-
     /**
      * Register arguments.
      * @return void
