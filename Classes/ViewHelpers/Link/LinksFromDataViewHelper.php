@@ -66,15 +66,69 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         if($has_isil_links) {
             foreach($isil_links as $isil_link) {
-                $return_links['access'][] = array(
-                    'url' => $isil_link,
-                    'url_prefix' => '',
-                    'label' => '',
-                    'intro' => '',
-                    'material' => '',
-                    'note' => ''
-                );
+
+                $url = parse_url($isil_link);
+
+                $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
+
+                if (str_ends_with($isil_link, 'manifest.json')) {
+
+                    $return_links['access'][] = array(
+                        'url' => $isil_link,
+                        'url_prefix' => '',
+                        'label' => $localisedLabel,
+                        'intro' => '',
+                        'material' => 'iiif',
+                        'note' => ''
+                    );
+
+                } else {
+                    $return_links['access'][] = array(
+                        'url' => $isil_link,
+                        'url_prefix' => '',
+                        'label' => $localisedLabel,
+                        'intro' => '',
+                        'material' => '',
+                        'note' => ''
+                    );
+
+                }
+
+
+                
             }
+
+            // Find iiif manifests            
+            foreach($arguments['document']['url'] as $document_url) {
+                if (str_ends_with($document_url, 'manifest.json')) {
+
+                    if(!in_array($document_url, $isil_links)) {
+
+                        $return_links['access'][] = array(
+                            'url' => 'https://iiif.arthistoricum.net/mirador/?id='.$document_url,
+                            'url_prefix' => '',
+                            'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistorricum'),
+                            'intro' => '',
+                            'material' => 'iiif',
+                            'note' => ''
+                        );
+
+                        $return_links['access'][] = array(
+                            'url' => $document_url,
+                            'url_prefix' => '',
+                            'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.manifest'),
+                            'intro' => '',
+                            'material' => '',
+                            'note' => ''
+                        );
+
+                    }
+
+                }
+                
+            }
+
         }
 
         $marc = $arguments['marc'];
@@ -117,14 +171,18 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
                     $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
 
-                    $return_links['additional_information'][] = array(
-                        'url' => $uri,
-                        'url_prefix' => '',
-                        'label' => '',
-                        'intro' => '',
-                        'material' => '',
-                        'note' => ''
-                    );
+                    if (!str_ends_with($document_url, 'manifest.json')) {
+
+                        $return_links['additional_information'][] = array(
+                            'url' => $uri,
+                            'url_prefix' => '',
+                            'label' => '',
+                            'intro' => '',
+                            'material' => 'iiif',
+                            'note' => ''
+                        );
+    
+                    }
                 }
             }
 
@@ -186,18 +244,45 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             );
         }
 
-        foreach($document['url'] as $url) {
-            if((strpos($url, '|')) && ($document['source_id'] != '215')) {
-                $url_parts = explode('|', $url);
-                $return_links['references'][] = array(
-                    'url' => $url_parts[1],
-                    'url_prefix' => '',
-                    'label' => $url_parts[0],
-                    'intro' => '',
-                    'material' => '',
-                    'note' => ''
-                );
+        if(!$has_isil_links) {
+
+            foreach($document['url'] as $url) {
+                if((strpos($url, '|')) && ($document['source_id'] != '215')) {
+                    $url_parts = explode('|', $url);
+                    $return_links['references'][] = array(
+                        'url' => $url_parts[1],
+                        'url_prefix' => '',
+                        'label' => $url_parts[0],
+                        'intro' => '',
+                        'material' => '',
+                        'note' => ''
+                    );
+                } else {
+
+                    if(strpos($url, '|')) {
+                        $url_parts = explode('|', $url);
+                        $return_links['links'][] = array(
+                            'url' => $url_parts[1],
+                            'url_prefix' => '',
+                            'label' => $url_parts[0],
+                            'intro' => '',
+                            'material' => '',
+                            'note' => ''
+                        );
+                    } else {
+                        $return_links['links'][] = array(
+                            'url' => $url,
+                            'url_prefix' => '',
+                            'label' => '',
+                            'intro' => '',
+                            'material' => '',
+                            'note' => ''
+                        );
+                    }
+
+                }
             }
+
         }
 
 
