@@ -136,7 +136,7 @@ class AdvancedQuery
      */
     private function cleanParameter($queryParameter)
     {
-        return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'], ' ', $queryParameter);
+        return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’', ','], ' ', $queryParameter);
     }
 
     /**
