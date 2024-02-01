@@ -63,6 +63,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         if(count($isil_links) > 0) {
             $has_isil_links = true;
         }
+        $is_marc = false;
+        if($arguments['marc'] != '') {
+            $is_marc = true;
+        }
 
         if($has_isil_links) {
             foreach($isil_links as $isil_link) {
@@ -95,8 +99,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                 }
 
-
-                
             }
 
             // Find iiif manifests            
@@ -150,12 +152,53 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                 if(!$has_isil_links) {
                     if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
-                        $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+                        $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+                        $url = parse_url($raw_url);
+
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                        $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
+        
+                        if($localisedLabel === '') {
+                            $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
+                            $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                            $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
+
+                            if($note === 'lizenzpflichtig') {
+                                $note = '';
+                            }
+
+                            if(strlen($material) > 0) {
+                                $marclabel = $material;
+                                if(strlen($note) > 0) {
+                                    $marclabel .= ' ('.$note.')';
+                                }
+                            } else if(strlen($general) > 0) {
+                                $marclabel = $general;
+                                if(strlen($note) > 0) {
+                                    $marclabel .= ' ('.$note.')';
+                                }
+                                
+                            } else if(strlen($note) > 0) {
+                                $marclabel = $note;
+                            }
+
+                            if(str_contains($marclabel, '#')) {
+                                $marclabel = str_replace('#', ' - ', $marclabel);
+                            }
+
+                        }
+
+                        if((strlen($localisedLabel) === 0) && (strlen($marclabel) === 0)) {
+                            $label = "Zugang zur Ressource";
+                        } else {
+                            $label = $localisedLabel.$marclabel;
+                        }
+
 
                         $return_links['access'][] = array(
-                            'url' => $uri,
+                            'url' => $raw_url,
                             'url_prefix' => '',
-                            'label' => '',
+                            'label' => $label,
                             'intro' => '',
                             'material' => '',
                             'note' => ''
@@ -169,16 +212,56 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                ($ind1 == 4) && ($ind2 == 2)) {
 
                 if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
-                    $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+                    $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
 
-                    if (!str_ends_with($document_url, 'manifest.json')) {
+                    if (!str_ends_with($raw_url, 'manifest.json')) {
+
+                        $url = parse_url($raw_url);
+
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                        $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
+        
+                        if($localisedLabel === '') {
+                            $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
+                            $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                            $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
+
+                            if($note === 'lizenzpflichtig') {
+                                $note = '';
+                            }
+
+                            if(strlen($material) > 0) {
+                                $marclabel = $material;
+                                if(strlen($note) > 0) {
+                                    $marclabel .= ' ('.$note.')';
+                                }
+                            } else if(strlen($general) > 0) {
+                                $marclabel = $general;
+                                if(strlen($note) > 0) {
+                                    $marclabel .= ' ('.$note.')';
+                                }
+                                
+                            } else if(strlen($note) > 0) {
+                                $marclabel = $note;
+                            }
+
+                            if(str_contains($marclabel, '#')) {
+                                $marclabel = str_replace('#', ' - ', $marclabel);
+                            }
+
+                        }
+                        if((strlen($localisedLabel) === 0) && (strlen($marclabel) === 0)) {
+                            $label = "Zugang zur Ressource";
+                        } else {
+                            $label = $localisedLabel.$marclabel;
+                        }
 
                         $return_links['additional_information'][] = array(
-                            'url' => $uri,
+                            'url' => $raw_url,
                             'url_prefix' => '',
-                            'label' => '',
+                            'label' => $label,
                             'intro' => '',
-                            'material' => 'iiif',
+                            'material' => '',
                             'note' => ''
                         );
     
@@ -212,8 +295,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $return_links['references'][] = array(
                     'url' => 'http://gateway-bayern.de/'.urlencode($reference->cache["024_7"][$i]->getSubfield('a')->getData()),
                     'url_prefix' => '',
-                    'label' => '',
-                    'intro' => '',
+                    'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
+                    'intro' => 'Verzeichnis der Drucke des 16. Jahrhunderts:',
                     'material' => '',
                     'note' => ''
                 );
@@ -224,8 +307,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $return_links['references'][] = array(
                     'url' => 'https://kxp.k10plus.de/DB=1.28/CMD?ACT=SRCHA&IKT=8079&TRM=%27'.trim(ltrim($reference->cache["024_7"][$i]->getSubfield('a')->getData(), 'VD17')).'%27',
                     'url_prefix' => '',
-                    'label' => '',
-                    'intro' => '',
+                    'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
+                    'intro' => 'Verzeichnis der Drucke des 17. Jahrhunderts:',
                     'material' => '',
                     'note' => ''
                 );
@@ -244,7 +327,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             );
         }
 
-        if(!$has_isil_links) {
+        if(!$has_isil_links && !$is_marc) {
 
             foreach($document['url'] as $url) {
                 if((strpos($url, '|')) && ($document['source_id'] != '215')) {
