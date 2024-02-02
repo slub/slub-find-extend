@@ -50,6 +50,6 @@ class CleanUrnLinkViewHelper extends AbstractViewHelper
             return $link.'&bibid=SLUB';
         }
 
-        return 'http://wwwdb.dbod.de/login?url='.$link;
+        return 'https://wwwdb.dbod.de/login?url='.$link;
     }
 }
