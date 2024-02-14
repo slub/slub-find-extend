@@ -220,17 +220,28 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                         $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
-        
-                        if($localisedLabel === '') {
-                            $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
-                            $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
-                            $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
-
-                            if($note === 'lizenzpflichtig') {
-                                $note = '';
+ 
+                        $note = '';
+                        $j = 0;
+                        foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
+                            // Notiz:
+                            // In der Katalogisierung häufig verwendete Einleitung die für die Anzeige entfernt wird
+                            $note .= trim(ltrim($value->getData(), '// '));
+                            ++$j;
+                            if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
+                                $note .=  " ; ";
                             }
+                        }
+                                        
+                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                        $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
 
-                            if(strlen($material) > 0) {
+                        if($note === 'lizenzpflichtig') {
+                            $note = '';
+                        }                        
+
+                        if($localisedLabel === '') {
+                             if(strlen($material) > 0) {
                                 $marclabel = $material;
                                 if(strlen($note) > 0) {
                                     $marclabel .= ' ('.$note.')';
@@ -249,6 +260,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 $marclabel = str_replace('#', ' - ', $marclabel);
                             }
 
+                        } else {
+                            $marclabel = '';
                         }
                         if((strlen($localisedLabel) === 0) && (strlen($marclabel) === 0)) {
                             $label = "Zugang zur Ressource";
@@ -256,15 +269,30 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             $label = $localisedLabel.$marclabel;
                         }
 
-                        $return_links['additional_information'][] = array(
-                            'url' => $raw_url,
-                            'url_prefix' => '',
-                            'label' => $label,
-                            'intro' => '',
-                            'material' => '',
-                            'note' => ''
-                        );
-    
+                        // Notiz:
+                        // Wenn der Link aus Ergänzende Informationen auch schon im Zugangsbereich 
+                        // vorhanden ist, dann wird er in den Ergänzenden Informationen nicht gesondert 
+                        // aufgeführt. 
+                        // Falls in $z Notizen enthalten sind werden die an den Zugangslink ergänzt.
+                        $is_accessslink = false;
+                        for($k = 0; $k < count($return_links['access']); $k++) {
+                            if($raw_url === $return_links['access'][$k]['url']) {
+                                $is_accessslink = true;
+                                $return_links['access'][$k]['label'] .= ' - ' . $note;
+                            }
+                        }
+
+                        if(!$is_accessslink) {
+                            $return_links['additional_information'][] = array(
+                                'url' => $raw_url,
+                                'url_prefix' => '',
+                                'label' => $label,
+                                'intro' => '',
+                                'material' => '',
+                                'note' => ''
+                            );
+                        }
+
                     }
                 }
             }
@@ -304,14 +332,20 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             }
             if ($reference->cache["024_7"][$i]->getSubfield('2')->getData() == 'vd17') {
 
-                $return_links['references'][] = array(
-                    'url' => 'https://kxp.k10plus.de/DB=1.28/CMD?ACT=SRCHA&IKT=8079&TRM=%27'.trim(ltrim($reference->cache["024_7"][$i]->getSubfield('a')->getData(), 'VD17')).'%27',
-                    'url_prefix' => '',
-                    'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
-                    'intro' => 'Verzeichnis der Drucke des 17. Jahrhunderts:',
-                    'material' => '',
-                    'note' => ''
-                );
+                if($reference->cache["024_7"][$i]->getSubfield('a')) {
+
+                    $return_links['references'][] = array(
+                        // Notiz:
+                        // Links starten in der Katalogisierung mit VD17. Die Suche im Verzeichnis funktioniert nur ohne
+                        'url' => 'https://kxp.k10plus.de/DB=1.28/CMD?ACT=SRCHA&IKT=8079&TRM=%27'.trim(ltrim($reference->cache["024_7"][$i]->getSubfield('a')->getData(), 'VD17')).'%27',
+                        'url_prefix' => '',
+                        'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
+                        'intro' => 'Verzeichnis der Drucke des 17. Jahrhunderts:',
+                        'material' => '',
+                        'note' => ''
+                    );
+
+                }
 
             }
         }
