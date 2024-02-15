@@ -83,6 +83,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'url_prefix' => '',
                         'label' => $localisedLabel,
                         'intro' => '',
+                        'url_title' => '',
                         'material' => 'iiif',
                         'note' => ''
                     );
@@ -93,6 +94,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'url_prefix' => '',
                         'label' => $localisedLabel,
                         'intro' => '',
+                        'url_title' => '',
                         'material' => '',
                         'note' => ''
                     );
@@ -112,6 +114,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url_prefix' => '',
                             'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistorricum'),
                             'intro' => '',
+                            'url_title' => '',
                             'material' => 'iiif',
                             'note' => ''
                         );
@@ -121,6 +124,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url_prefix' => '',
                             'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.manifest'),
                             'intro' => '',
+                            'url_title' => '',
                             'material' => '',
                             'note' => ''
                         );
@@ -199,6 +203,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url' => $raw_url,
                             'url_prefix' => '',
                             'label' => $label,
+                            'url_title' => '',
                             'intro' => '',
                             'material' => '',
                             'note' => ''
@@ -287,6 +292,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 'url' => $raw_url,
                                 'url_prefix' => '',
                                 'label' => $label,
+                                'url_title' => '',
                                 'intro' => '',
                                 'material' => '',
                                 'note' => ''
@@ -325,6 +331,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     'url_prefix' => '',
                     'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
                     'intro' => 'Verzeichnis der Drucke des 16. Jahrhunderts:',
+                    'url_title' => '',
                     'material' => '',
                     'note' => ''
                 );
@@ -341,6 +348,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'url_prefix' => '',
                         'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
                         'intro' => 'Verzeichnis der Drucke des 17. Jahrhunderts:',
+                        'url_title' => '',
                         'material' => '',
                         'note' => ''
                     );
@@ -351,11 +359,21 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         }
 
         if (in_array("Sächsische Bibliografie", $document['mega_collection'])) {
+
+            if($document['author_facet'][0]) {
+                $label = htmlentities($document['author_facet'][0] .': '. $document['title_short']);
+            } else {
+                $label = htmlentities($document['title_short']);
+            }
+
+
+
             $return_links['references'][] = array(
                 'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
                 'url_prefix' => '',
-                'label' => '',
-                'intro' => '',
+                'label' => substr($label, 0, 125).' (<f:image src="EXT:slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline"></f:image>Säbi)',
+                'url_title' => $label,
+                'intro' => 'Nachweis in der Sächsischen Bibliografie:',
                 'material' => '',
                 'note' => ''
             );
@@ -370,6 +388,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'url' => $url_parts[1],
                         'url_prefix' => '',
                         'label' => $url_parts[0],
+                        'url_title' => '',
                         'intro' => '',
                         'material' => '',
                         'note' => ''
@@ -382,6 +401,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url' => $url_parts[1],
                             'url_prefix' => '',
                             'label' => $url_parts[0],
+                            'url_title' => '',
                             'intro' => '',
                             'material' => '',
                             'note' => ''
@@ -390,6 +410,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $return_links['links'][] = array(
                             'url' => $url,
                             'url_prefix' => '',
+                            'url_title' => '',
                             'label' => '',
                             'intro' => '',
                             'material' => '',
@@ -524,11 +545,52 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     /** @var \Solarium\QueryType\Select\Result\Document */
                     $result = $results[0];
 
+                    if($result->getFields()['author_facet'][0]) {
+                        $label = htmlentities($result->getFields()['author_facet'][0] .': '. $result->getFields()['title_short']);
+                    } else {
+                        $label = htmlentities($result->getFields()['title_short']);
+                    }
+
+
+                    $localisedIntroI = '';
+                    $localisedIntroN = '';
+                    if($reference->cache[$selector][$i]->getSubfield('n') && $reference->cache[$selector][$i]->getSubfield('n')->getData()) {
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.references.intro.marc.' . $reference->cache[$selector][$i]->getSubfield('n')->getData();
+                        $localisedIntroN = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $reference->cache[$selector][$i]->getSubfield('n')->getData();     
+                    }
+                    if($reference->cache[$selector][$i]->getSubfield('i') && $reference->cache[$selector][$i]->getSubfield('i')->getData()) {
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.references.intro.marc.' . $reference->cache[$selector][$i]->getSubfield('i')->getData();
+                        $localisedIntroI = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $reference->cache[$selector][$i]->getSubfield('i')->getData();     
+                    }
+
+                    
+                    if($reference->cache[$selector][$i]->getSubfield('i') && $reference->cache[$selector][$i]->getSubfield('i')->getData()) {
+
+                        if($reference->cache[$selector][$i]->getSubfield('n') && $reference->cache[$selector][$i]->getSubfield('n')->getData()) {
+                            $intro = $localisedIntroI . ' (' . $localisedIntroN . '):';
+                        } else {
+                            $intro = $localisedIntroI . ':';
+                        }
+
+                    } else {
+
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.references.intro.marc.' . $selector;
+                        $localisedIntro = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';     
+
+                        if($reference->cache[$selector][$i]->getSubfield('n') && $reference->cache[$selector][$i]->getSubfield('n')->getData()) {
+                            $intro = $localisedIntro . " (". $localisedIntroN . "):";
+                        } else {
+                            $intro = $localisedIntro;
+                        }
+
+                    }
+
                     $return_links['references'][] = array(
                         'url' => '/id/'.$result->getFields()['id'],
                         'url_prefix' => '',
-                        'label' => '',
-                        'intro' => '',
+                        'label' => substr($label, 0, 125) . ' (<span class="reference_slub_logo">SLUB</span>)',
+                        'url_title' => '',
+                        'intro' => $intro,
                         'material' => '',
                         'note' => ''
                     );
