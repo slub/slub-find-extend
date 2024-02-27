@@ -76,7 +76,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                 $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
 
-                $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_format.' . $arguments['document']['format_de14'][0];
+                $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                 $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
 
                 $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel;
@@ -167,7 +167,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                         $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
         
-                        $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_format.' . $arguments['document']['format_de14'][0];
+                        $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
         
                         $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
@@ -232,6 +232,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                         $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
  
+                        $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_additional_relationship.' . $ind2;
+                        $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
+
                         $note = '';
                         $j = 0;
                         foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
@@ -274,10 +277,21 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         } else {
                             $marclabel = '';
                         }
-                        if((strlen($localisedLabel) === 0) && (strlen($marclabel) === 0)) {
-                            $label = "Zugang zur Ressource";
+
+
+                        // Notiz:
+                        // Additional Information ohne intro label wenn marclabel vorhanden
+                        // wenn nicht dann nur intro label. außer wenn label "kostenfrei" ist
+                        if((strlen($marclabel) > 0) && ($marclabel !== "kostenfrei")) {
+                            $label = $marclabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel;
                         } else {
-                            $label = $localisedLabel.$marclabel;
+
+                            if($marclabel === "kostenfrei") {
+                                $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
+                            } else {
+                                $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel;
+                            }
+                            
                         }
 
                         // Notiz:
@@ -289,7 +303,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         for($k = 0; $k < count($return_links['access']); $k++) {
                             if($raw_url === $return_links['access'][$k]['url']) {
                                 $is_accessslink = true;
-                                $return_links['access'][$k]['label'] .= ' - ' . $note;
+                                $return_links['access'][$k]['label'] .= ' (' . $note . ')';
                             }
                         }
 
@@ -318,6 +332,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                     $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
     
+                    $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_links.no_relationship';
+                    $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
+
                     if($localisedLabel === '') {
                         $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
                         $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
@@ -327,19 +344,25 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             $note = '';
                         }
 
-                        if(strlen($material) > 0) {
-                            $marclabel = $material;
-                            if(strlen($note) > 0) {
-                                $marclabel .= ' ('.$note.')';
-                            }
-                        } else if(strlen($general) > 0) {
-                            $marclabel = $general;
-                            if(strlen($note) > 0) {
-                                $marclabel .= ' ('.$note.')';
-                            }
-                            
-                        } else if(strlen($note) > 0) {
-                            $marclabel = $note;
+                        if(str_ends_with($url['path'], '.zip')) {
+                            $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
+                            $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
+        
+                            $material = $materialZipLocalisedLabel;
+                        }
+
+                        $marclabel = $general;
+                        if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
+                            $marclabel .= ' ; ';
+                        }
+                        $marclabel .= $material;
+                        if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
+                            $marclabel .= ' ; ';
+                        }
+                        $marclabel .= $note;
+
+                        if(str_contains($marclabel, '#')) {
+                            $marclabel = str_replace('#', ' - ', $marclabel);
                         }
 
                         if(str_contains($marclabel, '#')) {
@@ -348,12 +371,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                     }
 
-                    if((strlen($localisedLabel) === 0) && (strlen($marclabel) === 0)) {
-                        $label = "Zugang zur Ressource";
-                    } else {
-                        $label = $localisedLabel.$marclabel;
-                    }
-
+                    $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
 
                     $return_links['links'][] = array(
                         'url' => $raw_url,
