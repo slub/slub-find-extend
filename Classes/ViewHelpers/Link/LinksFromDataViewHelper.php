@@ -60,7 +60,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         $isil_links = array();
         $isil_links = $arguments['document']['url_de14_str_mv'];
         $has_isil_links = false;
-        if(count($isil_links) > 0) {
+        if($isil_links && count($isil_links) > 0) {
             $has_isil_links = true;
         }
         $is_marc = false;
