@@ -64,7 +64,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             $has_isil_links = true;
         }
         $is_marc = false;
-        if($arguments['marc'] != '') {
+        if($arguments['document']['recordtype'] === 'marc') {
             $is_marc = true;
         }
 
@@ -179,8 +179,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
                             // Notiz:
                             // In der Katalogisierung häufig verwendete Einleitung die für die Anzeige entfernt wird
-                            if($note === 'lizenzpflichtig') {
-                                $note = '';
+                            if($value->getData() === 'lizenzpflichtig') {
+                                break;
                             } else {
                                 $note .= trim(ltrim($value->getData(), '// '));
                             }
@@ -235,49 +235,44 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_additional_relationship.' . $ind2;
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
 
+                        $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
+                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                        $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
+
                         $note = '';
                         $j = 0;
                         foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
                             // Notiz:
                             // In der Katalogisierung häufig verwendete Einleitung die für die Anzeige entfernt wird
-                            $note .= trim(ltrim($value->getData(), '// '));
+
+                            if($value->getData() === 'lizenzpflichtig') {
+                                break;
+                            } else {
+                                $note .= trim(ltrim($value->getData(), '// '));
+                            }
                             ++$j;
                             if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
                                 $note .=  " ; ";
                             }
                         }
-                                        
-                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
-                        $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
 
-                        if($note === 'lizenzpflichtig') {
-                            $note = '';
-                        }                        
+                        $marclabel = $general;
+                        if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
+                            $marclabel .= ' ; ';
+                        }
+                        $marclabel .= $material;
+                        if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
+                            $marclabel .= ' ; ';
+                        }
+                        $marclabel .= $note;
 
-                        if($localisedLabel === '') {
-                             if(strlen($material) > 0) {
-                                $marclabel = $material;
-                                if(strlen($note) > 0) {
-                                    $marclabel .= ' ('.$note.')';
-                                }
-                            } else if(strlen($general) > 0) {
-                                $marclabel = $general;
-                                if(strlen($note) > 0) {
-                                    $marclabel .= ' ('.$note.')';
-                                }
-                                
-                            } else if(strlen($note) > 0) {
-                                $marclabel = $note;
-                            }
-
-                            if(str_contains($marclabel, '#')) {
-                                $marclabel = str_replace('#', ' - ', $marclabel);
-                            }
-
-                        } else {
-                            $marclabel = '';
+                        if(str_contains($marclabel, '#')) {
+                            $marclabel = str_replace('#', ' - ', $marclabel);
                         }
 
+                        if(str_contains($marclabel, ' // ')) {
+                            $marclabel = str_replace(' // ', ' - ', $marclabel);
+                        }
 
                         // Notiz:
                         // Additional Information ohne intro label wenn marclabel vorhanden
@@ -335,43 +330,71 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_links.no_relationship';
                     $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
 
-                    if($localisedLabel === '') {
-                        $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
-                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
-                        $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
+                    $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
+                    $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                    $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
 
-                        if($note === 'lizenzpflichtig') {
-                            $note = '';
-                        }
+                    $note = '';
+                    $j = 0;
+                    foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
+                        // Notiz:
+                        // In der Katalogisierung häufig verwendete Einleitung die für die Anzeige entfernt wird
 
-                        if(str_ends_with($url['path'], '.zip')) {
-                            $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
-                            $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
-        
-                            $material = $materialZipLocalisedLabel;
+                        if($value->getData() === 'lizenzpflichtig') {
+                            break;
+                        } else {
+                            $note .= trim(ltrim($value->getData(), '// '));
                         }
-
-                        $marclabel = $general;
-                        if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
-                            $marclabel .= ' ; ';
+                        ++$j;
+                        if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
+                            $note .=  " ; ";
                         }
-                        $marclabel .= $material;
-                        if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
-                            $marclabel .= ' ; ';
-                        }
-                        $marclabel .= $note;
-
-                        if(str_contains($marclabel, '#')) {
-                            $marclabel = str_replace('#', ' - ', $marclabel);
-                        }
-
-                        if(str_contains($marclabel, '#')) {
-                            $marclabel = str_replace('#', ' - ', $marclabel);
-                        }
-
                     }
 
-                    $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
+                    if(str_ends_with($url['path'], '.zip')) {
+                        $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
+                        $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
+    
+                        $material = $materialZipLocalisedLabel;
+                    }
+
+                    $marclabel = $general;
+                    if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
+                        $marclabel .= ' ; ';
+                    }
+                    $marclabel .= $material;
+                    if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
+                        $marclabel .= ' ; ';
+                    }
+                    $marclabel .= $note;
+
+                    if(str_contains($marclabel, '#')) {
+                        $marclabel = str_replace('#', ' - ', $marclabel);
+                    }
+
+                    if(str_contains($marclabel, '#')) {
+                        $marclabel = str_replace('#', ' - ', $marclabel);
+                    }
+
+
+                    \TYPO3\CMS\Core\Utility\DebugUtility::debug($marclabel);
+
+                    // Notiz:
+                    // Links ohne intro label wenn marclabel vorhanden
+                    // wenn nicht dann nur intro label. außer wenn label "kostenfrei" ist
+                    if((strlen($marclabel) > 0) && ($marclabel !== "kostenfrei")) {
+                        $label = $marclabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel;
+                    } else {
+
+                        if($marclabel === "kostenfrei") {
+                            $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
+                        } else {
+                            $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel;
+                        }
+                        
+                    }
+
+                    //$label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
 
                     $return_links['links'][] = array(
                         'url' => $raw_url,
@@ -463,22 +486,51 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         if(!$has_isil_links && !$is_marc) {
 
-            foreach($document['url'] as $url) {
-                if((strpos($url, '|')) && ($document['source_id'] != '215')) {
-                    $url_parts = explode('|', $url);
-                    $return_links['references'][] = array(
-                        'url' => $url_parts[1],
-                        'url_prefix' => '',
-                        'label' => $url_parts[0],
-                        'url_title' => '',
-                        'intro' => '',
-                        'material' => '',
-                        'note' => ''
-                    );
+            foreach($document['url'] as $raw_url) {                
+
+                if(($document['source_id'] != '215')) {
+
+                    if(strpos($raw_url, '|')) {
+                        
+                        $url_parts = explode('|', $raw_url);
+                        $return_links['references'][] = array(
+                            'url' => $url_parts[1],
+                            'url_prefix' => '',
+                            'label' => $url_parts[0],
+                            'url_title' => '',
+                            'intro' => '',
+                            'material' => '',
+                            'note' => ''
+                        );
+
+                    } else {
+
+                        $url = parse_url($raw_url);
+
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                        $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
+
+                        $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
+                        $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
+        
+                        $return_links['links'][] = array(
+                            'url' => $raw_url,
+                            'url_prefix' => '',
+                            'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                            'url_title' => '',
+                            'intro' => '',
+                            'material' => '',
+                            'note' => ''
+                        );
+
+
+                    }
+
+                    
                 } else {
 
-                    if(strpos($url, '|')) {
-                        $url_parts = explode('|', $url);
+                    if(strpos($raw_url, '|')) {
+                        $url_parts = explode('|', $raw_url);
                         $return_links['links'][] = array(
                             'url' => $url_parts[1],
                             'url_prefix' => '',
@@ -490,7 +542,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         );
                     } else {
                         $return_links['links'][] = array(
-                            'url' => $url,
+                            'url' => $raw_url,
                             'url_prefix' => '',
                             'url_title' => '',
                             'label' => '',
@@ -627,10 +679,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     /** @var \Solarium\QueryType\Select\Result\Document */
                     $result = $results[0];
 
-                    if($result->getFields()['author_facet'][0]) {
-                        $label = htmlentities($result->getFields()['author_facet'][0] .': '. $result->getFields()['title_short']);
+                    if($reference->cache[$selector][$i]->getSubfield('a') && $reference->cache[$selector][$i]->getSubfield('a')->getData()) {
+                        $label = htmlentities(preg_replace("/,\s?\d{0,4}\s-\s\d{0,4}/", "", $reference->cache[$selector][$i]->getSubfield('a')->getData()) .': '. $reference->cache[$selector][$i]->getSubfield('t')->getData());
                     } else {
-                        $label = htmlentities($result->getFields()['title_short']);
+                        $label = htmlentities($reference->cache[$selector][$i]->getSubfield('t')->getData());
                     }
 
 
