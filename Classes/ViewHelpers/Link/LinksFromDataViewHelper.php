@@ -3,6 +3,7 @@
 namespace Slub\SlubFindExtend\ViewHelpers\Link;
 
 use Slub\SlubFindExtend\Services\MarcRefrenceResolverService;
+use Slub\SlubFindExtend\Services\RediService;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -23,6 +24,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     protected static $marcRefrenceResolverService = null;
 
     /**
+     * @var RediService
+     */
+    protected static $rediService = null;
+
+    /**
      * Register arguments.
      * @return void
      */
@@ -31,6 +37,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         parent::initializeArguments();
         $this->registerArgument('marc', 'string', 'The raw MARC', false, null);
         $this->registerArgument('document', 'array', 'The Solr doc', false, null);
+        $this->registerArgument('enriched', 'array', 'The enriched data', false, null);
 
     }
 
@@ -144,6 +151,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         $marc = $arguments['marc'];
         $document = $arguments['document'];
+        $enriched = $arguments['enriched'];
 
         $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
         /** @var \File_MARC_Record */
@@ -513,15 +521,69 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
         
-                        $return_links['links'][] = array(
-                            'url' => $raw_url,
-                            'url_prefix' => '',
-                            'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
-                            'url_title' => '',
-                            'intro' => '',
-                            'material' => '',
-                            'note' => ''
-                        );
+                        if(($document['recordtype'] === 'ai')) {
+
+                            $redi = static::getRediService()->getCached($document, $enriched);
+
+                            if($redi['doilink']) {
+
+                                $return_links['access'][] = array(
+                                    'url' => $raw_url,
+                                    'url_prefix' => '',
+                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => ''
+                                );
+
+                            } else {
+
+                                $return_links['access'][] = array(
+                                    'url' => $redi['url'],
+                                    'url_prefix' => '',
+                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => ''
+                                );
+                                
+                            }
+
+                            
+
+                            if($redi['infolink']) {
+
+                                $return_links['access'][] = array(
+                                    'url' => $redi['infolink'],
+                                    'url_prefix' => '',
+                                    'label' => 'Zugangsbedingungen via EZB',
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => ''
+                                );
+                            }
+
+
+
+
+    
+                        } else {
+
+
+                            $return_links['links'][] = array(
+                                'url' => $raw_url,
+                                'url_prefix' => '',
+                                'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                'url_title' => '',
+                                'intro' => '',
+                                'material' => '',
+                                'note' => ''
+                            );
+    
+                        }
 
 
                     }
@@ -570,6 +632,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         }
 
         return static::$marcRefrenceResolverService;
+    }
+
+    private static function getRediService()
+    {
+        if (null === static::$rediService) {
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            static::$rediService = $objectManager->get(RediService::class);
+        }
+
+        return static::$rediService;
     }
 
     /**
