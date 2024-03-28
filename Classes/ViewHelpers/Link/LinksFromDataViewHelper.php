@@ -496,8 +496,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             }
         }
 
-        \TYPO3\CMS\Core\Utility\DebugUtility::debug($document);
-
         if(!$has_isil_links && !$is_marc && $document && $document['url']) {
 
             foreach($document['url'] as $raw_url) {                
@@ -530,8 +528,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if(($document['recordtype'] === 'ai')) {
 
                             $redi = static::getRediService()->getCached($document, $enriched);
-
-                            \TYPO3\CMS\Core\Utility\DebugUtility::debug($redi);
 
                             if($redi['doilink']) {
 
