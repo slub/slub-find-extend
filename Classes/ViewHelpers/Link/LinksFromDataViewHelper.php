@@ -150,12 +150,12 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         }
 
+        $marc = $arguments['marc'];
+        $document = $arguments['document'];
+        $enriched = $arguments['enriched'];
+
         if($is_marc) 
         {
-            $marc = $arguments['marc'];
-            $document = $arguments['document'];
-            $enriched = $arguments['enriched'];
-
             $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
             /** @var \File_MARC_Record */
             $decoded = $decoder->decode($marc);
@@ -496,6 +496,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             }
         }
 
+        \TYPO3\CMS\Core\Utility\DebugUtility::debug($document);
+
         if(!$has_isil_links && !$is_marc && $document && $document['url']) {
 
             foreach($document['url'] as $raw_url) {                
@@ -528,6 +530,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if(($document['recordtype'] === 'ai')) {
 
                             $redi = static::getRediService()->getCached($document, $enriched);
+
+                            \TYPO3\CMS\Core\Utility\DebugUtility::debug($redi);
 
                             if($redi['doilink']) {
 
