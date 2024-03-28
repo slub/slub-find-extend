@@ -496,7 +496,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             }
         }
 
-        if(!$has_isil_links && !$is_marc) {
+        if(!$has_isil_links && !$is_marc && $document && $document['url']) {
 
             foreach($document['url'] as $raw_url) {                
 
