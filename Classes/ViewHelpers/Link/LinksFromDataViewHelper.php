@@ -168,7 +168,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
                 $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
 
-                if($ind2 === '0') {
+                if(($ind2 === '1') || ($ind2 === '0')) {
 
                     if(!$has_isil_links) {
                         if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
@@ -231,7 +231,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                 }
 
-                if(($ind2 === '1') || ($ind2 === '2')) {
+                if($ind2 === '2') {
 
                     if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
                         $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
@@ -474,27 +474,29 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
-            if (in_array("Sächsische Bibliografie", $document['mega_collection'])) {
-
-                if($document['author_facet'][0]) {
-                    $label = htmlentities($document['author_facet'][0] .': '. $document['title_short']);
-                } else {
-                    $label = htmlentities($document['title_short']);
-                }
-
-
-
-                $return_links['references'][] = array(
-                    'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
-                    'url_prefix' => '',
-                    'label' => substr($label, 0, 125).' (<f:image src="EXT:slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline"></f:image>Säbi)',
-                    'url_title' => $label,
-                    'intro' => 'Nachweis in der Sächsischen Bibliografie:',
-                    'material' => '',
-                    'note' => ''
-                );
-            }
         }
+
+        if (in_array("Sächsische Bibliografie", $document['mega_collection'])) {
+
+            if($document['author_facet'][0]) {
+                $label = htmlentities($document['author_facet'][0] .': '. $document['title_short']);
+            } else {
+                $label = htmlentities($document['title_short']);
+            }
+
+
+
+            $return_links['references'][] = array(
+                'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
+                'url_prefix' => '',
+                'label' => substr($label, 0, 125).' (<f:image src="EXT:slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline"></f:image>Säbi)',
+                'url_title' => $label,
+                'intro' => 'Nachweis in der Sächsischen Bibliografie:',
+                'material' => '',
+                'note' => ''
+            );
+        }
+        
 
         if(!$has_isil_links && !$is_marc && $document && $document['url']) {
 
@@ -529,12 +531,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             $redi = static::getRediService()->getCached($document, $enriched);
 
-                            if($redi['doilink']) {
+                            if($redi['oa_url']) 
+                            {
+
+                                $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['oa_via'];
+                                $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['oa_via']; 
 
                                 $return_links['access'][] = array(
-                                    'url' => $raw_url,
+                                    'url' => $redi['oa_url'],
                                     'url_prefix' => '',
-                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel . ' (gefunden durch Unpaywall)',
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
@@ -543,36 +549,48 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             } else {
 
-                                $return_links['access'][] = array(
-                                    'url' => $redi['url'],
-                                    'url_prefix' => '',
-                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
-                                    'url_title' => '',
-                                    'intro' => '',
-                                    'material' => '',
-                                    'note' => ''
-                                );
-                                
+                                if($redi['doilink']) {
+
+                                    $return_links['access'][] = array(
+                                        'url' => $raw_url,
+                                        'url_prefix' => '',
+                                        'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                        'url_title' => '',
+                                        'intro' => '',
+                                        'material' => '',
+                                        'note' => ''
+                                    );
+    
+                                } else {
+    
+                                    $return_links['access'][] = array(
+                                        'url' => $redi['url'],
+                                        'url_prefix' => '',
+                                        'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                        'url_title' => '',
+                                        'intro' => '',
+                                        'material' => '',
+                                        'note' => ''
+                                    );
+                                    
+                                }
+    
+                                if($redi['infolink']) {
+    
+                                    $return_links['access'][] = array(
+                                        'url' => $redi['infolink'],
+                                        'url_prefix' => '',
+                                        'label' => 'Zugangsbedingungen via EZB',
+                                        'url_title' => '',
+                                        'intro' => '',
+                                        'material' => '',
+                                        'note' => ''
+                                    );
+                                }
+
                             }
 
                             
-
-                            if($redi['infolink']) {
-
-                                $return_links['access'][] = array(
-                                    'url' => $redi['infolink'],
-                                    'url_prefix' => '',
-                                    'label' => 'Zugangsbedingungen via EZB',
-                                    'url_title' => '',
-                                    'intro' => '',
-                                    'material' => '',
-                                    'note' => ''
-                                );
-                            }
-
-
-
-
     
                         } else {
 

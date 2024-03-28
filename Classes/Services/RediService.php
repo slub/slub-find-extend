@@ -123,7 +123,8 @@ class RediService
 
         if (strlen($oa_url) > 0) {
             $oa_via = trim($xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p")->item(0)->nodeValue);
-            $oa_via = substr($oa_via, strpos($oa_via, 'via')+4, strlen($oa_via)-strpos($oa_via, ',')-5);
+            preg_match('/\(via (.*),/', $oa_via, $output_array);
+            $oa_via = $output_array[1];
         }
 
         $status['infolink'] = $infolink;
