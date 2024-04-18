@@ -530,7 +530,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if(($document['recordtype'] === 'ai')) {
 
                             $redi = static::getRediService()->getCached($document, $enriched);
-
+var_dump($redi);
                             if($redi['oa_url']) 
                             {
 
@@ -549,6 +549,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             } else {
 
+
                                 if($redi['doilink']) {
 
                                     $return_links['access'][] = array(
@@ -562,6 +563,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     );
     
                                 } else {
+
+                                    $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['via'];
+                                    $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
     
                                     $return_links['access'][] = array(
                                         'url' => $redi['url'],

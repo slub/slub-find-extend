@@ -66,10 +66,11 @@ class RediService
             '&genre='.urlencode($genre).
             '&sid=katalogbeta.slub-dresden.de&date='.urlencode($date).
             '&language='.urlencode($language).
-            '&id='.urlencode($doi).
+            '&doi='.urlencode($doi).
             '&title='.urlencode($jtitle);
 
         $doc = new \DOMDocument();
+
         $html = $this->getData($url);
         if (strlen($html) === 0) {
             return;
