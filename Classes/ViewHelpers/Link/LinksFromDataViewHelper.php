@@ -81,6 +81,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                 $url = parse_url($isil_link);
 
+                // Shitty special case for ezb and dbis
+                if(str_contains($url['path'], 'ezeit')) {
+                    $url['host'] = $url['host'].'/ezeit';
+                }
+                if(str_contains($url['path'], 'dbinfo')) {
+                    $url['host'] = $url['host'].'/dbinfo';
+                }
+
                 $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                 $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
 
@@ -174,6 +182,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
                             $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
                             $url = parse_url($raw_url);
+
+                            // Shitty special case for ezb and dbis
+                            if(str_contains($url['path'], 'ezeit')) {
+                                $url['host'] = $url['host'].'/ezeit';
+                            }
+                            if(str_contains($url['path'], 'dbinfo')) {
+                                $url['host'] = $url['host'].'/dbinfo';
+                            }
 
                             $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                             $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
