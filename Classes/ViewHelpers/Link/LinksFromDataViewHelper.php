@@ -527,7 +527,15 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if(($document['recordtype'] === 'ai')) {
 
                             $redi = static::getRediService()->getCached($document, $enriched);
-var_dump($redi);
+
+                            $linknote = '';
+                            if($redi['status'] === 2) 
+                            {
+                                $linknoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.status_redi.2';
+                                $linknote = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) : '';      
+        
+                            }
+
                             if($redi['oa_url']) 
                             {
 
@@ -541,7 +549,7 @@ var_dump($redi);
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
-                                    'note' => ''
+                                    'note' => $linknote
                                 );
 
                             } else {
@@ -556,7 +564,7 @@ var_dump($redi);
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
-                                        'note' => ''
+                                        'note' => $linknote
                                     );
     
                                 } else {
@@ -571,7 +579,7 @@ var_dump($redi);
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
-                                        'note' => ''
+                                        'note' => $linknote
                                     );
                                     
                                 }
