@@ -387,9 +387,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             $marclabel = str_replace('#', ' - ', $marclabel);
                         }
 
-
-                        \TYPO3\CMS\Core\Utility\DebugUtility::debug($marclabel);
-
                         // Notiz:
                         // Links ohne intro label wenn marclabel vorhanden
                         // wenn nicht dann nur intro label. außer wenn label "kostenfrei" ist
