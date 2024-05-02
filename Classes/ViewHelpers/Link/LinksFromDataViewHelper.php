@@ -124,36 +124,38 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
             }
 
-            // Find iiif manifests            
-            foreach($arguments['document']['url'] as $document_url) {
-                if (str_ends_with($document_url, 'manifest.json')) {
+            // Find iiif manifests      
+            if($arguments['document'] && $arguments['document']['url']) {
+                foreach($arguments['document']['url'] as $document_url) {
+                    if (str_ends_with($document_url, 'manifest.json')) {
 
-                    if(!in_array($document_url, $isil_links)) {
+                        if(!in_array($document_url, $isil_links)) {
 
-                        $return_links['access'][] = array(
-                            'url' => 'https://iiif.arthistoricum.net/mirador/?id='.$document_url,
-                            'url_prefix' => '',
-                            'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistorricum'),
-                            'intro' => '',
-                            'url_title' => '',
-                            'material' => 'iiif',
-                            'note' => ''
-                        );
+                            $return_links['access'][] = array(
+                                'url' => 'https://iiif.arthistoricum.net/mirador/?id='.$document_url,
+                                'url_prefix' => '',
+                                'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistorricum'),
+                                'intro' => '',
+                                'url_title' => '',
+                                'material' => 'iiif',
+                                'note' => ''
+                            );
 
-                        $return_links['access'][] = array(
-                            'url' => $document_url,
-                            'url_prefix' => '',
-                            'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.manifest'),
-                            'intro' => '',
-                            'url_title' => '',
-                            'material' => '',
-                            'note' => ''
-                        );
+                            $return_links['access'][] = array(
+                                'url' => $document_url,
+                                'url_prefix' => '',
+                                'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.manifest'),
+                                'intro' => '',
+                                'url_title' => '',
+                                'material' => '',
+                                'note' => ''
+                            );
+
+                        }
 
                     }
-
+                    
                 }
-                
             }
 
         }
@@ -288,7 +290,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                             $marclabel = $general;
-                            
+
                             if($material !== $general) {
                                 if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
                                     $marclabel .= ' ; ';
