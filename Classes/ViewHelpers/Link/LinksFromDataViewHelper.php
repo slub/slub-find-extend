@@ -218,10 +218,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                             $marclabel = $general;
-                            if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
-                                $marclabel .= ' ; ';
+
+                            if($material !== $general) {
+                                if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
+                                    $marclabel .= ' ; ';
+                                }
+                                $marclabel .= $material;
                             }
-                            $marclabel .= $material;
+
                             if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
                                 $marclabel .= ' ; ';
                             }
@@ -284,10 +288,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                             $marclabel = $general;
-                            if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
-                                $marclabel .= ' ; ';
+                            
+                            if($material !== $general) {
+                                if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
+                                    $marclabel .= ' ; ';
+                                }
+                                $marclabel .= $material;
                             }
-                            $marclabel .= $material;
+
                             if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
                                 $marclabel .= ' ; ';
                             }
@@ -386,10 +394,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         }
 
                         $marclabel = $general;
-                        if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
-                            $marclabel .= ' ; ';
+
+                        if($material !== $general) {
+                            if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
+                                $marclabel .= ' ; ';
+                            }
+                            $marclabel .= $material;
                         }
-                        $marclabel .= $material;
+
                         if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
                             $marclabel .= ' ; ';
                         }
