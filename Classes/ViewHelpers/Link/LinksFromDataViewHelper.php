@@ -64,6 +64,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
          * Link besteht aus url, url_prefix, label, intro, material, note
          */
 
+        $document = $arguments['document'];
+
         $isil_links = array();
         $isil_links = $arguments['document']['url_de14_str_mv'];
         $has_isil_links = false;
@@ -112,7 +114,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 } else {
                     $return_links['access'][] = array(
                         'url' => $isil_link,
-                        'url_prefix' => '',
+                        'url_prefix' => static::checkAndAddProxyPrefix($isil_link, $document),
                         'label' => $label,
                         'intro' => '',
                         'url_title' => '',
@@ -241,7 +243,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             $return_links['access'][] = array(
                                 'url' => $raw_url,
-                                'url_prefix' => '',
+                                'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
                                 'label' => $label,
                                 'url_title' => '',
                                 'intro' => '',
@@ -589,7 +591,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                                     $return_links['access'][] = array(
                                         'url' => $raw_url,
-                                        'url_prefix' => '',
+                                        'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
                                         'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
                                         'url_title' => '',
                                         'intro' => '',
@@ -599,12 +601,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     
                                 } else {
 
+                                    $finalUrl = static::checkRedirectTargetCached($redi['url']);
+
                                     $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['via'];
                                     $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
     
                                     $return_links['access'][] = array(
-                                        'url' => $redi['url'],
-                                        'url_prefix' => '',
+                                        'url' => $finalUrl,
+                                        'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document),
                                         'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
                                         'url_title' => '',
                                         'intro' => '',
@@ -866,6 +870,70 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             }
 
         }
+
+    }
+
+    /** 
+     * Check URL and add prefix wehen needed
+     * 
+     * @param string $url
+     * @param array $document
+     */
+    private static function checkAndAddProxyPrefix($url, $document) 
+    {
+
+        $proxy_prefix = 'https://wwwdb.dbod.de/login?url=';  
+        $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de'];
+
+        $urlParsed = parse_url($url);
+
+        if (in_array($urlParsed['host'], $no_prefix_hosts)) {
+            $proxy_prefix =  '';
+        }
+
+        if (in_array('Free', $document['facet_avail'])) {
+            $proxy_prefix =  '';
+        }
+
+        if ($document['access_state_str'] === 'Open Access') {
+            $proxy_prefix =  '';
+        }
+
+        return $proxy_prefix;
+    }
+
+    private static function checkRedirectTargetCached($url)
+    {
+        $cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
+        $cacheIdentifier = sha1($url);
+        $entry = $cache->get($cacheIdentifier);
+        if (!$entry) {
+            // Try to resolve article against redi
+            $entry = static::checkRedirectTarget($url);
+            $cache->set($cacheIdentifier, $entry);
+        }
+
+        return $entry;
+    }
+
+    /**
+     * Check if URL is a redirect and return the final URL
+     * 
+     * @param string $url
+     */
+    private static function checkRedirectTarget($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, true); 
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+        
+        $a = curl_exec($ch); 
+        
+        $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL); 
+        
+        return $finalUrl;
 
     }
 }
