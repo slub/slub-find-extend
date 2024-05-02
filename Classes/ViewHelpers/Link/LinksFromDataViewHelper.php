@@ -783,8 +783,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
             if ($reference->cache[$selector][$i]->getSubfield('w')) {
 
-                $id = ltrim($reference->cache[$selector][$i]->getSubfield('w')->getData(), '(DE-627)');
-            
+                $id = str_replace('(DE-627)', '', $reference->cache[$selector][$i]->getSubfield('w')->getData());
+
                 $query = static::createQuery($solrClient, 'kxp_id_str:"'.$id.'"', $templateVariableContainer);
                 $solrClient->setOptions(static::getSolariumClientOptionsArray($templateVariableContainer, $query));
 
