@@ -456,7 +456,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 if ($reference->cache["024_7"][$i]->getSubfield('2')->getData() == 'vd16') {
 
                     $return_links['references'][] = array(
-                        'url' => 'http://gateway-bayern.de/'.urlencode($reference->cache["024_7"][$i]->getSubfield('a')->getData()),
+                        'url' => 'https://gateway-bayern.de/'.urlencode($reference->cache["024_7"][$i]->getSubfield('a')->getData()),
                         'url_prefix' => '',
                         'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
                         'intro' => 'Verzeichnis der Drucke des 16. Jahrhunderts:',
