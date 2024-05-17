@@ -603,7 +603,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
-                                    'note' => $linknote
+                                    'note' => ''
                                 ));
 
                             } else {
@@ -873,7 +873,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if($reference->cache[$selector][$i]->getSubfield('n') && $reference->cache[$selector][$i]->getSubfield('n')->getData()) {
                             $intro = $localisedIntro . " (". $localisedIntroN . "):";
                         } else {
-                            $intro = $localisedIntro;
+                            $intro = $localisedIntro .":";
                         }
 
                     }
