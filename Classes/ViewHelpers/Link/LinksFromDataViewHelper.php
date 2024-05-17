@@ -182,80 +182,94 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
                 $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
 
-                if(($ind2 === '1') || ($ind2 === '0')) {
+                if(($ind2 === '0') || ($ind2 === '1')) {
 
-                    if(!$has_isil_links) {
-                        if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
-                            $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-                            $url = parse_url($raw_url);
+                    if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                        $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+                        $url = parse_url($raw_url);
 
-                            // Shitty special case for ezb and dbis
-                            if(str_contains($url['path'], 'ezeit')) {
-                                $url['host'] = $url['host'].'/ezeit';
+                        // Shitty special case for ezb and dbis
+                        if(str_contains($url['path'], 'ezeit')) {
+                            $url['host'] = $url['host'].'/ezeit';
+                        }
+                        if(str_contains($url['path'], 'dbinfo')) {
+                            $url['host'] = $url['host'].'/dbinfo';
+                        }
+
+                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                        $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
+        
+                        $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
+                        $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
+        
+                        $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
+                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                        $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
+
+                        $note = '';
+                        $j = 0;
+                        foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
+                            // Notiz:
+                            // In der Katalogisierung häufig verwendete Einleitung die für die Anzeige entfernt wird
+                            if($value->getData() === 'lizenzpflichtig') {
+                                break;
+                            } else {
+                                $note .= trim(ltrim($value->getData(), '// '));
                             }
-                            if(str_contains($url['path'], 'dbinfo')) {
-                                $url['host'] = $url['host'].'/dbinfo';
+                            ++$j;
+                            if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
+                                $note .=  " ; ";
                             }
+                        }
 
-                            $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
-                            $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
-            
-                            $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
-                            $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
-            
-                            $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
-                            $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
-                            $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
+                        $marclabel = $general;
 
-                            $note = '';
-                            $j = 0;
-                            foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
-                                // Notiz:
-                                // In der Katalogisierung häufig verwendete Einleitung die für die Anzeige entfernt wird
-                                if($value->getData() === 'lizenzpflichtig') {
-                                    break;
-                                } else {
-                                    $note .= trim(ltrim($value->getData(), '// '));
-                                }
-                                ++$j;
-                                if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
-                                    $note .=  " ; ";
-                                }
-                            }
-
-                            $marclabel = $general;
-
-                            if($material !== $general) {
-                                if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
-                                    $marclabel .= ' ; ';
-                                }
-                                $marclabel .= $material;
-                            }
-
-                            if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
+                        if($material !== $general) {
+                            if((strlen($marclabel) > 0) && (strlen($material) > 0)) {
                                 $marclabel .= ' ; ';
                             }
-                            $marclabel .= $note;
+                            $marclabel .= $material;
+                        }
 
-                            if(str_contains($marclabel, '#')) {
-                                $marclabel = str_replace('#', ' - ', $marclabel);
+                        if((strlen($marclabel) > 0) && (strlen($note) > 0)) {
+                            $marclabel .= ' ; ';
+                        }
+                        $marclabel .= $note;
+
+                        if(str_contains($marclabel, '#')) {
+                            $marclabel = str_replace('#', ' - ', $marclabel);
+                        }
+
+                        $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
+
+                            // Notiz:
+                            // Wenn der Link aus MARC schon in den links aus url_de14 
+                            // vorhanden ist, dann wird er nicht zusätzlich hinzugefügt 
+                            // Falls in $z Notizen enthalten sind werden die an den Zugangslink ergänzt.
+                            $is_accessslink = false;
+                            for($k = 0; $k < count($return_links['access']); $k++) {
+                                if($raw_url === $return_links['access'][$k]['url']) {
+                                    $is_accessslink = true;
+                                    if(strlen($marclabel) > 0) {
+                                        $return_links['access'][$k]['label'] .= ' (' . $marclabel . ')';
+                                    }
+                                }
                             }
 
-                            $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
+                            if(!$is_accessslink) {
+                                self::addLinkObjectToArray($return_links, 'access', array(
+                                    'url' => self::replaceDomains($raw_url, $document),
+                                    'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
+                                    'label' => $label,
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => ''
+                                ));
+                            }
 
-                            self::addLinkObjectToArray($return_links, 'access', array(
-                                'url' => self::replaceDomains($raw_url, $document),
-                                'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
-                                'label' => $label,
-                                'url_title' => '',
-                                'intro' => '',
-                                'material' => '',
-                                'note' => ''
-                            ));
-
-                        }
                     }
-
+            
                 }
 
                 if($ind2 === '2') {
@@ -340,7 +354,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             for($k = 0; $k < count($return_links['access']); $k++) {
                                 if($raw_url === $return_links['access'][$k]['url']) {
                                     $is_accessslink = true;
-                                    $return_links['access'][$k]['label'] .= ' (' . $note . ')';
+                                    if(strlen($marclabel) > 0) {
+                                        $return_links['access'][$k]['label'] .= ' (' . $marclabel . ')';
+                                    }
                                 }
                             }
 
