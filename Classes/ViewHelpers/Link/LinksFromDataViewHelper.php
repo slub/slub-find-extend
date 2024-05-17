@@ -603,7 +603,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
-                                    'note' => ''
+                                    'note' => '',
+                                    'jsfunction' => '$(document).ready(function() { showOAIcon(); });'
                                 ));
 
                             } else {
