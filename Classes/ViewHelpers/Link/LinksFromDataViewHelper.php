@@ -256,6 +256,12 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 }
                             }
 
+                            // Notiz:
+                            // Wenn 856 40 und isilLinks vorhanden dann füge keine Links hinzu
+                            if(($ind2 === '0') && $has_isil_links) {
+                                $is_accessslink = true;
+                            }
+
                             if(!$is_accessslink) {
                                 self::addLinkObjectToArray($return_links, 'access', array(
                                     'url' => self::replaceDomains($raw_url, $document),
@@ -535,10 +541,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $label = htmlentities($document['title_short']);
             }
 
+            if(strlen($label) >= 150 ) {
+                $label = array_shift(explode("\n", wordwrap($label, 150))) . '...';
+            }
+
             self::addLinkObjectToArray($return_links, 'references', array(
                 'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
                 'url_prefix' => '',
-                'label' => substr($label, 0, 125).' (<img src="/typo3conf/ext/slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
+                'label' => $label.' (<img src="/typo3conf/ext/slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
                 'url_title' => $label,
                 'intro' => 'Nachweis in der Sächsischen Bibliografie:',
                 'material' => '',
@@ -879,10 +889,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                     }
 
+                    if(strlen($label) >= 150 ) {
+                        $label = array_shift(explode("\n", wordwrap($label, 150))) . '...';
+                    }
+
                     self::addLinkObjectToArray($return_links, 'references', array(
                         'url' => '/id/'.$result->getFields()['id'],
                         'url_prefix' => '',
-                        'label' => substr($label, 0, 125) . ' (<span class="reference_slub_logo">SLUB</span>)',
+                        'label' => $label . ' (<span class="reference_slub_logo">SLUB</span>)',
                         'url_title' => '',
                         'intro' => $intro,
                         'material' => '',
@@ -907,7 +921,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         $proxy_prefix = 'https://wwwdb.dbod.de/login?url=';  
         $return_prefix = $proxy_prefix;
-        $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de'];
+        $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de', 'rzblx10.uni-regensburg.de'];
         $force_prefix_hosts = [];
 
         $urlParsed = parse_url($url);
