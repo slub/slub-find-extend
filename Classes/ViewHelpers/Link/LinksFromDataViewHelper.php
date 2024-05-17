@@ -101,26 +101,28 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                 if (str_ends_with($isil_link, 'manifest.json')) {
 
-                    $return_links['access'][] = array(
-                        'url' => $isil_link,
+                    self::addLinkObjectToArray($return_links, 'access', array(
+                        'url' => self::replaceDomains($isil_link, $document),
                         'url_prefix' => '',
                         'label' => $label,
                         'intro' => '',
                         'url_title' => '',
                         'material' => 'iiif',
                         'note' => ''
-                    );
+                    ));
+
 
                 } else {
-                    $return_links['access'][] = array(
-                        'url' => $isil_link,
+
+                    self::addLinkObjectToArray($return_links, 'access', array(
+                        'url' => self::replaceDomains($isil_link, $document),
                         'url_prefix' => static::checkAndAddProxyPrefix($isil_link, $document),
                         'label' => $label,
                         'intro' => '',
                         'url_title' => '',
                         'material' => '',
                         'note' => ''
-                    );
+                    ));
 
                 }
 
@@ -133,7 +135,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         if(!in_array($document_url, $isil_links)) {
 
-                            $return_links['access'][] = array(
+                            self::addLinkObjectToArray($return_links, 'access', array(
                                 'url' => 'https://iiif.arthistoricum.net/mirador/?id='.$document_url,
                                 'url_prefix' => '',
                                 'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistorricum'),
@@ -141,17 +143,17 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 'url_title' => '',
                                 'material' => 'iiif',
                                 'note' => ''
-                            );
+                            ));
 
-                            $return_links['access'][] = array(
-                                'url' => $document_url,
+                            self::addLinkObjectToArray($return_links, 'access', array(
+                                'url' => self::replaceDomains($document_url, $document),
                                 'url_prefix' => '',
                                 'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.manifest'),
                                 'intro' => '',
                                 'url_title' => '',
                                 'material' => '',
                                 'note' => ''
-                            );
+                            ));
 
                         }
 
@@ -241,15 +243,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
 
-                            $return_links['access'][] = array(
-                                'url' => $raw_url,
+                            self::addLinkObjectToArray($return_links, 'access', array(
+                                'url' => self::replaceDomains($raw_url, $document),
                                 'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
                                 'label' => $label,
                                 'url_title' => '',
                                 'intro' => '',
                                 'material' => '',
                                 'note' => ''
-                            );
+                            ));
+
                         }
                     }
 
@@ -342,15 +345,17 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                             if(!$is_accessslink) {
-                                $return_links['additional_information'][] = array(
-                                    'url' => $raw_url,
+
+                                self::addLinkObjectToArray($return_links, 'additional_information', array(
+                                    'url' => self::replaceDomains($raw_url, $document),
                                     'url_prefix' => '',
                                     'label' => $label,
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
                                     'note' => ''
-                                );
+                                ));
+
                             }
 
                         }
@@ -436,15 +441,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         //$label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
 
-                        $return_links['links'][] = array(
-                            'url' => $raw_url,
+                        self::addLinkObjectToArray($return_links, 'links', array(
+                            'url' => self::replaceDomains($raw_url, $document),
                             'url_prefix' => '',
                             'label' => $label,
                             'url_title' => '',
                             'intro' => '',
                             'material' => '',
                             'note' => ''
-                        );
+                        ));
+
                     }
                 }
 
@@ -471,7 +477,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             for ($i = 0; $i < count($reference->cache["024_7"]); $i++) {
                 if ($reference->cache["024_7"][$i]->getSubfield('2')->getData() == 'vd16') {
 
-                    $return_links['references'][] = array(
+                    self::addLinkObjectToArray($return_links, 'references', array(
                         'url' => 'https://gateway-bayern.de/'.urlencode($reference->cache["024_7"][$i]->getSubfield('a')->getData()),
                         'url_prefix' => '',
                         'label' => $reference->cache["024_7"][$i]->getSubfield('a')->getData(),
@@ -479,14 +485,14 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'url_title' => '',
                         'material' => '',
                         'note' => ''
-                    );
+                    ));
 
                 }
                 if ($reference->cache["024_7"][$i]->getSubfield('2')->getData() == 'vd17') {
 
                     if($reference->cache["024_7"][$i]->getSubfield('a')) {
 
-                        $return_links['references'][] = array(
+                        self::addLinkObjectToArray($return_links, 'references', array(
                             // Notiz:
                             // Links starten in der Katalogisierung mit VD17. Die Suche im Verzeichnis funktioniert nur ohne
                             'url' => 'https://kxp.k10plus.de/DB=1.28/CMD?ACT=SRCHA&IKT=8079&TRM=%27'.trim(ltrim($reference->cache["024_7"][$i]->getSubfield('a')->getData(), 'VD17')).'%27',
@@ -496,7 +502,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url_title' => '',
                             'material' => '',
                             'note' => ''
-                        );
+                        ));
 
                     }
 
@@ -513,9 +519,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $label = htmlentities($document['title_short']);
             }
 
-
-
-            $return_links['references'][] = array(
+            self::addLinkObjectToArray($return_links, 'references', array(
                 'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
                 'url_prefix' => '',
                 'label' => substr($label, 0, 125).' (<img src="/typo3conf/ext/slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
@@ -523,7 +527,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 'intro' => 'Nachweis in der Sächsischen Bibliografie:',
                 'material' => '',
                 'note' => ''
-            );
+            ));
+
         }
         
 
@@ -536,15 +541,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     if(strpos($raw_url, '|')) {
                         
                         $url_parts = explode('|', $raw_url);
-                        $return_links['references'][] = array(
-                            'url' => $url_parts[1],
+
+                        self::addLinkObjectToArray($return_links, 'references', array(
+                            'url' => self::replaceDomains($url_parts[1], $document),
                             'url_prefix' => '',
                             'label' => $url_parts[0],
                             'url_title' => '',
                             'intro' => '',
                             'material' => '',
                             'note' => ''
-                        );
+                        ));
 
                     } else {
 
@@ -574,7 +580,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['oa_via'];
                                 $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['oa_via']; 
 
-                                $return_links['access'][] = array(
+                                self::addLinkObjectToArray($return_links, 'access', array(
                                     'url' => $redi['oa_url'],
                                     'url_prefix' => '',
                                     'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel . ' (gefunden durch Unpaywall)',
@@ -582,22 +588,22 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     'intro' => '',
                                     'material' => '',
                                     'note' => $linknote
-                                );
+                                ));
 
                             } else {
 
 
                                 if($redi['doilink']) {
 
-                                    $return_links['access'][] = array(
-                                        'url' => $raw_url,
+                                    self::addLinkObjectToArray($return_links, 'access', array(
+                                        'url' => self::replaceDomains($raw_url, $document),
                                         'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
                                         'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
                                         'note' => $linknote
-                                    );
+                                    ));
     
                                 } else {
 
@@ -606,7 +612,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['via'];
                                     $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
     
-                                    $return_links['access'][] = array(
+                                    self::addLinkObjectToArray($return_links, 'access', array(
                                         'url' => $finalUrl,
                                         'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document),
                                         'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
@@ -614,13 +620,13 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'intro' => '',
                                         'material' => '',
                                         'note' => $linknote
-                                    );
+                                    ));
                                     
                                 }
     
                                 if($redi['infolink']) {
     
-                                    $return_links['access'][] = array(
+                                    self::addLinkObjectToArray($return_links, 'access', array(
                                         'url' => $redi['infolink'],
                                         'url_prefix' => '',
                                         'label' => 'Zugangsbedingungen via EZB',
@@ -628,25 +634,23 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'intro' => '',
                                         'material' => '',
                                         'note' => ''
-                                    );
+                                    ));
+
                                 }
 
                             }
 
-                            
-    
                         } else {
 
-
-                            $return_links['links'][] = array(
-                                'url' => $raw_url,
+                            self::addLinkObjectToArray($return_links, 'links', array(
+                                'url' => self::replaceDomains($raw_url, $document),
                                 'url_prefix' => '',
                                 'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
                                 'url_title' => '',
                                 'intro' => '',
                                 'material' => '',
                                 'note' => ''
-                            );
+                            ));
     
                         }
 
@@ -658,33 +662,35 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                     if(strpos($raw_url, '|')) {
                         $url_parts = explode('|', $raw_url);
-                        $return_links['links'][] = array(
-                            'url' => $url_parts[1],
+
+                        self::addLinkObjectToArray($return_links, 'links', array(
+                            'url' => self::replaceDomains($url_parts[1], $document),
                             'url_prefix' => '',
                             'label' => $url_parts[0],
                             'url_title' => '',
                             'intro' => '',
                             'material' => '',
                             'note' => ''
-                        );
+                        ));
+
                     } else {
-                        $return_links['links'][] = array(
-                            'url' => $raw_url,
+
+                        self::addLinkObjectToArray($return_links, 'links', array(
+                            'url' => self::replaceDomains($raw_url, $document),
                             'url_prefix' => '',
                             'url_title' => '',
                             'label' => '',
                             'intro' => '',
                             'material' => '',
                             'note' => ''
-                        );
+                        ));
+
                     }
 
                 }
             }
 
         }
-
-
 
         return $return_links;
     }
@@ -856,7 +862,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                     }
 
-                    $return_links['references'][] = array(
+                    self::addLinkObjectToArray($return_links, 'references', array(
                         'url' => '/id/'.$result->getFields()['id'],
                         'url_prefix' => '',
                         'label' => substr($label, 0, 125) . ' (<span class="reference_slub_logo">SLUB</span>)',
@@ -864,7 +870,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'intro' => $intro,
                         'material' => '',
                         'note' => ''
-                    );
+                    ));
 
                 }
             }
@@ -883,23 +889,29 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     {
 
         $proxy_prefix = 'https://wwwdb.dbod.de/login?url=';  
+        $return_prefix = $proxy_prefix;
         $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de'];
+        $force_prefix_hosts = [];
 
         $urlParsed = parse_url($url);
 
         if (in_array($urlParsed['host'], $no_prefix_hosts)) {
-            $proxy_prefix =  '';
+            $return_prefix =  '';
         }
 
         if (in_array('Free', $document['facet_avail'])) {
-            $proxy_prefix =  '';
+            $return_prefix =  '';
         }
 
         if ($document['access_state_str'] === 'Open Access') {
-            $proxy_prefix =  '';
+            $return_prefix =  '';
         }
 
-        return $proxy_prefix;
+        if (in_array($urlParsed['host'], $force_prefix_hosts)) {
+            $return_prefix =  $proxy_prefix;
+        }
+
+        return $return_prefix;
     }
 
     private static function checkRedirectTargetCached($url)
@@ -936,4 +948,56 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         return $finalUrl;
 
     }
+
+    /**
+     * replaceDomains
+     * 
+     * @param string $url
+     * @param array $document
+     */
+    private static function replaceDomains($url, $document)
+    {
+        $url = str_replace('http://deposit.d-nb.de', 'https://deposit.dnb.de', $url);
+
+        if(str_contains($url, 'opus.kobv.de')) {
+            foreach($document['url'] as $document_url) {
+                if(str_contains($document_url, 'nbn-resolving.de')) {
+                    $url = $document_url;
+                }
+            }
+        }
+
+        if(str_contains($url, 'www.onleihe.de')) {
+            $url = "";
+        }
+        
+        return $url;
+
+    }
+
+    /**
+     * validateLinksArray
+     * 
+     * Check if the links array is valid
+     * 
+     * @param array|boolean $linksArray
+     */
+    private static function validateLinksArray($linksArray)
+    {
+        if(strlen($linksArray['url']) === 0) {
+            return FALSE;
+        }
+
+        return $linksArray;;
+    }
+
+    private static function addLinkObjectToArray(&$linksArray, $type, $linkObject)
+    {
+        $isValidObject = self::validateLinksArray($linkObject);
+
+        if($isValidObject) {
+            $linksArray[$type][] = $linkObject;
+        }
+    }
+
 }
