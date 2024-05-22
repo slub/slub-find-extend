@@ -99,6 +99,21 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                 $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel;
 
+                $note = '';
+                $material = '';
+                if(str_ends_with($isil_link, '.zip')) {
+                    $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
+                    $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
+
+                    $material = $materialZipLocalisedLabel;
+                }
+                if(str_ends_with($isil_link, '.pdf')) {
+                    $materialPdfLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.pdf';
+                    $materialPdfLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) : '';      
+
+                    $material = $materialPdfLocalisedLabel;
+                }
+
                 if (str_ends_with($isil_link, 'manifest.json')) {
 
                     self::addLinkObjectToArray($return_links, 'access', array(
@@ -116,11 +131,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                     self::addLinkObjectToArray($return_links, 'access', array(
                         'url' => self::replaceDomains($isil_link, $document),
-                        'url_prefix' => static::checkAndAddProxyPrefix($isil_link, $document),
+                        'url_prefix' => static::checkAndAddProxyPrefix($isil_link, $document, $note),
                         'label' => $label,
                         'intro' => '',
                         'url_title' => '',
-                        'material' => '',
+                        'material' => $material,
                         'note' => ''
                     ));
 
@@ -206,6 +221,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
                         $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
 
+                        if($note === 'kostenfrei') {
+                            $jsfunction = '$(document).ready(function() { showOAIcon(); });';
+                        }
+
                         $note = '';
                         $j = 0;
                         foreach ($reference->cache["856[" . $i . "]"]->getSubfields('z') as $code => $value) {
@@ -220,6 +239,25 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
                                 $note .=  " ; ";
                             }
+                        }
+
+                        if(str_ends_with($url['path'], '.zip')) {
+                            $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
+                            $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
+        
+                            if((strlen($material) > 0) && (strlen($materialZipLocalisedLabel) > 0)) {
+                                $material .=  " ; ";
+                            }
+                            $material .= $materialZipLocalisedLabel;
+                        }
+                        if(str_ends_with($url['path'], '.pdf')) {
+                            $materialPdfLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.pdf';
+                            $materialPdfLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) : '';      
+        
+                            if((strlen($material) > 0) && (strlen($materialPdfLocalisedLabel) > 0)) {
+                                $material .=  " ; ";
+                            }
+                            $material .= $materialPdfLocalisedLabel;
                         }
 
                         $marclabel = $general;
@@ -263,15 +301,36 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                             if(!$is_accessslink) {
-                                self::addLinkObjectToArray($return_links, 'access', array(
-                                    'url' => self::replaceDomains($raw_url, $document),
-                                    'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
-                                    'label' => $label,
-                                    'url_title' => '',
-                                    'intro' => '',
-                                    'material' => '',
-                                    'note' => ''
-                                ));
+
+                                // Notiz: 
+                                // Wenn nicht source_id 0,füge hinzu zu den access links
+                                // Wenn source_id 0 nur hinzufügen wenn note kostenfrei ist
+                                if($document['source_id'] !== '0') {
+                                    self::addLinkObjectToArray($return_links, 'access', array(
+                                        'url' => self::replaceDomains($raw_url, $document),
+                                        'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document, $note),
+                                        'label' => $label,
+                                        'url_title' => '',
+                                        'intro' => '',
+                                        'material' => '',
+                                        'note' => '',
+                                        'jsfunction' => $jsfunction
+                                    ));
+                                } else {
+                                        if($note === 'kostenfrei') {
+                                            self::addLinkObjectToArray($return_links, 'access', array(
+                                                'url' => self::replaceDomains($raw_url, $document),
+                                                'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document, $note),
+                                                'label' => $label,
+                                                'url_title' => '',
+                                                'intro' => '',
+                                                'material' => '',
+                                                'note' => '',
+                                                'jsfunction' => $jsfunction
+                                            ));
+                                        }
+                                }
+                                
                             }
 
                     }
@@ -312,6 +371,25 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
                                     $note .=  " ; ";
                                 }
+                            }
+
+                            if(str_ends_with($url['path'], '.zip')) {
+                                $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
+                                $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
+            
+                                if((strlen($material) > 0) && (strlen($materialZipLocalisedLabel) > 0)) {
+                                    $material .=  " ; ";
+                                }
+                                $material .= $materialZipLocalisedLabel;
+                            }
+                            if(str_ends_with($url['path'], '.pdf')) {
+                                $materialPdfLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.pdf';
+                                $materialPdfLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) : '';      
+            
+                                if((strlen($material) > 0) && (strlen($materialPdfLocalisedLabel) > 0)) {
+                                    $material .=  " ; ";
+                                }
+                                $material .= $materialPdfLocalisedLabel;
                             }
 
                             $marclabel = $general;
@@ -417,11 +495,27 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
                         }
 
+                        if($note === 'kostenfrei') {
+                            $jsfunction = '$(document).ready(function() { showOAIcon(); });';
+                        }
+
                         if(str_ends_with($url['path'], '.zip')) {
                             $materialZipLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.zip';
                             $materialZipLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialZipLocalisationKey) : '';      
         
-                            $material = $materialZipLocalisedLabel;
+                            if((strlen($material) > 0) && (strlen($materialZipLocalisedLabel) > 0)) {
+                                $material .=  " ; ";
+                            }
+                            $material .= $materialZipLocalisedLabel;
+                        }
+                        if(str_ends_with($url['path'], '.pdf')) {
+                            $materialPdfLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.material.pdf';
+                            $materialPdfLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($materialPdfLocalisationKey) : '';      
+        
+                            if((strlen($material) > 0) && (strlen($materialPdfLocalisedLabel) > 0)) {
+                                $material .=  " ; ";
+                            }
+                            $material .= $materialPdfLocalisedLabel;
                         }
 
                         $marclabel = $general;
@@ -470,7 +564,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url_title' => '',
                             'intro' => '',
                             'material' => '',
-                            'note' => ''
+                            'note' => '',
+                            'jsfunction' => $jsfunction
                         ));
 
                     }
@@ -624,7 +719,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                                     self::addLinkObjectToArray($return_links, 'access', array(
                                         'url' => self::replaceDomains($raw_url, $document),
-                                        'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document),
+                                        'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document, $note),
                                         'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
                                         'url_title' => '',
                                         'intro' => '',
@@ -641,7 +736,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     
                                     self::addLinkObjectToArray($return_links, 'access', array(
                                         'url' => $finalUrl,
-                                        'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document),
+                                        'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document, $note),
                                         'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
                                         'url_title' => '',
                                         'intro' => '',
@@ -916,7 +1011,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
      * @param string $url
      * @param array $document
      */
-    private static function checkAndAddProxyPrefix($url, $document) 
+    private static function checkAndAddProxyPrefix($url, $document, $note) 
     {
 
         $proxy_prefix = 'https://wwwdb.dbod.de/login?url=';  
@@ -935,6 +1030,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         }
 
         if ($document['access_state_str'] === 'Open Access') {
+            $return_prefix =  '';
+        }
+
+        if ($note === 'kostenfrei') {
             $return_prefix =  '';
         }
 
@@ -996,10 +1095,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     $url = $document_url;
                 }
             }
-        }
-
-        if(str_contains($url, 'www.onleihe.de')) {
-            $url = "";
         }
         
         return $url;
