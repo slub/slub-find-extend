@@ -124,8 +124,9 @@ class RediService
 
         if (strlen($oa_url) > 0) {
             $oa_via = trim($xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p")->item(0)->nodeValue);
-            preg_match('/\(via (.*),/', $oa_via, $output_array);
+            preg_match('/\(via (.*?), (.*)\)/', $oa_via, $output_array);
             $oa_via = $output_array[1];
+            $oa_more = $output_array[2];
         }
 
         $status['infolink'] = $infolink;
@@ -135,6 +136,7 @@ class RediService
         $status['status'] = $status_code;
         $status['oa_url'] = $oa_url;
         $status['oa_via'] = $oa_via;
+        $status['oa_more'] = $oa_more;
         $status['doilink'] = $doilink;
 
         return $status;

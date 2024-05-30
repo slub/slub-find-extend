@@ -90,6 +90,15 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 if(str_contains($url['path'], 'dbinfo')) {
                     $url['host'] = $url['host'].'/dbinfo';
                 }
+                if((str_contains($url['path'], 'ReadMe') && ($url['host'] === 'ezb.ur.de'))) {
+                    if(str_contains($url['query'], 'lang=en')) {
+                        $url['host'] = $url['host'].'/ReadMe/en';
+                    }
+                    if(str_contains($url['query'], 'lang=de')) {
+                        $url['host'] = $url['host'].'/ReadMe/de';
+                    }
+                
+                }
 
                 $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                 $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
@@ -97,7 +106,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                 $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
 
-                $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel;
+                $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel;              
 
                 $note = '';
                 $material = '';
@@ -150,17 +159,27 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         if(!in_array($document_url, $isil_links)) {
 
+
+                            $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistoricum';
+                            $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';   
+
+                            $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel;
+
+                            //$label = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistoricum');
+
+                            \TYPO3\CMS\Core\Utility\DebugUtility::debug($introLocalisedLabel);
+
                             self::addLinkObjectToArray($return_links, 'access', array(
                                 'url' => 'https://iiif.arthistoricum.net/mirador/?id='.$document_url,
                                 'url_prefix' => '',
-                                'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistorricum'),
+                                'label' => $label,
                                 'intro' => '',
                                 'url_title' => '',
                                 'material' => 'iiif',
                                 'note' => ''
                             ));
 
-                            self::addLinkObjectToArray($return_links, 'access', array(
+                            self::addLinkObjectToArray($return_links, 'additional_information', array(
                                 'url' => self::replaceDomains($document_url, $document),
                                 'url_prefix' => '',
                                 'label' => \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.manifest'),
@@ -221,9 +240,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
                         $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
 
-                        if($note === 'kostenfrei') {
-                            $jsfunction = '$(document).ready(function() { showOAIcon(); });';
-                        }
+ 
 
                         $note = '';
                         $j = 0;
@@ -239,6 +256,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             if($j < count($reference->cache["856[" . $i . "]"]->getSubfields('z'))) {
                                 $note .=  " ; ";
                             }
+                        }
+
+                        if(str_contains($note, 'kostenfrei')) {
+                            $jsfunction = '$(document).ready(function() { showOAIcon(); });';
                         }
 
                         if(str_ends_with($url['path'], '.zip')) {
@@ -290,6 +311,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     $is_accessslink = true;
                                     if(strlen($marclabel) > 0) {
                                         $return_links['access'][$k]['label'] .= ' (' . $marclabel . ')';
+                                        $return_links['access'][$k]['jsfunction'] = $jsfunction;
                                     }
                                 }
                             }
@@ -301,7 +323,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                             if(!$is_accessslink) {
-
                                 // Notiz: 
                                 // Wenn nicht source_id 0,füge hinzu zu den access links
                                 // Wenn source_id 0 nur hinzufügen wenn note kostenfrei ist
@@ -317,7 +338,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'jsfunction' => $jsfunction
                                     ));
                                 } else {
-                                        if($note === 'kostenfrei') {
+                                        if(str_contains($note, 'kostenfrei')) {
                                             self::addLinkObjectToArray($return_links, 'access', array(
                                                 'url' => self::replaceDomains($raw_url, $document),
                                                 'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document, $note),
@@ -704,7 +725,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 self::addLinkObjectToArray($return_links, 'access', array(
                                     'url' => $redi['oa_url'],
                                     'url_prefix' => '',
-                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel . ' (gefunden durch Unpaywall)',
+                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel . ' ('. ( $redi['oa_more'] ? $redi['oa_more'] . ', ' : '' )  .'gefunden durch Unpaywall)',
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
@@ -730,10 +751,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 } else {
 
                                     $finalUrl = static::checkRedirectTargetCached($redi['url']);
+                                    $url = parse_url($finalUrl);
 
-                                    $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['via'];
+                                    $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                                     $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
-    
+
                                     self::addLinkObjectToArray($return_links, 'access', array(
                                         'url' => $finalUrl,
                                         'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document, $note),
@@ -763,6 +785,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             }
 
                         } else {
+
+
 
                             self::addLinkObjectToArray($return_links, 'links', array(
                                 'url' => self::replaceDomains($raw_url, $document),
