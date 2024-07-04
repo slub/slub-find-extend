@@ -299,6 +299,24 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             $marclabel = str_replace('#', ' - ', $marclabel);
                         }
 
+                        if(str_contains($marclabel, 'teilw. kostenfrei')) {
+
+                            $kostenfreiLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.kostenfrei.teilw';
+                            $kostenfreiLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($kostenfreiLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($kostenfreiLocalisationKey) : '';
+
+                            $marclabel = str_replace('teilw. kostenfrei', $kostenfreiLocalisedLabel, $marclabel);
+
+                        }
+
+                        if(str_contains($marclabel, 'kostenfrei')) {
+
+                            $kostenfreiLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.kostenfrei';
+                            $kostenfreiLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($kostenfreiLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($kostenfreiLocalisationKey) : '';
+
+                            $marclabel = str_replace('kostenfrei', $kostenfreiLocalisedLabel, $marclabel);
+
+                        }
+
                         $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
 
                             // Notiz:
@@ -786,18 +804,52 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         } else {
 
+                            // Sonderfall DIN / VDE
+                            // Wenn Document in title_short DIN & VDE enthaölt udn source_id 211 ist,
+                            // enthält dann ergänzen wir $note mit Hinweis auf DIN VDE Normen
 
+                            if(($document['source_id'] === '211') && ( (strpos($document['title_short'], 'DIN') !== false) || (strpos($document['title_short'], 'VDE') !== false))) {
+
+                                $nautosNoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.nautos-note';
+                                $nautosNoteLocalisationLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($nautosNoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($nautosNoteLocalisationKey) : '';     
+
+                            }
+
+                            $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($nautosNoteLocalisationLabel) > 0) ? ' ('.$nautosNoteLocalisationLabel.')' : '');
 
                             self::addLinkObjectToArray($return_links, 'links', array(
                                 'url' => self::replaceDomains($raw_url, $document),
                                 'url_prefix' => '',
-                                'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                'label' =>  $label,
                                 'url_title' => '',
-                                'intro' => '',
+                                'intro' =>  '',
                                 'material' => '',
                                 'note' => ''
                             ));
-    
+
+
+                            // Sonderfall DIN / VDE
+                            // Wenn Document in title_short DIN & VDE enthaölt udn source_id 211 ist,
+                            // enthält dann ergänzen wir $note mit Hinweis auf DIN VDE Normen
+
+                            if(($document['source_id'] === '211') && ( (strpos($document['title_short'], 'DIN') !== false) || (strpos($document['title_short'], 'VDE') !== false))) {
+
+                                $nautos3dLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.nautos-note.3d';
+                                $nautos3dLocalisationLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($nautos3dLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($nautos3dLocalisationKey) : '';     
+
+
+                                self::addLinkObjectToArray($return_links, 'links', array(
+                                    'url' => 'https://3d.slub-dresden.de/viewer?p=3&b=5&f=11&l=6755&lang=de&search_text=vde',
+                                    'url_prefix' => '',
+                                    'label' => $nautos3dLocalisationLabel,
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => ''
+                                ));
+
+                            }
+
                         }
 
 
