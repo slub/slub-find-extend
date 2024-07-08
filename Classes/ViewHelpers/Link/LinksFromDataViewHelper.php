@@ -808,7 +808,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             // Wenn Document in title_short DIN & VDE enthaölt udn source_id 211 ist,
                             // enthält dann ergänzen wir $note mit Hinweis auf DIN VDE Normen
 
-                            if(($document['source_id'] === '211') && ( (strpos($document['title_short'], 'DIN') !== false) || (strpos($document['title_short'], 'VDE') !== false))) {
+                            if(($document['source_id'] === '211') && (strpos($document['title_short'], 'DIN') !== false) && (strpos($document['title_short'], 'VDE') !== false)) {
 
                                 $nautosNoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.nautos-note';
                                 $nautosNoteLocalisationLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($nautosNoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($nautosNoteLocalisationKey) : '';     
