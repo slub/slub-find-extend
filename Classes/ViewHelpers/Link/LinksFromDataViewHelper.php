@@ -81,24 +81,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         if($has_isil_links) {
             foreach($isil_links as $isil_link) {
 
-                $url = parse_url($isil_link);
-
-                // Shitty special case for ezb and dbis
-                if(str_contains($url['path'], 'ezeit')) {
-                    $url['host'] = $url['host'].'/ezeit';
-                }
-                if(str_contains($url['path'], 'dbinfo')) {
-                    $url['host'] = $url['host'].'/dbinfo';
-                }
-                if((str_contains($url['path'], 'ReadMe') && ($url['host'] === 'ezb.ur.de'))) {
-                    if(str_contains($url['query'], 'lang=en')) {
-                        $url['host'] = $url['host'].'/ReadMe/en';
-                    }
-                    if(str_contains($url['query'], 'lang=de')) {
-                        $url['host'] = $url['host'].'/ReadMe/de';
-                    }
-                
-                }
+                $url = self::parseUrlAndAdapt($isil_link);
 
                 $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                 $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
@@ -1093,9 +1076,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         $proxy_prefix = 'https://wwwdb.dbod.de/login?url=';  
         $return_prefix = $proxy_prefix;
         $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de', 'rzblx10.uni-regensburg.de'];
-        $force_prefix_hosts = [];
+        $force_prefix_hosts = ['wayback.archive-it.org/22564'];
 
-        $urlParsed = parse_url($url);
+        $urlParsed = self::parseUrlAndAdapt($url);
 
         if (in_array($urlParsed['host'], $no_prefix_hosts)) {
             $return_prefix =  '';
@@ -1118,6 +1101,39 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         }
 
         return $return_prefix;
+    }
+
+    /** 
+     * Basically parse_url but with some additional adaptions
+     * 
+     * @param string $url
+     * @return array
+     */
+    private static function parseUrlAndAdapt($url) 
+    {
+        $url= parse_url($url);
+
+        // Shitty special case for ezb and dbis
+        if(str_contains($url['path'], 'ezeit')) {
+            $url['host'] = $url['host'].'/ezeit';
+        }
+        if(str_contains($url['path'], 'dbinfo')) {
+            $url['host'] = $url['host'].'/dbinfo';
+        }
+        if((str_contains($url['path'], 'ReadMe') && ($url['host'] === 'ezb.ur.de'))) {
+            if(str_contains($url['query'], 'lang=en')) {
+                $url['host'] = $url['host'].'/ReadMe/en';
+            }
+            if(str_contains($url['query'], 'lang=de')) {
+                $url['host'] = $url['host'].'/ReadMe/de';
+            }
+        }
+
+        if((str_contains($url['path'], '22564') && ($url['host'] === 'wayback.archive-it.org'))) {
+            $url['host'] = $url['host'].'/22564';
+        }
+
+        return $url;
     }
 
     private static function checkRedirectTargetCached($url)
