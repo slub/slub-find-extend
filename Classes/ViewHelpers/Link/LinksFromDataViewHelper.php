@@ -115,7 +115,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'intro' => '',
                         'url_title' => '',
                         'material' => 'iiif',
-                        'note' => ''
+                        'note' => '',
+                        'type' => 'iiif manifest in url_de14_str_mv'
                     ));
 
 
@@ -128,7 +129,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'intro' => '',
                         'url_title' => '',
                         'material' => $material,
-                        'note' => ''
+                        'note' => '',
+                        'type' => 'isil link from url_de14_str_mv'
                     ));
 
                 }
@@ -150,8 +152,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             //$label = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistoricum');
 
-                            \TYPO3\CMS\Core\Utility\DebugUtility::debug($introLocalisedLabel);
-
                             self::addLinkObjectToArray($return_links, 'access', array(
                                 'url' => 'https://iiif.arthistoricum.net/mirador/?id='.$document_url,
                                 'url_prefix' => '',
@@ -159,7 +159,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 'intro' => '',
                                 'url_title' => '',
                                 'material' => 'iiif',
-                                'note' => ''
+                                'note' => '',
+                                'type' => 'iiif viewer link from url'
                             ));
 
                             self::addLinkObjectToArray($return_links, 'additional_information', array(
@@ -169,7 +170,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 'intro' => '',
                                 'url_title' => '',
                                 'material' => '',
-                                'note' => ''
+                                'note' => '',
+                                'type' => 'iiif manifest from url'
                             ));
 
                         }
@@ -336,7 +338,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'intro' => '',
                                         'material' => '',
                                         'note' => '',
-                                        'jsfunction' => $jsfunction
+                                        'jsfunction' => $jsfunction,
+                                        'type' => 'marc link != source_id 0 ind2 0 || 1'
+                                        
                                     ));
                                 } else {
                                         if(str_contains($note, 'kostenfrei')) {
@@ -348,7 +352,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                                 'intro' => '',
                                                 'material' => '',
                                                 'note' => '',
-                                                'jsfunction' => $jsfunction
+                                                'jsfunction' => $jsfunction,
+                                                'type' => 'marc link source_id 0 ind2 0 || 1  && z kostenfrei'
                                             ));
                                         }
                                 }
@@ -475,7 +480,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
-                                    'note' => ''
+                                    'note' => '',
+                                    'type' => 'marc link ind2 2'
                                 ));
 
                             }
@@ -587,7 +593,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'intro' => '',
                             'material' => '',
                             'note' => '',
-                            'jsfunction' => $jsfunction
+                            'jsfunction' => $jsfunction,
+                            'type' => 'marc link ind2 " "'
                         ));
 
                     }
@@ -623,7 +630,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'intro' => 'Verzeichnis der Drucke des 16. Jahrhunderts:',
                         'url_title' => '',
                         'material' => '',
-                        'note' => ''
+                        'note' => '',
+                        'type' => 'marc link 024_7 subf 2 vd16'
                     ));
 
                 }
@@ -640,7 +648,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'intro' => 'Verzeichnis der Drucke des 17. Jahrhunderts:',
                             'url_title' => '',
                             'material' => '',
-                            'note' => ''
+                            'note' => '',
+                            'type' => 'marc link 024_7 subf 2 vd17'
                         ));
 
                     }
@@ -669,7 +678,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 'url_title' => $label,
                 'intro' => 'Nachweis in der Sächsischen Bibliografie:',
                 'material' => '',
-                'note' => ''
+                'note' => '',
+                'type' => 'mega_collection link Säbi'
             ));
 
         }
@@ -692,7 +702,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url_title' => '',
                             'intro' => '',
                             'material' => '',
-                            'note' => ''
+                            'note' => '',
+                            'type' => 'url link with | seperator'
                         ));
 
                     } else {
@@ -701,7 +712,6 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                         $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
-
                         $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
         
@@ -731,7 +741,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     'intro' => '',
                                     'material' => '',
                                     'note' => '',
-                                    'jsfunction' => '$(document).ready(function() { showOAIcon(); });'
+                                    'jsfunction' => '$(document).ready(function() { showOAIcon(); });',
+                                    'type' => 'ai & oa link from redi'
                                 ));
 
                             } else {
@@ -746,13 +757,19 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
-                                        'note' => $linknote
+                                        'note' => $linknote,
+                                        'type' => 'ai & doi link from redi'
                                     ));
     
                                 } else {
 
                                     $finalUrl = static::checkRedirectTargetCached($redi['url']);
                                     $url = parse_url($finalUrl);
+                                    
+                                    // clean redi via  if is smaller than 5 characters to filter parse errors
+                                    if(strlen($redi['via']) < 5 ) {
+                                        $redi['via'] = '';
+                                    }
 
                                     $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                                     $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
@@ -764,7 +781,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
-                                        'note' => $linknote
+                                        'note' => $linknote,
+                                        'type' => 'ai & link from redi'
                                     ));
                                     
                                 }
@@ -778,7 +796,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
-                                        'note' => ''
+                                        'note' => '',
+                                        'type' => 'ai &  info link from redi'
                                     ));
 
                                 }
@@ -788,7 +807,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         } else {
 
                             // Sonderfall DIN / VDE
-                            // Wenn Document in title_short DIN & VDE enthaölt udn source_id 211 ist,
+                            // Wenn Document in title_short DIN & VDE enthält und source_id 211 ist,
                             // enthält dann ergänzen wir $note mit Hinweis auf DIN VDE Normen
 
                             if(($document['source_id'] === '211') && (strpos($document['title_short'], 'DIN') !== false) && (strpos($document['title_short'], 'VDE') !== false)) {
@@ -807,12 +826,13 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 'url_title' => '',
                                 'intro' =>  '',
                                 'material' => '',
-                                'note' => ''
+                                'note' => '',
+                                'type' => 'url form solr'
                             ));
 
 
                             // Sonderfall DIN / VDE
-                            // Wenn Document in title_short DIN & VDE enthaölt udn source_id 211 ist,
+                            // Wenn Document in title_short DIN & VDE enthält und source_id 211 ist,
                             // enthält dann ergänzen wir $note mit Hinweis auf DIN VDE Normen
 
                             if(($document['source_id'] === '211') && (strpos($document['title_short'], 'DIN') !== false) && (strpos($document['title_short'], 'VDE') !== false)) {
@@ -828,7 +848,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
-                                    'note' => ''
+                                    'note' => '',
+                                    'type' => 'nautos 3d link'
                                 ));
 
                             }
@@ -851,7 +872,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'url_title' => '',
                             'intro' => '',
                             'material' => '',
-                            'note' => ''
+                            'note' => '',
+                            'type' => 'source_id 215 link with | seperator'
                         ));
 
                     } else {
@@ -863,7 +885,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'label' => '',
                             'intro' => '',
                             'material' => '',
-                            'note' => ''
+                            'note' => '',
+                            'type' => 'source_id 215 link'
                         ));
 
                     }
@@ -1054,7 +1077,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         'url_title' => '',
                         'intro' => $intro,
                         'material' => '',
-                        'note' => ''
+                        'note' => '',
+                        'type' => 'marc link '.$selector
                     ));
 
                 }
