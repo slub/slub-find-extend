@@ -817,11 +817,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             }
 
+                            $url_prefix_only_nautos = '';
+                            if($document['source_id'] === '211') {
+                                $url_prefix_only_nautos = static::checkAndAddProxyPrefix($raw_url, $document, $note);
+                            }
+
                             $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($nautosNoteLocalisationLabel) > 0) ? ' ('.$nautosNoteLocalisationLabel.')' : '');
 
                             self::addLinkObjectToArray($return_links, 'links', array(
                                 'url' => self::replaceDomains($raw_url, $document),
-                                'url_prefix' => '',
+                                'url_prefix' => $url_prefix_only_nautos,
                                 'label' =>  $label,
                                 'url_title' => '',
                                 'intro' =>  '',
