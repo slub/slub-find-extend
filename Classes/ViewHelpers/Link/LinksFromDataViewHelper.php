@@ -1121,7 +1121,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             $return_prefix =  '';
         }
 
-        if ($note === 'kostenfrei') {
+        if(str_contains($note, 'kostenfrei')) {
             $return_prefix =  '';
         }
 
