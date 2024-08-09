@@ -94,6 +94,8 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper
 
         $access = $xpath->query("//div[@id ='t_ezb']/div/p/b")->item(0)->nodeValue;
 
+        $doilink = $xpath->query("//dd[contains(@class,'doi_d')]/span/a/@href")->item(0)->nodeValue;
+
         $status_code = 10;
         $url = '';
         $via = '';
@@ -141,6 +143,7 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper
         $status['status'] = $status_code;
         $status['oa_url'] = $oa_url;
         $status['oa_via'] = $oa_via;
+        $status['doilink'] = $doilink;
 
         return $status;
     }
