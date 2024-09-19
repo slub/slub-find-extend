@@ -81,6 +81,11 @@ class ModifySolrResult
                             $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']]);
                         }
                         break;
+                    case 'is':
+                        if ($fields['recordtype'] === 'is') {
+                            $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']]);
+                        }
+                        break;
                 }
             }
         }

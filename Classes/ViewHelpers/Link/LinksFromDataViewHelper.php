@@ -715,7 +715,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
         
-                        if(($document['recordtype'] === 'ai')) {
+                        if($document['recordtype'] === 'ai' || $document['recordtype'] === 'is') {
 
                             $redi = static::getRediService()->getCached($document, $enriched);
 
