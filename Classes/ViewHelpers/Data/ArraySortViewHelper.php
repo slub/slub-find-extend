@@ -18,7 +18,8 @@ class ArraySortViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('array', 'array', 'The data to access', false, null);
+        $this->registerArgument('array', 'array', 'The data to access', true, null);
+        $this->registerArgument('type', 'string', 'The type to sort ("value" => sort()) otherwise ksort())', false, null);
         $this->registerArgument('flag', 'string', 'The flags to sort', false, null);
     }
 
@@ -40,7 +41,16 @@ class ArraySortViewHelper extends AbstractViewHelper
             return null;
         }
 
-        ksort($array, $arguments['flag']);
+        // Parses sort type constant name to corresponding int value, eg. SORT_NATURAL => 6
+        if(is_string($arguments['flag'])) {
+            $arguments['flag'] = constant($arguments['flag']);
+        }
+
+        if($arguments['type'] == 'value') {
+            sort($array, $arguments['flag']);
+        } else {
+            ksort($array, $arguments['flag']);
+        }
 
         return $array;
     }
