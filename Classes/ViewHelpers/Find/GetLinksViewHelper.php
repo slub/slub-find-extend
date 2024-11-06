@@ -44,7 +44,7 @@ class GetLinksViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-        if (($arguments['document']['recordtype'] === 'ai') && (!$arguments['index'])) {
+        if (($arguments['document']['recordtype'] === 'ai' || $arguments['document']['recordtype'] === 'is') && (!$arguments['index'])) {
             return static::getLinksFromAiFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], true);
         } else {
             switch ($arguments['document']['recordtype']) {

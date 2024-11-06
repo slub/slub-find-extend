@@ -22,6 +22,7 @@ class ParseMarcFieldViewHelper extends AbstractViewHelper
         $this->registerArgument('subfieldasarray', 'boolean', 'Return subfields as array?', false, false);
         $this->registerArgument('orderedarray', 'boolean', 'Return subfields as array ordered as in original data?', false, false);
         $this->registerArgument('getindicators', 'boolean', 'Return indicator1 and indicator2 as fields', false, false);
+        $this->registerArgument('ignoreindicators', 'boolean', 'Ingnore indicator level in array ', false, false);
     }
 
     /**
@@ -38,7 +39,7 @@ class ParseMarcFieldViewHelper extends AbstractViewHelper
             foreach ($arguments['field'] as $field) {
                 $fieldData = explode('', $field);
 
-                if (strlen(trim($fieldData[0])) > 0) {
+                if ($arguments['ignoreindicators'] !== true && strlen(trim($fieldData[0])) > 0) {
                     $index = intval(substr($fieldData[0], 0, 1));
 
                     if (!is_array($output[$index])) {
