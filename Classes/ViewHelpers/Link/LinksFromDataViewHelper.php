@@ -10,6 +10,11 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use File_MARC_Record;
 use File_MARC_Reference;
+use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Solarium\Core\Client\Adapter\Http;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 class LinksFromDataViewHelper extends AbstractViewHelper
 {
 
@@ -930,8 +935,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     private static function getSolariumClient()
     {
         if (null === static::$solr) {
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            static::$solr = $objectManager->get(\Solarium\Client::class);
+            // create an HTTP adapter instance
+            $adapter = new Curl();
+            $eventDispatcher = new EventDispatcher();
+            // create a client instance
+            static::$solr = new Client($adapter, $eventDispatcher);
         }
 
         return static::$solr;
