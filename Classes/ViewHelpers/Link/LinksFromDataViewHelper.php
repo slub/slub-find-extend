@@ -717,87 +717,80 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         
                         if($document['recordtype'] === 'ai' || $document['recordtype'] === 'is') {
 
-                            $redi = static::getRediService()->getCached($document, $enriched);
+                            $rediLinks = static::getRediService()->getCached($document, $enriched);
 
-                            $linknote = '';
-                            if($redi['status'] === 2) 
-                            {
-                                $linknoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.status_redi.2';
-                                $linknote = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) : '';      
-        
-                            }
+                            $hosts = [];
 
-                            if($redi['oa_url']) 
+                            foreach($rediLinks['links'] as $redi) 
                             {
 
-                                $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $redi['oa_via'];
-                                $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['oa_via']; 
+                                $linknote = '';
+                                if($redi['status'] === 2) 
+                                {
+                                    $linknoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.status_redi.2';
+                                    $linknote = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) : '';      
+            
+                                }
+
+                                $finalUrl = static::checkRedirectTargetCached($redi['url']);
+                                $url = parse_url($finalUrl);
+                                
+                                // clean redi via  if is smaller than 5 characters to filter parse errors
+                                if(strlen($redi['via']) < 5 ) {
+                                    $redi['via'] = '';
+                                }
+
+                                $hosts[] = $url['host'];
+
+                                $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                                $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
 
                                 self::addLinkObjectToArray($return_links, 'access', array(
-                                    'url' => $redi['oa_url'],
+                                    'url' => $redi['url'],
+                                    'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document, $note),
+                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => $linknote,
+                                    'type' => 'ai & link from redi'
+                                ));
+                                
+                            }
+
+                            if($rediLinks['infolink']) {
+        
+                                self::addLinkObjectToArray($return_links, 'access', array(
+                                    'url' => $rediLinks['infolink'],
                                     'url_prefix' => '',
-                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel . ' ('. ( $redi['oa_more'] ? $redi['oa_more'] . ', ' : '' )  .'gefunden durch Unpaywall)',
+                                    'label' => 'Zugangsbedingungen via EZB',
                                     'url_title' => '',
                                     'intro' => '',
                                     'material' => '',
                                     'note' => '',
-                                    'jsfunction' => '$(document).ready(function() { showOAIcon(); });',
-                                    'type' => 'ai & oa link from redi'
+                                    'type' => 'ai &  info link from redi'
                                 ));
 
-                            } else {
+                            }
 
+                            if($rediLinks['oa_url']) 
+                            {
 
-                                if($redi['doilink']) {
+                                if(! in_array($rediLinks['oa_via'], $hosts)) {
 
-                                    self::addLinkObjectToArray($return_links, 'access', array(
-                                        'url' => self::replaceDomains($raw_url, $document),
-                                        'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document, $note),
-                                        'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
-                                        'url_title' => '',
-                                        'intro' => '',
-                                        'material' => '',
-                                        'note' => $linknote,
-                                        'type' => 'ai & doi link from redi'
-                                    ));
-    
-                                } else {
-
-                                    $finalUrl = static::checkRedirectTargetCached($redi['url']);
-                                    $url = parse_url($finalUrl);
-                                    
-                                    // clean redi via  if is smaller than 5 characters to filter parse errors
-                                    if(strlen($redi['via']) < 5 ) {
-                                        $redi['via'] = '';
-                                    }
-
-                                    $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
-                                    $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
+                                    $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $rediLinks['oa_via'];
+                                    $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $rediLinks['oa_via']; 
 
                                     self::addLinkObjectToArray($return_links, 'access', array(
-                                        'url' => $finalUrl,
-                                        'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document, $note),
-                                        'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
-                                        'url_title' => '',
-                                        'intro' => '',
-                                        'material' => '',
-                                        'note' => $linknote,
-                                        'type' => 'ai & link from redi'
-                                    ));
-                                    
-                                }
-    
-                                if($redi['infolink']) {
-    
-                                    self::addLinkObjectToArray($return_links, 'access', array(
-                                        'url' => $redi['infolink'],
+                                        'url' => $rediLinks['oa_url'],
                                         'url_prefix' => '',
-                                        'label' => 'Zugangsbedingungen via EZB',
+                                        'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel . ' ('. ( $rediLinks['oa_more'] ? $rediLinks['oa_more'] . ', ' : '' )  .'gefunden durch Unpaywall) &nbsp; <span class="reference_oa_logo"></span>',
                                         'url_title' => '',
                                         'intro' => '',
                                         'material' => '',
                                         'note' => '',
-                                        'type' => 'ai &  info link from redi'
+                                        'jsfunction' => '$(document).ready(function() { showOAIcon(); });',
+                                        'type' => 'ai & oa link from redi'
                                     ));
 
                                 }
