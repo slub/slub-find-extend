@@ -16,7 +16,7 @@ class ArrayPluckViewHelper extends AbstractViewHelper
         parent::initializeArguments();
         $this->registerArgument('array', 'array', 'The array to pluck values from', true);
         $this->registerArgument('pluck', 'string|array', 'String or array to remove', true);
-        $this->registerArgument('flattenArray', 'boolean', 'Flatten associative Array', true);
+        $this->registerArgument('flattenArray', 'boolean', 'Flatten associative Array to only work on keys', true);
     }
 
     /**
@@ -36,7 +36,7 @@ class ArrayPluckViewHelper extends AbstractViewHelper
         $flattenArray = $arguments['flattenArray'];
 
         if($flattenArray) {
-            $array = array_values($array);
+            $array = array_keys($array);
         }
 
         if (!is_array($pluck)) {
