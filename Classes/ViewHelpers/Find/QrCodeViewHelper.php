@@ -4,9 +4,9 @@ namespace Slub\SlubFindExtend\ViewHelpers\Find;
 
 /**
  * Class QrCodeViewHelper
- * 
+ *
  * This class generates a QR code from a given URL.
- * 
+ *
  * @package Slub\SlubFindExtend\ViewHelpers\Find
  */
 
@@ -29,7 +29,6 @@ class QrCodeViewHelper extends AbstractViewHelper
         $this->registerArgument('url', 'string', 'URL to enocode to qr code', true);
     }
 
- 
     /**
      * @return string
      */
@@ -44,15 +43,18 @@ class QrCodeViewHelper extends AbstractViewHelper
         $renderer->setWidth(256);
         $writer = new \BaconQrCode\Writer($renderer);
 
-        $imageDir = GeneralUtility::getFileAbsFileName('typo3temp/slub_find_extend/qr/');
+        $imageDirWebroot = 'typo3temp/slub_find_extend/qr/';
+        $imageDirAbs = GeneralUtility::getFileAbsFileName($imageDirWebroot);
+        $imageName = MD5($arguments['url']).'.svg';
 
-        if(!is_dir($imageDir)) {
-            mkdir($imageDir, 0777, true);
+        if(!is_dir($imageDirAbs)) {
+            GeneralUtility::mkdir_deep($imageDirAbs);
         }
 
-        $writer->writeFile($arguments['url'], GeneralUtility::getFileAbsFileName($imageDir.MD5($arguments['url']).'.svg'));
+        $writer->writeFile($arguments['url'], $imageDirAbs.$imageName);
+        GeneralUtility::fixPermissions($imageDirAbs.$imageName);
 
-        return '/typo3temp/slub_find_extend/qr/'.MD5($arguments['url']).'.svg';
+        return '/'.$imageDirWebroot.$imageName;
     }
 
 
