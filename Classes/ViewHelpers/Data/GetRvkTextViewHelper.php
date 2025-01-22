@@ -43,7 +43,14 @@ class GetRvkTextViewHelper extends AbstractViewHelper
         $rvkArray = json_decode(static::getData($url), true);
 
         if (!empty($rvkArray["name"])) {
-            return trim($rvk) . ' : ' . $rvkArray["name"];
+            $fullPath = '';
+            if (!empty($rvkArray["hierarchy"])) {
+                foreach ($rvkArray["hierarchy"] as $item) {
+                    $fullPath .= $item["notation"] . ' : ' . $item["name"] . ' -> ';
+                }
+                $fullPath = rtrim($fullPath, ' -> ');
+            }
+            return '<span title="' . htmlspecialchars($fullPath) . '">' . trim($rvk) . ' : ' . htmlspecialchars($rvkArray["name"]) . '</span>';
         }
 
         return $rvk;
