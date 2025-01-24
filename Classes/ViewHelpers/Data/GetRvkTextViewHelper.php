@@ -50,7 +50,7 @@ class GetRvkTextViewHelper extends AbstractViewHelper
                 }
                 $fullPath = rtrim($fullPath, " =>\n");
             }
-            return '<span title="' . htmlspecialchars($fullPath) . ' => ' . trim($rvk) . ' : ' . htmlspecialchars($rvkArray["name"]) . '</span>';
+            return '<span title="' . htmlspecialchars($fullPath) . '">' . trim($rvk) . ' : ' . htmlspecialchars($rvkArray["name"]) . '</span>';
         }
 
         return $rvk;
