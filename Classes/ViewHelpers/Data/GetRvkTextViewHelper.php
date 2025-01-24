@@ -46,9 +46,9 @@ class GetRvkTextViewHelper extends AbstractViewHelper
             $fullPath = '';
             if (!empty($rvkArray["hierarchy"])) {
                 foreach ($rvkArray["hierarchy"] as $item) {
-                    $fullPath .= str_repeat(' ', 4) . $item["notation"] . ' : ' . $item["name"] . " =>\n";
+                    $fullPath .= $item["notation"] . ' : ' . $item["name"] . "\n   => ";
                 }
-                $fullPath = rtrim($fullPath, " =>\n");
+                $fullPath = rtrim($fullPath, "\n   => ");
             }
             return '<span title="' . htmlspecialchars($fullPath) . '">' . trim($rvk) . ' : ' . htmlspecialchars($rvkArray["name"]) . '</span>';
         }
