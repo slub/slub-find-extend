@@ -91,7 +91,12 @@ class RediService
         $url = '';
         $via = '';
 
+        $links = [];
+
         for ($i = 0; $i < $xpath->query("//div[@id ='t_ezb']/div/div[contains(@class,'t_ezb_result')]/p")->length; $i++) {
+
+            $link = [];
+
             $ezb_status_code = 10;
 
             $ezb_status = $xpath->query("//div[@id ='t_ezb']/div/div[contains(@class,'t_ezb_result')]/p/span[contains(@class, 't_ezb_yellow') or contains(@class, 't_ezb_green') or contains(@class, 't_ezb_red')]/@class")->item($i)->nodeValue;
@@ -114,10 +119,12 @@ class RediService
             }
 
             if ($ezb_status_code < $status_code) {
-                $status_code = $ezb_status_code;
-                $via = $ezb_via;
-                $url = $ezb_url;
+                $link['status'] = $ezb_status_code;
+                $link['via'] = $ezb_via;
+                $link['url'] = $ezb_url;
             }
+
+            $links[] = $link;
         }
 
         $oa_url = $xpath->query("//div[@id ='t_oadoi']/div/div[contains(@class,'t_ezb_result')]/p/span[contains(@class,'t_link')]/a/@href")->item(0)->nodeValue;
@@ -131,9 +138,7 @@ class RediService
 
         $status['infolink'] = $infolink;
         $status['access'] = $access == 'freigeschaltet' ? 1 : 0;
-        $status['via'] = $via;
-        $status['url'] = $url;
-        $status['status'] = $status_code;
+        $status['links'] = $links;
         $status['oa_url'] = $oa_url;
         $status['oa_via'] = $oa_via;
         $status['oa_more'] = $oa_more;
