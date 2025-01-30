@@ -25,7 +25,7 @@ class GetRvkTextViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return string
+     * @return array
      */
     public static function renderStatic(
         array $arguments,
@@ -50,10 +50,16 @@ class GetRvkTextViewHelper extends AbstractViewHelper
                 }
                 $fullPath = rtrim($fullPath, "\n   => ");
             }
-            return '<span title="' . htmlspecialchars($fullPath) . '">' . trim($rvk) . ' : ' . htmlspecialchars($rvkArray["name"]) . '</span>';
+            return [
+                'name' => trim($rvk) . ' : ' . $rvkArray["name"], 
+                'path' => $fullPath
+            ];
         }
 
-        return $rvk;
+        return [
+            'name' => $rvk, 
+            'path' => ''
+        ];
     }
 
     private static function getData($url)
