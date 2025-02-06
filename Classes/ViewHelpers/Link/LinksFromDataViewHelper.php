@@ -657,6 +657,35 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
+            // Add reference to monographs on this resource
+            if (strpos($document['inventory_de14_str_mv'],'monogra') !== FALSE)
+            {
+                $solrClient = static::getSolariumClient();
+
+                $query = static::createQuery($solrClient, 'title_full_unstemmed:"'.$document['title'].'" AND !format_de14:"Journal, E-Journal" AND !format_de14:"Article, E-Article"', $templateVariableContainer);
+                $solrClient->setOptions(static::getSolariumClientOptionsArray($templateVariableContainer, $query));
+
+                /** @var Result $resultSet */
+                $resultSet = static::$solr->select($query);
+
+                /** @var DocumentInterface $result */
+                $results = $resultSet->getDocuments();
+
+                if(count($results) > 0) {    
+                    self::addLinkObjectToArray($return_links, 'references', array(
+
+                        'url' => '/?tx_find_find[q][default]=%22'.urlencode($document['title']).'%22&tx_find_find[facet][format_de14][Article%2C+E-Article]=not&tx_find_find[facet][format_de14][Journal%2C+E-Journal]=not',
+                        'url_prefix' => '',
+                        'label' => '... im Bestand der <span class="reference_slub_logo">SLUB</span>',
+                        'intro' => 'Monografische Titel zu dieser Ressource',
+                        'url_title' => '',
+                        'material' => '',
+                        'note' => '',
+                        'type' => 'monogra'
+                    ));
+                }
+            }
+
         }
 
         if (in_array("Sächsische Bibliografie", $document['mega_collection'])) {
