@@ -657,8 +657,15 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
+
+            $is_monograph = isset($document['inventory_de14_str_mv']) && 
+                ((is_string($document['inventory_de14_str_mv']) && strpos($document['inventory_de14_str_mv'], 'monogra') !== FALSE) || 
+                (is_array($document['inventory_de14_str_mv']) && array_reduce($document['inventory_de14_str_mv'], function($carry, $item) {
+                    return $carry || strpos($item, 'monogra') !== FALSE;
+                }, false)));
+
             // Add reference to monographs on this resource
-            if (strpos($document['inventory_de14_str_mv'],'monogra') !== FALSE)
+            if ($is_monograph)
             {
                 $solrClient = static::getSolariumClient();
 
@@ -676,7 +683,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                         'url' => '/?tx_find_find[q][default]=%22'.urlencode($document['title']).'%22&tx_find_find[facet][format_de14][Article%2C+E-Article]=not&tx_find_find[facet][format_de14][Journal%2C+E-Journal]=not',
                         'url_prefix' => '',
-                        'label' => '... im Bestand der <span class="reference_slub_logo">SLUB</span>',
+                        'label' => '... im Bestand der <span class="reference_slub_logo">SLUB</span> suchen',
                         'intro' => 'Monografische Titel zu dieser Ressource',
                         'url_title' => '',
                         'material' => '',
