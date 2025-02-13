@@ -679,7 +679,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             self::addLinkObjectToArray($return_links, 'references', array(
                 'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
                 'url_prefix' => '',
-                'label' => $label.' (<img src="/typo3conf/ext/slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
+                'label' => $label.' (<img src="/typo3conf/ext/slub_katalog/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
                 'url_title' => $label,
                 'intro' => 'Nachweis in der Sächsischen Bibliografie:',
                 'material' => '',
