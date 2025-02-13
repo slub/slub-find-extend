@@ -25,7 +25,7 @@ class GetRvkTextViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return string
+     * @return array
      */
     public static function renderStatic(
         array $arguments,
@@ -43,10 +43,23 @@ class GetRvkTextViewHelper extends AbstractViewHelper
         $rvkArray = json_decode(static::getData($url), true);
 
         if (!empty($rvkArray["name"])) {
-            return trim($rvk) . ' : ' . $rvkArray["name"];
+            $fullPath = '';
+            if (!empty($rvkArray["hierarchy"])) {
+                foreach ($rvkArray["hierarchy"] as $item) {
+                    $fullPath .= $item["notation"] . ' : ' . $item["name"] . "\n   => ";
+                }
+                $fullPath = rtrim($fullPath, "\n   => ");
+            }
+            return [
+                'name' => trim($rvk) . ' : ' . $rvkArray["name"], 
+                'path' => $fullPath
+            ];
         }
 
-        return $rvk;
+        return [
+            'name' => $rvk, 
+            'path' => ''
+        ];
     }
 
     private static function getData($url)
