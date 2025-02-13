@@ -943,11 +943,12 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         $configuration = array(
             'endpoint' => array(
                 'localhost' => array(
-                    'host' => $templateVariableContainer->get('settings')['connection']['host'],
-                    'port' => intval($templateVariableContainer->get('settings')['connection']['port']),
-                    'path' => $templateVariableContainer->get('settings')['connection']['path'],
-                    'timeout' => $templateVariableContainer->get('settings')['connection']['timeout'],
-                    'scheme' => $templateVariableContainer->get('settings')['connection']['scheme']
+                    'host' => $templateVariableContainer->get('settings')['connections']['default']['options']['host'],
+                    'port' => intval($templateVariableContainer->get('settings')['connections']['default']['options']['port']),
+                    'path' => $templateVariableContainer->get('settings')['connections']['default']['options']['path'],
+                    'core' => $templateVariableContainer->get('settings')['connections']['default']['options']['core'],
+                    'timeout' => $templateVariableContainer->get('settings')['connections']['default']['options']['timeout'],                    
+                    'scheme' => $templateVariableContainer->get('settings')['connections']['default']['options']['scheme']
                 )
             ),
             'solarium' => $query

@@ -82,13 +82,14 @@ $signalSlotDispatcher->connect(
 );
 
 $cacheKey = 'resolv_link_electronic';
-if (!is_array($TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ])) {
-    $cacheConfig =  $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ] = array();
-    $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['frontend'] = 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend';
-    $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend';
-    $TYPO3_CONF_VARS['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['options'] = array();
-}
 
+if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][ $cacheKey ])) {
+
+    $cacheConfig =  $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][ $cacheKey ] = array();
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['frontend'] = 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend';
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['backend'] = 'TYPO3\\CMS\\Core\\Cache\\Backend\\Typo3DatabaseBackend';
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][ $cacheKey ]['options'] = array();
+}
 
 if (TYPO3_MODE === 'BE') {
 	$languageDir = $_EXTKEY . '/Resources/Private/Language/';
