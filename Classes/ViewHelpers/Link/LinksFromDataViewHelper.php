@@ -681,7 +681,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 if(count($results) > 0) {    
                     self::addLinkObjectToArray($return_links, 'references', array(
 
-                        'url' => '/?tx_find_find[q][default]=%22'.urlencode($document['title']).'%22&tx_find_find[facet][format_de14][Article%2C+E-Article]=not&tx_find_find[facet][format_de14][Journal%2C+E-Journal]=not',
+                        'url' => '/?tx_find_find[q][title]=%22'.urlencode($document['title']).'%22&tx_find_find[facet][format_de14][Article%2C+E-Article]=not&tx_find_find[facet][format_de14][Journal%2C+E-Journal]=not',
                         'url_prefix' => '',
                         'label' => '... im Bestand der <span class="reference_slub_logo">SLUB</span> suchen',
                         'intro' => 'Monografische Titel zu dieser Ressource',
