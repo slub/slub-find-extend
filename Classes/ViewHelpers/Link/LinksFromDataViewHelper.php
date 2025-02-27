@@ -657,6 +657,42 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
+
+            $is_monograph = isset($document['inventory_de14_str_mv']) && 
+                ((is_string($document['inventory_de14_str_mv']) && strpos($document['inventory_de14_str_mv'], 'monogra') !== FALSE) || 
+                (is_array($document['inventory_de14_str_mv']) && array_reduce($document['inventory_de14_str_mv'], function($carry, $item) {
+                    return $carry || strpos($item, 'monogra') !== FALSE;
+                }, false)));
+
+            // Add reference to monographs on this resource
+            if ($is_monograph)
+            {
+                $solrClient = static::getSolariumClient();
+
+                $query = static::createQuery($solrClient, 'title_full_unstemmed:"'.$document['title'].'" AND !format_de14:"Journal, E-Journal" AND !format_de14:"Article, E-Article"', $templateVariableContainer);
+                $solrClient->setOptions(static::getSolariumClientOptionsArray($templateVariableContainer, $query));
+
+                /** @var Result $resultSet */
+                $resultSet = static::$solr->select($query);
+
+                /** @var DocumentInterface $result */
+                $results = $resultSet->getDocuments();
+
+                if(count($results) > 0) {    
+                    self::addLinkObjectToArray($return_links, 'references', array(
+
+                        'url' => '/?tx_find_find[q][title]=%22'.urlencode($document['title']).'%22&tx_find_find[facet][format_de14][Article%2C+E-Article]=not&tx_find_find[facet][format_de14][Journal%2C+E-Journal]=not',
+                        'url_prefix' => '',
+                        'label' => '... im Bestand der <span class="reference_slub_logo">SLUB</span> suchen',
+                        'intro' => 'Monografische Titel zu dieser Ressource',
+                        'url_title' => '',
+                        'material' => '',
+                        'note' => '',
+                        'type' => 'monogra'
+                    ));
+                }
+            }
+
         }
 
         if (in_array("Sächsische Bibliografie", $document['mega_collection'])) {
