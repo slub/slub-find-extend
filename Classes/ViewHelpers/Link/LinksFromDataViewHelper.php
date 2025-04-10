@@ -196,6 +196,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             /** @var \Object */
             $reference = static::getMarcRefrenceResolverService()->resolveReference('856', $decoded);
 
+            self::addRismLink($return_links, $reference, $document);
+
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
                 $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
@@ -1120,6 +1122,43 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         }
 
+    }
+
+    
+    private static function addRismLink(&$return_links, $reference, $document)
+    {
+        for ($i = 0; $i < count($reference->cache["856"]); $i++) {
+            $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
+    
+            if ($ind2 === '4' && $reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                $url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+    
+                if (!str_starts_with($url, 'http://opac.rism.info')) {
+                    for ($j = 0; $j < count($reference->cache["935"]); $j++) {
+                        if ($reference->cache["935[" . $j . "]"]->getSubfield('e')) {
+                            $rismValue = trim($reference->cache["935[" . $j . "]"]->getSubfield('e')->getData());
+    
+                            if (str_starts_with($rismValue, 'RISM-A/II-')) {
+                                $documentId = substr($rismValue, strlen('RISM-A/II-'));
+                                $rismUrl = 'http://opac.rism.info/search?documentid=' . urlencode($documentId);
+                                $label = 'Nachweis im Internationalen Quellenlexikon der Musik (RISM) via RISM Katalog';
+    
+                                self::addLinkObjectToArray($return_links, 'additional_information', array(
+                                    'url' => $rismUrl,
+                                    'url_prefix' => '',
+                                    'label' => $label,
+                                    'intro' => '',
+                                    'url_title' => '',
+                                    'material' => '',
+                                    'note' => '',
+                                    'type' => 'rism link from 935e'
+                                ));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /** 
