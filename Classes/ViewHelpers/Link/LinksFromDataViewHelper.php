@@ -1144,7 +1144,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             }
         }
         
-        if(!$hasRismLink) {
+        if(!$hasRismLink && is_countable($reference->cache["935"])) {
             for ($j = 0; $j < count($reference->cache["935"]); $j++) {
                 if ($reference->cache["935[" . $j . "]"]->getSubfield('e')) {
                     $rismValue = trim($reference->cache["935[" . $j . "]"]->getSubfield('e')->getData());
