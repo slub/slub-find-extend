@@ -195,8 +195,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
             /** @var \Object */
             $reference = static::getMarcRefrenceResolverService()->resolveReference('856', $decoded);
+            $reference_rism = static::getMarcRefrenceResolverService()->resolveReference('935', $decoded);
 
-            self::addRismLink($return_links, $reference, $document);
+
+            self::addRismLink($return_links, $reference, $reference_rismn, $document);
 
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
@@ -1125,33 +1127,35 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     }
 
     
-    private static function addRismLink(&$return_links, $reference, $document)
+    private static function addRismLink(&$return_links, $reference, $reference_rism, $document)
     {
 
         $hasRismLink = false;
+
+        if(is_countable($reference->cache["856"])) {
+            for ($i = 0; $i < count($reference->cache["856"]); $i++) {
+                
+                $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
+                $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
         
-        for ($i = 0; $i < count($reference->cache["856"]); $i++) {
-            
-            $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
-            $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
-    
-            if ($ind1 === '4' && $ind2 === '2' && $reference->cache["856[" . $i . "]"]->getSubfield('u')) {
-                $url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-    
-                if (str_contains($url, 'opac.rism.info')) {
-                    $hasRismLink = true;
+                if ($ind1 === '4' && $ind2 === '2' && $reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                    $url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+        
+                    if (str_contains($url, 'opac.rism.info')) {
+                        $hasRismLink = true;
+                    }
                 }
             }
         }
         
-        if(!$hasRismLink && is_countable($reference->cache["935"])) {
-            for ($j = 0; $j < count($reference->cache["935"]); $j++) {
-                if ($reference->cache["935[" . $j . "]"]->getSubfield('e')) {
-                    $rismValue = trim($reference->cache["935[" . $j . "]"]->getSubfield('e')->getData());
+        if(!$hasRismLink && is_countable($reference_rism->cache["935"])) {
+            for ($j = 0; $j < count($reference_rism->cache["935"]); $j++) {
+                if ($reference_rism->cache["935[" . $j . "]"]->getSubfield('e')) {
+                    $rismValue = trim($reference_rism->cache["935[" . $j . "]"]->getSubfield('e')->getData());
     
                     if (str_starts_with($rismValue, 'RISM-A/II-')) {
                         $documentId = substr($rismValue, strlen('RISM-A/II-'));
-                        $rismUrl = 'http://opac.rism.info/search?documentid=' . urlencode($documentId);
+                        $rismUrl = 'https://opac.rism.info/search?documentid=' . urlencode($documentId);
                         $label = 'Nachweis im Internationalen Quellenlexikon der Musik (RISM) via RISM Katalog';
     
                         self::addLinkObjectToArray($return_links, 'additional_information', array(
