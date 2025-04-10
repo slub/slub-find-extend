@@ -198,7 +198,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             $reference_rism = static::getMarcRefrenceResolverService()->resolveReference('935', $decoded);
 
 
-            self::addRismLink($return_links, $reference, $reference_rismn, $document);
+            self::addRismLink($return_links, $reference, $reference_rism, $document);
 
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
