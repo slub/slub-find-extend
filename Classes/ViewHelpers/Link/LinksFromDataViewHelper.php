@@ -200,6 +200,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
             /** @var \Object */
             $reference = static::getMarcRefrenceResolverService()->resolveReference('856', $decoded);
+            $reference_rism = static::getMarcRefrenceResolverService()->resolveReference('935', $decoded);
+
+
+            self::addRismLink($return_links, $reference, $reference_rism, $document);
 
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
@@ -662,6 +666,42 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
+
+            $is_monograph = isset($document['inventory_de14_str_mv']) && 
+                ((is_string($document['inventory_de14_str_mv']) && strpos($document['inventory_de14_str_mv'], 'monogra') !== FALSE) || 
+                (is_array($document['inventory_de14_str_mv']) && array_reduce($document['inventory_de14_str_mv'], function($carry, $item) {
+                    return $carry || strpos($item, 'monogra') !== FALSE;
+                }, false)));
+
+            // Add reference to monographs on this resource
+            if ($is_monograph)
+            {
+                $solrClient = static::getSolariumClient();
+
+                $query = static::createQuery($solrClient, 'title_full_unstemmed:"'.$document['title'].'" AND !format_de14:"Journal, E-Journal" AND !format_de14:"Article, E-Article"', $templateVariableContainer);
+                $solrClient->setOptions(static::getSolariumClientOptionsArray($templateVariableContainer, $query));
+
+                /** @var Result $resultSet */
+                $resultSet = static::$solr->select($query);
+
+                /** @var DocumentInterface $result */
+                $results = $resultSet->getDocuments();
+
+                if(count($results) > 0) {    
+                    self::addLinkObjectToArray($return_links, 'references', array(
+
+                        'url' => '/?tx_find_find[q][title]=%22'.urlencode($document['title']).'%22&tx_find_find[facet][format_de14][Article%2C+E-Article]=not&tx_find_find[facet][format_de14][Journal%2C+E-Journal]=not',
+                        'url_prefix' => '',
+                        'label' => '... im Bestand der <span class="reference_slub_logo">SLUB</span> suchen',
+                        'intro' => 'Monografische Titel zu dieser Ressource',
+                        'url_title' => '',
+                        'material' => '',
+                        'note' => '',
+                        'type' => 'monogra'
+                    ));
+                }
+            }
+
         }
 
         if ($document['mega_collection'] && in_array("Sächsische Bibliografie", $document['mega_collection'])) {
@@ -1093,6 +1133,55 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
+        }
+
+    }
+
+    
+    private static function addRismLink(&$return_links, $reference, $reference_rism, $document)
+    {
+
+        $hasRismLink = false;
+
+        if(is_countable($reference->cache["856"])) {
+            for ($i = 0; $i < count($reference->cache["856"]); $i++) {
+                
+                $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
+                $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
+        
+                if ($ind1 === '4' && $ind2 === '2' && $reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                    $url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+        
+                    if (str_contains($url, 'opac.rism.info')) {
+                        $hasRismLink = true;
+                    }
+                }
+            }
+        }
+        
+        if(!$hasRismLink && is_countable($reference_rism->cache["935"])) {
+            for ($j = 0; $j < count($reference_rism->cache["935"]); $j++) {
+                if ($reference_rism->cache["935[" . $j . "]"]->getSubfield('e')) {
+                    $rismValue = trim($reference_rism->cache["935[" . $j . "]"]->getSubfield('e')->getData());
+    
+                    if (str_starts_with($rismValue, 'RISM-A/II-')) {
+                        $documentId = substr($rismValue, strlen('RISM-A/II-'));
+                        $rismUrl = 'https://opac.rism.info/search?documentid=' . urlencode($documentId);
+                        $label = 'Nachweis im Internationalen Quellenlexikon der Musik (RISM) via RISM Katalog';
+    
+                        self::addLinkObjectToArray($return_links, 'additional_information', array(
+                            'url' => $rismUrl,
+                            'url_prefix' => '',
+                            'label' => $label,
+                            'intro' => '',
+                            'url_title' => '',
+                            'material' => '',
+                            'note' => '',
+                            'type' => 'rism link from 935e'
+                        ));
+                    }
+                }
+            }
         }
 
     }
