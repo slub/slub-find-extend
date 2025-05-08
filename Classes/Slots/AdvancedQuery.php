@@ -17,6 +17,7 @@ namespace Slub\SlubFindExtend\Slots;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use Slub\SlubFindExtend\Backend\Solr\SearchHandler;
 use Solarium\QueryType\Select\Query\Query;
+use Slub\SlubFindExtend\Services\StopWordService;
 
 /**
  * Slot implementation before the
@@ -28,9 +29,8 @@ class AdvancedQuery
 {
     /**
      * @var \Slub\SlubFindExtend\Services\StopWordService
-     * @inject
      */
-    protected $stopWordService;
+    protected $stopWordService = null;
 
     /**
      * Contains the settings of the current extension
@@ -46,6 +46,14 @@ class AdvancedQuery
     protected $configurationManager;
 
     /**
+     * @param \Slub\SlubFindExtend\Services\StopWordService $stopWordService
+     */
+    public function __construct(\Slub\SlubFindExtend\Services\StopWordService $stopWordService)
+    {
+        $this->stopWordService = $stopWordService;
+    }
+
+    /**
      * @param \TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager
      * @return void
      */
@@ -53,6 +61,14 @@ class AdvancedQuery
     {
         $this->configurationManager = $configurationManager;
         $this->settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
+    }
+
+    /**
+     * @param \Slub\SlubFindExtend\Services\StopWordService $stopWordService
+     * @return void
+     */
+    public function injectStopWordService(StopWordService $stopWordService){
+        $this->stopWordService = $stopWordService;
     }
 
     /**

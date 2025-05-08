@@ -23,12 +23,14 @@ namespace Slub\SlubFindExtend\ViewHelpers\Data;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Solarium\Core\Client\Adapter\Http;
 use Solarium\QueryType\Select\Result\Result;
 use Solarium\QueryType\Update\Query\Document\DocumentInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * FromSolrViewHelper
@@ -44,7 +46,6 @@ class FromSolrViewHelper extends AbstractViewHelper
      * @var bool
      */
     protected $escapeOutput = false;
-
 
     /**
      * @var \Solarium\Client
@@ -72,10 +73,11 @@ class FromSolrViewHelper extends AbstractViewHelper
      * @return string
      */
     public static function renderStatic(
-        array $arguments,
-        \Closure $renderChildrenClosure,
+        array                     $arguments,
+        \Closure                  $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ) {
+    )
+    {
         $templateVariableContainer = $renderingContext->getVariableProvider();
 
         $solrClient = static::getSolariumClient($templateVariableContainer);
@@ -147,7 +149,7 @@ class FromSolrViewHelper extends AbstractViewHelper
 
     /**
      * Check configuration for shards and when found create Distributed Search
-     * @param \Solarium\QueryType\Select\Query\Query $query
+     * @param Query $query
      */
     private static function createQueryComponents(&$query, &$templateVariableContainer)
     {
@@ -164,7 +166,7 @@ class FromSolrViewHelper extends AbstractViewHelper
     /**
      * Adds filter queries configured in TypoScript to $query.
      *
-     * @param \Solarium\QueryType\Select\Query\Query $query
+     * @param Query $query
      */
     private static function addTypoScriptFilters(&$query, &$templateVariableContainer)
     {
@@ -179,9 +181,10 @@ class FromSolrViewHelper extends AbstractViewHelper
     /**
      * Creates a query for a document
      *
-     * @param string $id the document id
-     * @param string $idfield the document id field
-     * @return \Solarium\QueryType\Select\Query\Query
+     * @param \Solarium\Client $solrClient
+     * @param string $query
+     * @param VariableProviderInterface $templateVariableContainer
+     * @return SelectQuery
      */
     private static function createQuery($solrClient, $query, &$templateVariableContainer)
     {
@@ -201,8 +204,11 @@ class FromSolrViewHelper extends AbstractViewHelper
     private static function getSolariumClient()
     {
         if (null === static::$solr) {
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            static::$solr = $objectManager->get(\Solarium\Client::class);
+            // create an HTTP adapter instance
+            $adapter = new Curl();
+            $eventDispatcher = new EventDispatcher();
+            // create a client instance
+            static::$solr = new Client($adapter, $eventDispatcher);
         }
 
         return static::$solr;
@@ -210,14 +216,18 @@ class FromSolrViewHelper extends AbstractViewHelper
 
     private static function getSolariumClientOptionsArray(&$templateVariableContainer, $query)
     {
+        $settings = $templateVariableContainer->get('settings');
+        $connection = $settings['connections'][$settings['activeConnection']]['options'];
+
         $configuration = array(
             'endpoint' => array(
-                'localhost' => array(
-                    'host' => $templateVariableContainer->get('settings')['connection']['host'],
-                    'port' => intval($templateVariableContainer->get('settings')['connection']['port']),
-                    'path' => $templateVariableContainer->get('settings')['connection']['path'],
-                    'timeout' => $templateVariableContainer->get('settings')['connection']['timeout'],
-                    'scheme' => $templateVariableContainer->get('settings')['connection']['scheme']
+                $settings['activeConnection'] => array(
+                    'host' => $connection['host'],
+                    'port' => intval($connection['port']),
+                    'path' => $connection['path'],
+                    'timeout' => $connection['timeout'],
+                    'scheme' => $connection['scheme'],
+                    'core' => $connection['core']
                 )
             ),
             'solarium' => $query

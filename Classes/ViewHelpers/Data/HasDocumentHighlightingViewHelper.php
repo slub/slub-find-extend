@@ -38,7 +38,7 @@ class HasDocumentHighlightingViewHelper extends AbstractConditionViewHelper
         $exclusiveHit = false;
 
 
-        if ($arguments['highlighting'][$arguments['id']]->getFields()) {
+        if ($arguments['highlighting'] && $arguments['highlighting'][$arguments['id']]->getFields()) {
             foreach ($arguments['highlighting'][$arguments['id']]->getFields() as $key => $hit) {
                 if ($exclusiveHit) {
                     break;

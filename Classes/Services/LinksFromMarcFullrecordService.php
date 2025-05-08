@@ -13,9 +13,12 @@ class LinksFromMarcFullrecordService
 {
     /**
      * @var \Slub\SlubFindExtend\Services\MarcRefrenceResolverService
-     * @inject
      */
     protected $marcRefrenceResolverService;
+
+    public function injectMarcRefrenceResolverService(MarcRefrenceResolverService $marcRefrenceResolverService) {
+        $this->marcRefrenceResolverService = $marcRefrenceResolverService;
+    }
 
     /**
      * Returns the links from the MARC fullrecord

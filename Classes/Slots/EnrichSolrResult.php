@@ -17,8 +17,12 @@ namespace Slub\SlubFindExtend\Slots;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
 use Solarium\QueryType\Select\Result\Document;
+
 
 /**
  * Slot implementation before the
@@ -215,19 +219,7 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
 
                                     // rewire the resultSet
                                     $response = new \Solarium\Core\Client\Response(json_encode($body), $resultSet->getResponse()->getHeaders());
-                                    $config = [
-                                        'endpoint' => [
-                                            'localhost' => [
-                                                'host' => $this->settings['connection']['host'],
-                                                'port' => intval($this->settings['connection']['port']),
-                                                'path' => $this->settings['connection']['path'],
-                                                'timeout' => $this->settings['connection']['timeout'],
-                                                'scheme' => $this->settings['connection']['scheme']
-                                            ]
-                                        ]
-                                    ];
-                                    $result = new \Solarium\QueryType\Select\Result\Result(new \Solarium\Client($config), $resultSet->getQuery(), $response);
-                                    $resultSet = $result;
+                                    $resultSet = new \Solarium\QueryType\Select\Result\Result($resultSet->getQuery(), $response);
                                 }
                             }
                         }
@@ -367,19 +359,22 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
      */
     private function solrEnrich($documents, $values, $enrichment)
     {
+        $connectionSettings = $this->settings['connections'][$this->settings['activeConnection']]['options'];
+
         $results = [];
         $config = [
             'endpoint' => [
                 'localhost' => [
-                    'host' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['host'])) ? $enrichment['endpoint']['host'] : $this->settings['connection']['host'],
-                    'port' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['port'])) ? intval($enrichment['endpoint']['port']) : intval($this->settings['connection']['port']),
-                    'path' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['path'])) ? $enrichment['endpoint']['path'] : $this->settings['connection']['path'],
-                    'timeout' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['timeout'])) ? $enrichment['endpoint']['timeout'] : $this->settings['connection']['timeout'],
-                    'scheme' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['scheme'])) ? $enrichment['endpoint']['scheme'] : $this->settings['connection']['scheme'],
+                    'host' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['host'])) ? $enrichment['endpoint']['host'] : $connectionSettings['host'],
+                    'port' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['port'])) ? intval($enrichment['endpoint']['port']) : intval($connectionSettings['port']),
+                    'path' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['path'])) ? $enrichment['endpoint']['path'] : $connectionSettings['path'],
+                    'timeout' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['timeout'])) ? $enrichment['endpoint']['timeout'] : $connectionSettings['timeout'],
+                    'scheme' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['scheme'])) ? $enrichment['endpoint']['scheme'] : $connectionSettings['scheme'],
+                    'core' => (isset($enrichment['endpoint']) && isset($enrichment['endpoint']['core'])) ? $enrichment['endpoint']['core'] : $connectionSettings['core']
                 ]
             ]
         ];
-        $solr = new \Solarium\Client($config);
+        $solr = new Client(new Curl(), new EventDispatcher(), $config);
 
         if ($enrichment['filter_field'] == 'id') {
             $query = new \Solarium\QueryType\RealtimeGet\Query();
@@ -390,7 +385,7 @@ class EnrichSolrResult implements \Psr\Log\LoggerAwareInterface
                 $response = $solr->realtimeGet($query);
                 $results = $response->getDocuments();
             } catch (\Exception $e) {
-
+                $this->logger->error('Error while querying Solr: '. $e);
             }
         } else {
 

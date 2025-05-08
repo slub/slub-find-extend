@@ -22,9 +22,12 @@ class HoldingStatusJsonViewHelper extends AbstractViewHelper
 
     /**
      * @var \Slub\SlubFindExtend\Services\HoldingStatusService
-     * @inject
      */
     protected $holdingStatusService;
+
+    public function injectHoldingStatusService(HoldingStatusService $holdingStatusService) {
+        $this->holdingStatusService = $holdingStatusService;
+    }
 
     /**
      * Registers own arguments.

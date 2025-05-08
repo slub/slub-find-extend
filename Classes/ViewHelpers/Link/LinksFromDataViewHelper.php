@@ -10,6 +10,11 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use File_MARC_Record;
 use File_MARC_Reference;
+use Solarium\Client;
+use Solarium\Core\Client\Adapter\Curl;
+use Solarium\Core\Client\Adapter\Http;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 class LinksFromDataViewHelper extends AbstractViewHelper
 {
 
@@ -195,6 +200,10 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
             /** @var \Object */
             $reference = static::getMarcRefrenceResolverService()->resolveReference('856', $decoded);
+            $reference_rism = static::getMarcRefrenceResolverService()->resolveReference('935', $decoded);
+
+
+            self::addRismLink($return_links, $reference, $reference_rism, $document);
 
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
@@ -695,7 +704,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         }
 
-        if (in_array("Sächsische Bibliografie", $document['mega_collection'])) {
+        if ($document['mega_collection'] && in_array("Sächsische Bibliografie", $document['mega_collection'])) {
 
             if($document['author_facet'][0]) {
                 $label = htmlentities($document['author_facet'][0] .': '. $document['title_short']);
@@ -710,7 +719,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             self::addLinkObjectToArray($return_links, 'references', array(
                 'url' => 'https://swb.bsz-bw.de/DB=2.304/PPNSET?PPN='.$document['kxp_id_str'],
                 'url_prefix' => '',
-                'label' => $label.' (<img src="/typo3conf/ext/slub_katalog_beta/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
+                'label' => $label.' (<img src="/typo3conf/ext/slub_katalog/Resources/Public/Images/mega_collection/sxrm_icon.png" width="12" height="16" class="mega_collection_logo_inline" />Säbi)',
                 'url_title' => $label,
                 'intro' => 'Nachweis in der Sächsischen Bibliografie:',
                 'material' => '',
@@ -757,41 +766,43 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             $hosts = [];
 
-                            foreach($rediLinks['links'] as $redi) 
-                            {
-
-                                $linknote = '';
-                                if($redi['status'] === 2) 
+                            if($rediLinks['links']) {
+                                foreach($rediLinks['links'] as $redi) 
                                 {
-                                    $linknoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.status_redi.2';
-                                    $linknote = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) : '';      
-            
+
+                                    $linknote = '';
+                                    if($redi['status'] === 2) 
+                                    {
+                                        $linknoteLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.status_redi.2';
+                                        $linknote = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($linknoteLocalisationKey) : '';      
+                
+                                    }
+
+                                    $finalUrl = static::checkRedirectTargetCached($redi['url']);
+                                    $url = parse_url($finalUrl);
+                                    
+                                    // clean redi via  if is smaller than 5 characters to filter parse errors
+                                    if(strlen($redi['via']) < 5 ) {
+                                        $redi['via'] = '';
+                                    }
+
+                                    $hosts[] = $url['host'];
+
+                                    $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                                    $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
+
+                                    self::addLinkObjectToArray($return_links, 'access', array(
+                                        'url' => $redi['url'],
+                                        'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document, $note),
+                                        'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                        'url_title' => '',
+                                        'intro' => '',
+                                        'material' => '',
+                                        'note' => $linknote,
+                                        'type' => 'ai & link from redi'
+                                    ));
+                                    
                                 }
-
-                                $finalUrl = static::checkRedirectTargetCached($redi['url']);
-                                $url = parse_url($finalUrl);
-                                
-                                // clean redi via  if is smaller than 5 characters to filter parse errors
-                                if(strlen($redi['via']) < 5 ) {
-                                    $redi['via'] = '';
-                                }
-
-                                $hosts[] = $url['host'];
-
-                                $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
-                                $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $redi['via'];     
-
-                                self::addLinkObjectToArray($return_links, 'access', array(
-                                    'url' => $redi['url'],
-                                    'url_prefix' => static::checkAndAddProxyPrefix($finalUrl, $document, $note),
-                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
-                                    'url_title' => '',
-                                    'intro' => '',
-                                    'material' => '',
-                                    'note' => $linknote,
-                                    'type' => 'ai & link from redi'
-                                ));
-                                
                             }
 
                             if($rediLinks['infolink']) {
@@ -959,8 +970,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     private static function getSolariumClient()
     {
         if (null === static::$solr) {
-            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            static::$solr = $objectManager->get(\Solarium\Client::class);
+            // create an HTTP adapter instance
+            $adapter = new Curl();
+            $eventDispatcher = new EventDispatcher();
+            // create a client instance
+            static::$solr = new Client($adapter, $eventDispatcher);
         }
 
         return static::$solr;
@@ -971,11 +985,12 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         $configuration = array(
             'endpoint' => array(
                 'localhost' => array(
-                    'host' => $templateVariableContainer->get('settings')['connection']['host'],
-                    'port' => intval($templateVariableContainer->get('settings')['connection']['port']),
-                    'path' => $templateVariableContainer->get('settings')['connection']['path'],
-                    'timeout' => $templateVariableContainer->get('settings')['connection']['timeout'],
-                    'scheme' => $templateVariableContainer->get('settings')['connection']['scheme']
+                    'host' => $templateVariableContainer->get('settings')['connections']['default']['options']['host'],
+                    'port' => intval($templateVariableContainer->get('settings')['connections']['default']['options']['port']),
+                    'path' => $templateVariableContainer->get('settings')['connections']['default']['options']['path'],
+                    'core' => $templateVariableContainer->get('settings')['connections']['default']['options']['core'],
+                    'timeout' => $templateVariableContainer->get('settings')['connections']['default']['options']['timeout'],                    
+                    'scheme' => $templateVariableContainer->get('settings')['connections']['default']['options']['scheme']
                 )
             ),
             'solarium' => $query
@@ -1118,6 +1133,55 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                 }
             }
 
+        }
+
+    }
+
+    
+    private static function addRismLink(&$return_links, $reference, $reference_rism, $document)
+    {
+
+        $hasRismLink = false;
+
+        if(is_countable($reference->cache["856"])) {
+            for ($i = 0; $i < count($reference->cache["856"]); $i++) {
+                
+                $ind1 = $reference->cache["856[" . $i . "]"]->getIndicator(1);
+                $ind2 = $reference->cache["856[" . $i . "]"]->getIndicator(2);
+        
+                if ($ind1 === '4' && $ind2 === '2' && $reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                    $url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+        
+                    if (str_contains($url, 'opac.rism.info')) {
+                        $hasRismLink = true;
+                    }
+                }
+            }
+        }
+        
+        if(!$hasRismLink && is_countable($reference_rism->cache["935"])) {
+            for ($j = 0; $j < count($reference_rism->cache["935"]); $j++) {
+                if ($reference_rism->cache["935[" . $j . "]"]->getSubfield('e')) {
+                    $rismValue = trim($reference_rism->cache["935[" . $j . "]"]->getSubfield('e')->getData());
+    
+                    if (str_starts_with($rismValue, 'RISM-A/II-')) {
+                        $documentId = substr($rismValue, strlen('RISM-A/II-'));
+                        $rismUrl = 'https://opac.rism.info/search?documentid=' . urlencode($documentId);
+                        $label = 'Nachweis im Internationalen Quellenlexikon der Musik (RISM) via RISM Katalog';
+    
+                        self::addLinkObjectToArray($return_links, 'additional_information', array(
+                            'url' => $rismUrl,
+                            'url_prefix' => '',
+                            'label' => $label,
+                            'intro' => '',
+                            'url_title' => '',
+                            'material' => '',
+                            'note' => '',
+                            'type' => 'rism link from 935e'
+                        ));
+                    }
+                }
+            }
         }
 
     }
