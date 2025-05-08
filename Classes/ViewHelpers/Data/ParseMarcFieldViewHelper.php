@@ -59,7 +59,7 @@ class ParseMarcFieldViewHelper extends AbstractViewHelper
 
                     $output[$index][] = $dataCleaned;
                 } else {
-                    $output[] = static::cleanedArrayData($fieldData, true);
+                   $output[] = static::cleanedArrayData(array_slice($fieldData, $arguments['ignoreindicators'] ? 1 : 0), true);
                 }
             }
         }
