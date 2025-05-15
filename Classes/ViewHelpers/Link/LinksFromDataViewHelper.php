@@ -310,7 +310,32 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             $marclabel = str_replace('kostenfrei', $kostenfreiLocalisedLabel, $marclabel);
 
                         }
+                        
+                        if(str_contains($marclabel, 'Deutschlandweit zugänglich')) {
 
+                            $dwLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.Deutschlandweit zugänglich';
+                            $dwLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($dwLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($dwLocalisationKey) : '';
+
+                            $marclabel = str_replace('Deutschlandweit zugänglich', $dwLocalisedLabel, $marclabel);
+
+                            $natliLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.nationallizenzen';
+                            $natliLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($natliLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($natliLocalisationKey) : '';
+
+                            self::addLinkObjectToArray($return_links, 'access', array(
+                                'url' => 'https://www.nationallizenzen.de/',
+                                'url_prefix' => '',
+                                'label' => $natliLocalisedLabel,
+                                'url_title' => '',
+                                'intro' => '',
+                                'material' => '',
+                                'note' => '',
+                                'jsfunction' => $jsfunction,
+                                'type' => 'extra only for nationallizenzen'
+
+                            ));
+
+                        } 
+                        
                         $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') . $localisedLabel . ((strlen($marclabel) > 0) ? ' ('.$marclabel.')' : '');
 
                             // Notiz:
