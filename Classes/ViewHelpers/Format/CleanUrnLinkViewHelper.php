@@ -37,7 +37,7 @@ class CleanUrnLinkViewHelper extends AbstractViewHelper
         }
 
         if (substr($link, 0, 4) === "urn:") {
-            return 'http://nbn-resolving.de/'.$link;
+            return 'https://nbn-resolving.de/'.$link;
         }
 
         // HOTFIX

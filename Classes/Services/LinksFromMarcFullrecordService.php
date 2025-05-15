@@ -53,7 +53,7 @@ class LinksFromMarcFullrecordService
                 $uri = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
 
                 if (substr($uri, 0, 4) === "urn:") {
-                    $uri = 'http://nbn-resolving.de/' . $uri;
+                    $uri = 'https://nbn-resolving.de/' . $uri;
                 }
                 $uri = str_replace('https://wwwdb.dbod.de/login?url=', '', $uri);
 
