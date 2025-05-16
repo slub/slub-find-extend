@@ -1222,7 +1222,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
         $proxy_prefix = 'https://wwwdb.dbod.de/login?url=';  
         $return_prefix = $proxy_prefix;
-        $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'ezb.ur.de/ReadMe/de', 'ezb.ur.de/ReadMe/en', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de', 'rzblx10.uni-regensburg.de'];
+        $no_prefix_hosts = ['dbis.uni-regensburg.de', 'www.bibliothek.uni-regensburg.de','ezb.ur.de', 'ezb.ur.de/ReadMe/de', 'ezb.ur.de/ReadMe/en', 'wwwdb.dbod.de', 'www.dbod.de', 'nbn-resolving.de', 'digital.slub-dresden.de', 'digital.zlb.de', 'www.deutschefotothek.de', 'mediathek.slub-dresden.de', 'rzblx10.uni-regensburg.de', 'dbis.ur.de'];
         $force_prefix_hosts = ['wayback.archive-it.org/22564'];
 
         $urlParsed = self::parseUrlAndAdapt($url);
