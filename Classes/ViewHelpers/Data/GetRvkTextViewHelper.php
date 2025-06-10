@@ -38,7 +38,7 @@ class GetRvkTextViewHelper extends AbstractViewHelper
             $rvk = $renderChildrenClosure();
         }
 
-        $url = 'http://sdvkatalogrvk.slub-dresden.de/api/?rvk='.urlencode(trim($rvk));
+        $url = 'http://katalogrvk.slub-dresden.de/api/?rvk='.urlencode(trim($rvk));
 
         $rvkArray = json_decode(static::getData($url), true);
 
