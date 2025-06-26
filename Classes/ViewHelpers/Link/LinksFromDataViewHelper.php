@@ -84,6 +84,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         }
 
         if($has_isil_links) {
+
+            foreach($isil_links as $key => $isil_link) {
+                $isil_links[$key] = self::replaceDomains($isil_link, $document);                
+            }
+
             foreach($isil_links as $isil_link) {
 
                 $url = self::parseUrlAndAdapt($isil_link);
@@ -344,7 +349,12 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             // Falls in $z Notizen enthalten sind werden die an den Zugangslink ergänzt.
                             $is_accessslink = false;
                             for($k = 0; $k < count($return_links['access']); $k++) {
-                                if($raw_url === $return_links['access'][$k]['url']) {
+
+                                // raw_url ohne http prefix
+                                $raw_url_without_http = str_replace(array('http://', 'https://'), '', $raw_url);
+                                $return_links_without_http = str_replace(array('http://', 'https://'), '', $return_links['access'][$k]['url']);
+
+                                if($raw_url_without_http === $return_links_without_http) {
                                     $is_accessslink = true;
                                     if(strlen($marclabel) > 0) {
                                         $return_links['access'][$k]['label'] .= ' (' . $marclabel . ')';
@@ -1319,6 +1329,9 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
     /**
      * replaceDomains
+     * Replace specific domains in URLs to ensure they use HTTPS and correct paths
+     * This is necessary because some URLs in the database are stored with HTTP
+     * and we want to ensure they are always accessed via HTTPS.
      * 
      * @param string $url
      * @param array $document
@@ -1326,12 +1339,33 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     private static function replaceDomains($url, $document)
     {
         $url = str_replace('http://deposit.d-nb.de', 'https://deposit.dnb.de', $url);
+        $url = str_replace('http://bvbr.bib-bvb.de:8991', 'https://bvbr.bib-bvb.de', $url);
 
         if(str_contains($url, 'opus.kobv.de')) {
             foreach($document['url'] as $document_url) {
                 if(str_contains($document_url, 'nbn-resolving.de')) {
                     $url = $document_url;
+                    if(str_contains($document_url, 'http://')) {
+                        $url = str_replace('http://', 'https://', $document_url);
+                    }
                 }
+            }
+        }
+
+        // Replace http with https for specific domains
+        $httpDomains = [
+            'http://nbn-resolving.de',
+            'http://digital.slub-dresden.de',
+            'http://mdz-nbn-resolving.de',
+            'http://elpub.bib.uni-wuppertal.de',
+            'http://vd17.bibliothek.uni-halle.de',
+            'http://dx.doi.org'
+        ];
+        
+        foreach ($httpDomains as $httpDomain) {
+            if (str_starts_with($url, $httpDomain)) {
+                $url = str_replace('http://', 'https://', $url);
+                break;
             }
         }
         
