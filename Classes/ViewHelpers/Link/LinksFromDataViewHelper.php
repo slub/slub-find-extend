@@ -1358,7 +1358,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             'http://digital.slub-dresden.de',
             'http://mdz-nbn-resolving.de',
             'http://elpub.bib.uni-wuppertal.de',
-            'http://vd17.bibliothek.uni-halle.de'
+            'http://vd17.bibliothek.uni-halle.de',
+            'http://dx.doi.org'
         ];
         
         foreach ($httpDomains as $httpDomain) {
