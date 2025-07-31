@@ -838,6 +838,30 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                     ));
                                     
                                 }
+                            } else {
+
+                                if($document['access_state_str'] === 'Open Access' || in_array('Free', $document['facet_avail'])) {
+
+                                    foreach($document['url'] as $url_solr) {
+                                        $url = parse_url($url_solr);
+                                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                                        $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';  
+
+                                        if(in_array($url['host'], ['doaj.org', 'doi.org'])) {
+                                            self::addLinkObjectToArray($return_links, 'access', array(
+                                                'url' => $url_solr,
+                                                'url_prefix' => static::checkAndAddProxyPrefix($url_solr, $document, $note),
+                                                'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                                'url_title' => '',
+                                                'intro' => '',
+                                                'material' => '',
+                                                'note' => '',
+                                                'type' => 'oa and no redi link -> get from url fields'
+                                            ));
+                                        }
+                                    }
+                                    
+                                } 
                             }
 
                             if($rediLinks['infolink']) {
