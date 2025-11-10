@@ -797,7 +797,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         
                         if($document['recordtype'] === 'ai' || $document['recordtype'] === 'is') {
 
-                            $rediLinks = static::getRediService()->getCached($document, $enriched);
+                            $rediLinks = static::getRediService($templateVariableContainer->get('settings'))->getCached($document, $enriched);
 
                             $hosts = [];
 
@@ -1013,11 +1013,18 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         return static::$marcRefrenceResolverService;
     }
 
-    private static function getRediService()
+    private static function getRediService($settings)
     {
         if (null === static::$rediService) {
             $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-            static::$rediService = $objectManager->get(RediService::class);
+            
+            // Host aus Settings laden, falls vorhanden
+            $rediHost = $settings['rediHost'] ?? null;
+            
+            // Wenn rediHost gesetzt ist, übergebe ihn, sonst nutzt der Service seinen Default
+            static::$rediService = $rediHost 
+                ? $objectManager->get(RediService::class, $rediHost)
+                : $objectManager->get(RediService::class);
         }
 
         return static::$rediService;
