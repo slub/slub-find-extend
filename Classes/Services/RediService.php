@@ -6,11 +6,35 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 
 /**
- * Class RedisService
+ * Class RediService
  * @package Slub\SlubFindExtend\Services
  */
 class RediService
 {
+    /**
+     * @var string
+     */
+    protected $rediHost;
+
+    /**
+     * RediService constructor.
+     * @param string $rediHost
+     */
+    public function __construct(string $rediHost = 'http://www-s.redi-bw.de/links/')
+    {
+        $this->rediHost = $rediHost;
+    }
+
+    /**
+     * Set the REDI host URL
+     * 
+     * @param string $rediHost
+     * @return void
+     */
+    public function setRediHost(string $rediHost): void
+    {
+        $this->rediHost = $rediHost;
+    }
 
     public function getCached($document, $enriched) 
     {
@@ -54,7 +78,7 @@ class RediService
         $firstAuthorAulast = $firstAuthor['rft.aulast'];
         $firstAuthorAufirst = $firstAuthor['rft.aufirst'];
 
-        $url = 'http://www-s.redi-bw.de/links/?rl_site=slub&atitle='.urlencode($article).
+        $url = $this->rediHost . '?rl_site=slub&atitle='.urlencode($article).
             '&issn='.urlencode($firstISSN).
             '&volume='.urlencode($volume).
             '&spage='.urlencode($spage).
