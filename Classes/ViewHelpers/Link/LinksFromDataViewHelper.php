@@ -903,6 +903,26 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             }
 
+                            if(!$rediLinks['oa_url'] && !$rediLinks['oa_url'] && !$rediLinks['access'] && !$rediLinks['links'])
+                            {
+                                
+                                $hosts[] = $url['host'];
+
+                                $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                                $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : $url['host'];     
+
+                                self::addLinkObjectToArray($return_links, 'access', array(
+                                    'url' => $raw_url,
+                                    'url_prefix' => static::checkAndAddProxyPrefix($raw_url, $document, $note),
+                                    'label' => $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel,
+                                    'url_title' => '',
+                                    'intro' => '',
+                                    'material' => '',
+                                    'note' => $linknote,
+                                    'type' => 'no redi links'
+                                ));
+                            }
+
                         } else {
 
                             // Sonderfall DIN / VDE
