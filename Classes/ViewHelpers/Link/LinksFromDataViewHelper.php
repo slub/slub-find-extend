@@ -1038,13 +1038,16 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         if (null === static::$rediService) {
             $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
             
-            // Host aus Settings laden, falls vorhanden
+            // Host und Cache-Einstellung aus Settings laden
             $rediHost = $settings['rediHost'] ?? null;
+            $linksUseCache = $settings['linksUseCache'] ?? true;
             
-            // Wenn rediHost gesetzt ist, übergebe ihn, sonst nutzt der Service seinen Default
-            static::$rediService = $rediHost 
-                ? $objectManager->get(RediService::class, $rediHost)
-                : $objectManager->get(RediService::class);
+            // Service mit beiden Parametern erstellen
+            if ($rediHost !== null) {
+                static::$rediService = $objectManager->get(RediService::class, $rediHost, $linksUseCache);
+            } else {
+                static::$rediService = $objectManager->get(RediService::class, 'http://www-s.redi-bw.de/links/', $linksUseCache);
+            }
         }
 
         return static::$rediService;
