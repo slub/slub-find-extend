@@ -111,7 +111,7 @@ class RediService
             '&aulast='.urlencode($firstAuthorAulast).
             '&aufirst='.urlencode($firstAuthorAufirst).
             '&genre='.urlencode($genre).
-            '&sid=katalogbeta.slub-dresden.de&date='.urlencode($date).
+            '&sid=katalog.slub-dresden.de&date='.urlencode($date).
             '&language='.urlencode($language).
             '&id='.urlencode($doi).
             '&title='.urlencode($jtitle);
