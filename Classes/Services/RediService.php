@@ -17,12 +17,19 @@ class RediService
     protected $rediHost;
 
     /**
+     * @var bool
+     */
+    protected $linksUseCache;
+
+    /**
      * RediService constructor.
      * @param string $rediHost
+     * @param bool $linksUseCache
      */
-    public function __construct(string $rediHost = 'http://www-s.redi-bw.de/links/')
+    public function __construct(string $rediHost = 'http://www-s.redi-bw.de/links/', bool $linksUseCache = true)
     {
         $this->rediHost = $rediHost;
+        $this->linksUseCache = $linksUseCache;
     }
 
     /**
@@ -36,8 +43,24 @@ class RediService
         $this->rediHost = $rediHost;
     }
 
+    /**
+     * Set whether to use cache
+     * 
+     * @param bool $useCache
+     * @return void
+     */
+    public function setLinksUseCache(bool $linksUseCache): void
+    {
+        $this->linksUseCache = $linksUseCache;
+    }
+
     public function getCached($document, $enriched) 
     {
+        if (!$this->linksUseCache) {
+            // Cache deaktiviert, direkt Daten abrufen
+            return $this->getElectronicHoldingFromData($document, $enriched);
+        }
+
         $cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('resolv_link_electronic');
         $cacheIdentifier = sha1($document['id']);
         $entry = $cache->get($cacheIdentifier);
