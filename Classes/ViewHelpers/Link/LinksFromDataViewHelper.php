@@ -417,6 +417,11 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                             $url = parse_url($raw_url);
 
+                            // Shitty special case for istc
+                            if(str_contains($url['path'], '/istc')) {
+                                $url['host'] = $url['host'].'/istc';
+                            }
+
                             $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                             $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
     
