@@ -81,7 +81,7 @@ class Get3DModelLinkViewHelper extends AbstractViewHelper
                 break;
             case "Zentralbibliothek Ebene -1 AV-Plätze Digitale Mediathek":
                 $pickupDesc = "Zentralbibliothek Ebene -1<br>AV-Plätze Digitale Mediathek";
-                $pickupID = 'ylcpf';
+                $pickupID = 'h8ulf';
                 break;
             case "Zentralbibliothek Ebene -1 Lesesaal Sondersammlungen":
                 $pickupDesc = "Zentralbibliothek<br>Ebene -1<br>Lesesaal Sondersammlungen";
