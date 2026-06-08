@@ -1,0 +1,5 @@
+plugin.tx_find.settings.elasticsearchLogEnabled = 0
+plugin.tx_find.settings.elasticsearchLogUrl = https://elasticsearch.example.org:9200
+plugin.tx_find.settings.elasticsearchLogIndex = slub-find-search-log
+plugin.tx_find.settings.elasticsearchLogSite = katalog
+plugin.tx_find.settings.elasticsearchLogTimeout = 0.4
