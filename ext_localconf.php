@@ -28,6 +28,16 @@ $signalSlotDispatcher->connect(
 );
 
 // Hook into \Subugoe\Find\Controller
+// Log search queries to Elasticsearch
+$signalSlotDispatcher->connect(
+    'Subugoe\Find\Controller\SearchController',
+    'indexActionBeforeRender',
+    'Slub\SlubFindExtend\Slots\LogSearchQuery',
+    'index',
+    false
+);
+
+// Hook into \Subugoe\Find\Controller
 $signalSlotDispatcher->connect(
     'Subugoe\Find\Controller\SearchController',
     'indexActionBeforeRender',

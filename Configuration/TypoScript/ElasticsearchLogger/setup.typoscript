@@ -1,0 +1,10 @@
+plugin.tx_find.settings {
+  elasticsearchLog {
+    enabled = {$plugin.tx_find.settings.elasticsearchLogEnabled}
+    url = {$plugin.tx_find.settings.elasticsearchLogUrl}
+    index = {$plugin.tx_find.settings.elasticsearchLogIndex}
+    site = {$plugin.tx_find.settings.elasticsearchLogSite}
+    timeout = {$plugin.tx_find.settings.elasticsearchLogTimeout}
+  }
+  omitHeader = false
+}
