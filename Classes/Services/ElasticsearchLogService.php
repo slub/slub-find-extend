@@ -59,6 +59,8 @@ class ElasticsearchLogService
 
     protected bool $verifySsl;
 
+    protected int $deduplicateWindowSeconds;
+
     public function __construct(string $elasticsearchUrl = '', string $indexName = 'find-search-log', float $timeout = 0.4)
     {
         $extensionConfiguration = (array)($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['slub_find_extend'] ?? []);
@@ -75,6 +77,7 @@ class ElasticsearchLogService
         $this->username = trim((string)($extensionConfiguration['elasticsearchLogUsername'] ?? ''));
         $this->password = (string)($extensionConfiguration['elasticsearchLogPassword'] ?? '');
         $this->verifySsl = (bool)($extensionConfiguration['elasticsearchLogVerifySsl'] ?? true);
+        $this->deduplicateWindowSeconds = max(0, (int)($extensionConfiguration['elasticsearchLogDeduplicateWindowSeconds'] ?? 25));
     }
 
     /**
@@ -90,8 +93,13 @@ class ElasticsearchLogService
         $document = $this->buildDocument($query, $numFound, $requestArguments, $responseTimeMs);
 
         $indexName = self::INDEX_PREFIX . '-' . date('Y.m');
-
+        $eventId = $this->buildEventId($document);
+        $method = 'POST';
         $url = sprintf('%s/%s/_doc', $this->elasticsearchUrl, $indexName);
+        if ($eventId !== null) {
+            $method = 'PUT';
+            $url = sprintf('%s/%s/_doc/%s', $this->elasticsearchUrl, $indexName, rawurlencode($eventId));
+        }
 
         try {
             /** @var RequestFactory $requestFactory */
@@ -109,7 +117,7 @@ class ElasticsearchLogService
 
             $requestFactory->request(
                 $url,
-                'POST',
+                $method,
                 $requestOptions
             );
         } catch (\Throwable $e) {
@@ -167,6 +175,37 @@ class ElasticsearchLogService
                 'device' => $this->resolveDevice(),
             ],
         ];
+    }
+
+    /**
+     * Build a deterministic ID for a short time window to avoid duplicate
+     * documents when the same search request is triggered repeatedly.
+     *
+     * @param array<string, mixed> $document
+     */
+    private function buildEventId(array $document): ?string
+    {
+        if ($this->deduplicateWindowSeconds <= 0) {
+            return null;
+        }
+
+        $bucket = (int)floor(time() / $this->deduplicateWindowSeconds);
+        $payload = [
+            'environment' => $document['environment'] ?? null,
+            'fields' => $document['fields'] ?? [],
+            'selected_facets' => $document['selected_facets'] ?? [],
+            'page' => $document['page'] ?? null,
+            'page_size' => $document['page_size'] ?? null,
+            'session_hash' => $document['metadata']['session_hash'] ?? null,
+            'bucket' => $bucket,
+        ];
+
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if (!is_string($json) || $json === '') {
+            return null;
+        }
+
+        return hash('sha256', $json);
     }
 
     /**
