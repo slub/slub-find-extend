@@ -90,6 +90,10 @@ class ElasticsearchLogService
      */
     public function logSearch(array $query, int $numFound, array $requestArguments = [], ?int $responseTimeMs = null): void
     {
+        if ($this->isBotRequest()) {
+            return;
+        }
+
         $document = $this->buildDocument($query, $numFound, $requestArguments, $responseTimeMs);
 
         $indexName = self::INDEX_PREFIX . '-' . date('Y.m');
@@ -394,6 +398,59 @@ class ElasticsearchLogService
         }
 
         return 'desktop';
+    }
+
+    private function isBotRequest(): bool
+    {
+        $userAgent = strtolower(trim((string)($_SERVER['HTTP_USER_AGENT'] ?? '')));
+        if ($userAgent === '') {
+            return false;
+        }
+
+        $botMarkers = [
+            'bot',
+            'spider',
+            'crawler',
+            'slurp',
+            'bingpreview',
+            'mediapartners-google',
+            'googleother',
+            'adsbot',
+            'ahrefs',
+            'semrush',
+            'mj12bot',
+            'dotbot',
+            'bytespider',
+            'petalbot',
+            'duckduckbot',
+            'yandexbot',
+            'curl/',
+            'wget/',
+            'python-requests',
+            'go-http-client',
+            'httpclient',
+            'gptbot',
+            'chatgpt-user',
+            'chatgpt',
+            'claudebot',
+            'claude-web',
+            'anthropic-ai',
+            'mistral-ai',
+            'mistral',
+            'perplexitybot',
+            'cohere-ai',
+            'ccbot',
+            'uptimerobot',
+            'openai'
+        ];
+
+        foreach ($botMarkers as $marker) {
+            if (str_contains($userAgent, $marker)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
