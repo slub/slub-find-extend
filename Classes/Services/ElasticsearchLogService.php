@@ -177,6 +177,9 @@ class ElasticsearchLogService
                 'session_hash' => $this->resolveSessionHash(),
                 'language' => $this->resolveLanguage(),
                 'device' => $this->resolveDevice(),
+                'geo_country' => $this->resolveGeoCountry(),
+                'geo_asn' => $this->resolveGeoAsn(),
+                'user_agent' => $this->resolveUserAgent(),
             ],
         ];
     }
@@ -398,6 +401,39 @@ class ElasticsearchLogService
         }
 
         return 'desktop';
+    }
+
+    private function resolveGeoCountry(): ?string
+    {
+        $country = $_SERVER['HTTP_X_GEO_COUNTRY'] ?? null;
+        if (!is_scalar($country)) {
+            return null;
+        }
+
+        $country = strtoupper(trim((string)$country));
+        return $country !== '' ? $country : null;
+    }
+
+    private function resolveGeoAsn(): ?string
+    {
+        $asn = $_SERVER['HTTP_X_GEO_ASN'] ?? null;
+        if (!is_scalar($asn)) {
+            return null;
+        }
+
+        $asn = strtoupper(trim((string)$asn));
+        return $asn !== '' ? $asn : null;
+    }
+
+    private function resolveUserAgent(): ?string
+    {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+        if (!is_scalar($userAgent)) {
+            return null;
+        }
+
+        $userAgent = trim((string)$userAgent);
+        return $userAgent !== '' ? $userAgent : null;
     }
 
     private function isBotRequest(): bool
