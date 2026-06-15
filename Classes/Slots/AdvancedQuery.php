@@ -46,6 +46,11 @@ class AdvancedQuery
     protected $configurationManager;
 
     /**
+     * @var \Solarium\Component\EdisMax
+     */
+    protected $dismax = null;
+
+    /**
      * @param \Slub\SlubFindExtend\Services\StopWordService $stopWordService
      */
     public function __construct(\Slub\SlubFindExtend\Services\StopWordService $stopWordService)
@@ -155,6 +160,87 @@ class AdvancedQuery
         return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'], ' ', $queryParameter);
     }
 
+
+    /**
+     * Handle Dismax parameters for the solr query
+     *
+     * @param array $dismaxParameters Settings Array
+     */
+    private function handleDismaxParameters($dismaxParameters)
+    {
+        if($this->dismax instanceof \Solarium\Component\EdisMax) {
+            foreach($dismaxParameters as $key => $value) {
+                if (isset($value) && $value !== '') {
+                    switch ($key) {
+                        case 'bf':
+                            $this->dismax->setBoostFunctions($value);
+                            break;
+                        case 'boost':
+                            $this->dismax->setBoostFunctionsMult($value);
+                            break;
+                        case 'bq':
+                            if(is_array($value)) {
+                                $this->dismax->setBoostQueries($value);
+                            } else {
+                                $this->dismax->setBoostQuery($value);
+                            }
+                            break;
+                        case 'fq':
+                            $additionalFilters = is_array($value) ? $value : [$value];
+                            $query->clearFilterQueries();
+                            foreach ($additionalFilters as $key => $filterQuery) {
+                                $query->createFilterQuery('additionalFilter-'.$key)->setQuery($filterQuery);
+                            }
+                            break;
+                        case 'fq+':
+                            #TODO: Implementation
+                            break;
+                        case 'mm':
+                            $this->dismax->setMinimumMatch($value);
+                            break;
+                        case 'pf':
+                            $this->dismax->setPhraseFields($value);
+                            break;
+                        case 'pf2':
+                            $this->dismax->setPhraseBigramFields($value);
+                            break;
+                        case 'pf3':
+                            $this->dismax->setPhraseTrigramFields($value);
+                            break;
+                        case 'ps':
+                            $this->dismax->setPhraseSlop($value);
+                            break;
+                        case 'ps2':
+                            $this->dismax->setPhraseBigramSlop($value);
+                            break;
+                        case 'ps3':
+                            $this->dismax->setPhraseTrigramSlop($value);
+                            break;
+                        case 'qf':
+                            $this->dismax->setQueryFields($value);
+                            break;
+                        case 'q.alt':
+                            $this->dismax->setQueryAlternative($value);
+                            break;
+                        case 'qs':
+                            $this->dismax->setQueryPhraseSlop($value);
+                            break;
+                        case 'tie':
+                            $this->dismax->setTie($value);
+                            break;
+                        case 'uf':
+                            $this->dismax->setUserFields($value);
+                            break;
+                        case 'sow':
+                            //TODO: Check $value for boolean
+                            //$query->setSplitOnWhitespace($value);
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Slot to build the advanced query
      *
@@ -208,19 +294,16 @@ class AdvancedQuery
 
                 $query->setQuery($querystring);
             } else {
-                if ($settings['DismaxHandler'] === 'edismax') {
-                    $dismax = $query->getEDisMax();
-                } else {
-                    $dismax = $query->getDisMax();
+                $this->dismax = $query->getEDisMax();
+
+                if (is_array($settings['DismaxParams'])) {
+                    $this->handleDismaxParameters($settings['DismaxParams']);
                 }
 
-                if ($settings['DismaxParams']) {
-                    foreach ($settings['DismaxParams'] as $params) {
-                        if ($params['name'] === 'bf') {
-                            $dismax->setBoostFunctions($params['value']);
-                        }
-                        if ($params['name'] === 'bq') {
-                            $dismax->setBoostQuery($params['value']);
+                if (is_array($this->settings['queryFields'])) {
+                    foreach ($this->settings['queryFields'] as $queryField) {
+                        if (array_key_exists('id', $queryField ?? []) && array_key_exists($queryField['id'], $arguments['q'] ?? [])) {
+                            $this->handleDismaxParameters($queryField);
                         }
                     }
                 }
