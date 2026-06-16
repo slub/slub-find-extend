@@ -208,7 +208,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             $reference_rism = static::getMarcRefrenceResolverService()->resolveReference('935', $decoded);
 
 
-            self::addRismLink($return_links, $reference, $reference_rism, $document);
+            self::addRismLink($return_links, $reference, $reference_rism, $document, $decoded);
 
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
@@ -1232,7 +1232,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     }
 
     
-    private static function addRismLink(&$return_links, $reference, $reference_rism, $document)
+    private static function addRismLink(&$return_links, $reference, $reference_rism, $document, $decoded)
     {
 
         $hasRismLink = false;
@@ -1249,6 +1249,37 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     if (str_contains($url, 'opac.rism.info')) {
                         $hasRismLink = true;
                     }
+                }
+            }
+        }
+        
+        // Prüfe auf RISM-Datensätze mit 003 = DE-633 und erstelle Link aus 001
+        if(!$hasRismLink) {
+            $field003 = $decoded->getField('003');
+            $field001 = $decoded->getField('001');
+            
+            if ($field003 && $field001) {
+                $controlNumber003 = trim($field003->getData());
+                $controlNumber001 = trim($field001->getData());
+                
+                if ($controlNumber003 === 'DE-633' && str_contains($controlNumber001, 'sources/')) {
+                    // Extrahiere die ID nach "sources/"
+                    $rismId = substr($controlNumber001, strpos($controlNumber001, 'sources/') + strlen('sources/'));
+                    $rismUrl = 'https://opac.rism.info/search?id=' . urlencode($rismId);
+                    $label = 'Nachweis im Internationalen Quellenlexikon der Musik (RISM) via RISM Katalog';
+    
+                    self::addLinkObjectToArray($return_links, 'additional_information', array(
+                        'url' => $rismUrl,
+                        'url_prefix' => '',
+                        'label' => $label,
+                        'intro' => '',
+                        'url_title' => '',
+                        'material' => '',
+                        'note' => '',
+                        'type' => 'rism link from 001/003 DE-633'
+                    ));
+                    
+                    $hasRismLink = true;
                 }
             }
         }
