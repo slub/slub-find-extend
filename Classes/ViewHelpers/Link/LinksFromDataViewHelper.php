@@ -244,7 +244,18 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
         
                         $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
-                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                        
+                        // Bei DE-633: Überspringe $3 wenn es mit "holdings" beginnt
+                        $subfield3 = $reference->cache["856[" . $i . "]"]->getSubfield('3');
+                        $material = '';
+                        if ($subfield3) {
+                            $subfield3Data = $subfield3->getData();
+                            $isDE633 = $field003 && trim($field003->getData()) === 'DE-633';
+                            if (!($isDE633 && str_starts_with(trim($subfield3Data), 'holdings'))) {
+                                $material = $subfield3Data;
+                            }
+                        }
+                        
                         $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
 
  
@@ -445,7 +456,18 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
 
                             $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
-                            $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                            
+                            // Bei DE-633: Überspringe $3 wenn es mit "holdings" beginnt
+                            $subfield3 = $reference->cache["856[" . $i . "]"]->getSubfield('3');
+                            $material = '';
+                            if ($subfield3) {
+                                $subfield3Data = $subfield3->getData();
+                                $isDE633 = $field003 && trim($field003->getData()) === 'DE-633';
+                                if (!($isDE633 && str_starts_with(trim($subfield3Data), 'holdings'))) {
+                                    $material = $subfield3Data;
+                                }
+                            }
+                            
                             $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
 
                             $note = '';
@@ -576,7 +598,18 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
 
                         $note = $reference->cache["856[" . $i . "]"]->getSubfield('z') ? $reference->cache["856[" . $i . "]"]->getSubfield('z')->getData() : '';
-                        $material = $reference->cache["856[" . $i . "]"]->getSubfield('3') ? $reference->cache["856[" . $i . "]"]->getSubfield('3')->getData(): '';
+                        
+                        // Bei DE-633: Überspringe $3 wenn es mit "holdings" beginnt
+                        $subfield3 = $reference->cache["856[" . $i . "]"]->getSubfield('3');
+                        $material = '';
+                        if ($subfield3) {
+                            $subfield3Data = $subfield3->getData();
+                            $isDE633 = $field003 && trim($field003->getData()) === 'DE-633';
+                            if (!($isDE633 && str_starts_with(trim($subfield3Data), 'holdings'))) {
+                                $material = $subfield3Data;
+                            }
+                        }
+                        
                         $general = $reference->cache["856[" . $i . "]"]->getSubfield('y') ? $reference->cache["856[" . $i . "]"]->getSubfield('y')->getData(): '';
 
                         $note = '';
