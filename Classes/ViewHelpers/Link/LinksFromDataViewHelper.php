@@ -208,7 +208,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             $reference_rism = static::getMarcRefrenceResolverService()->resolveReference('935', $decoded);
 
 
-            self::addRismLink($return_links, $reference, $reference_rism, $document, $decoded);
+            self::addRismLink($return_links, $reference, $reference_rism, $document, $decoded, $templateVariableContainer);
 
             for ($i = 0; $i < count($reference->cache["856"]); $i++) {
 
@@ -219,7 +219,15 @@ class LinksFromDataViewHelper extends AbstractViewHelper
 
                     if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
                         $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-                        $url = parse_url($raw_url);
+                        
+                        // Überspringe manifest URLs nur bei DE-633 Records
+                        $field003 = $decoded->getField('003');
+                        $skipManifest = (str_ends_with($raw_url, 'manifest.json') || str_ends_with($raw_url, '/manifest')) && 
+                                        $field003 && 
+                                        trim($field003->getData()) === 'DE-633';
+                        
+                        if (!$skipManifest) {
+                            $url = parse_url($raw_url);
 
                         // Shitty special case for ezb and dbis
                         if(str_contains($url['path'], 'ezeit')) {
@@ -403,6 +411,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                                 }
                                 
                             }
+                        
+                        }
 
                     }
             
@@ -413,7 +423,13 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
                         $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
 
-                        if (!str_ends_with($raw_url, 'manifest.json')) {
+                        // Überspringe manifest URLs nur bei DE-633 Records
+                        $field003 = $decoded->getField('003');
+                        $skipManifest = (str_ends_with($raw_url, 'manifest.json') || str_ends_with($raw_url, '/manifest')) && 
+                                        $field003 && 
+                                        trim($field003->getData()) === 'DE-633';
+
+                        if (!$skipManifest) {
 
                             $url = parse_url($raw_url);
 
@@ -543,9 +559,17 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
 
                         $raw_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
-                        $url = parse_url($raw_url);
+                        
+                        // Überspringe manifest URLs nur bei DE-633 Records
+                        $field003 = $decoded->getField('003');
+                        $skipManifest = (str_ends_with($raw_url, 'manifest.json') || str_ends_with($raw_url, '/manifest')) && 
+                                        $field003 && 
+                                        trim($field003->getData()) === 'DE-633';
+                        
+                        if (!$skipManifest) {
+                            $url = parse_url($raw_url);
 
-                        $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
+                            $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.' . $url['host'];
                         $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';      
         
                         $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_links.no_relationship';
@@ -645,7 +669,8 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                             'jsfunction' => $jsfunction,
                             'type' => 'marc link ind2 " "'
                         ));
-
+                        
+                        }
                     }
                 }
 
@@ -1232,7 +1257,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
     }
 
     
-    private static function addRismLink(&$return_links, $reference, $reference_rism, $document, $decoded)
+    private static function addRismLink(&$return_links, $reference, $reference_rism, $document, $decoded, &$templateVariableContainer)
     {
 
         $hasRismLink = false;
@@ -1280,6 +1305,41 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                     ));
                     
                     $hasRismLink = true;
+                }
+            }
+        }
+        
+        // Prüfe auf IIIF-Manifeste in 856-Feldern für RISM-Datensätze (003 = DE-633)
+        $field003 = $decoded->getField('003');
+        if ($field003 && trim($field003->getData()) === 'DE-633') {
+            if(is_countable($reference->cache["856"])) {
+                for ($i = 0; $i < count($reference->cache["856"]); $i++) {
+                    if ($reference->cache["856[" . $i . "]"]->getSubfield('u')) {
+                        $manifest_url = trim($reference->cache["856[" . $i . "]"]->getSubfield('u')->getData());
+                        
+                        if (str_ends_with($manifest_url, 'manifest.json')) {
+                            
+                            $localisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.target.iiif.arthistoricum';
+                            $localisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($localisationKey) : '';   
+
+                            $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $document['format_de14'][0];
+                            $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
+
+                            $label = $introLocalisedLabel . ((strlen($localisedLabel) > 0) ? ' via ' : '') .$localisedLabel;
+                            
+                            // IIIF-Viewer-Link zu access hinzufügen
+                            self::addLinkObjectToArray($return_links, 'access', array(
+                                'url' => 'https://iiif.arthistoricum.net/mirador/?id=' . $manifest_url,
+                                'url_prefix' => '',
+                                'label' => $label,
+                                'intro' => '',
+                                'url_title' => '',
+                                'material' => 'iiif',
+                                'note' => '',
+                                'type' => 'iiif viewer link from 856 for DE-633'
+                            ));
+                        }
+                    }
                 }
             }
         }
