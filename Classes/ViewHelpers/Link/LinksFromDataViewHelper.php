@@ -197,7 +197,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
         $document = $arguments['document'];
         $enriched = $arguments['enriched'];
 
-        if($is_marc) 
+        if($is_marc && !empty($marc))
         {
             $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
             /** @var \File_MARC_Record */
