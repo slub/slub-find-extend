@@ -251,6 +251,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         if ($subfield3) {
                             $subfield3Data = $subfield3->getData();
                             $isDE633 = $field003 && trim($field003->getData()) === 'DE-633';
+                            $trimmedSubfield3 = ltrim($subfield3Data); // Entferne führende Leerzeichen
                             if (!($isDE633 && str_starts_with(trim($subfield3Data), 'holdings'))) {
                                 $material = $subfield3Data;
                             }
