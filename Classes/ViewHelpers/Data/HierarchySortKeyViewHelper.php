@@ -32,15 +32,7 @@ class HierarchySortKeyViewHelper extends AbstractViewHelper
         $fallbackField = trim((string)($arguments['fallbackField'] ?? 'publishDateSort'));
 
         if (!is_array($document) || !is_array($documents) || $documents === []) {
-            return [
-                'documents' => [],
-                'debug' => [
-                    'sortKey' => '',
-                    'fallbackField' => $fallbackField,
-                    'useHierarchySort' => false,
-                    'rows' => [],
-                ],
-            ];
+            return ['documents' => $sortedDocuments];
         }
 
         $resolvedRows = [];
@@ -84,15 +76,7 @@ class HierarchySortKeyViewHelper extends AbstractViewHelper
             return $row['document'];
         }, $resolvedRows));
 
-        return [
-            'documents' => $sortedDocuments,
-            'debug' => [
-                'sortKey' => $sortKey,
-                'fallbackField' => $fallbackField,
-                'useHierarchySort' => $useHierarchySort,
-                'rows' => $resolvedRows,
-            ],
-        ];
+        return ['documents' => $sortedDocuments];
     }
 
     private static function resolveHierarchySortValue($solrDocument, string $currentId): string
