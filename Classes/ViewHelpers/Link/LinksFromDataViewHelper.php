@@ -78,7 +78,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
             $has_isil_links = true;
         }
         $is_marc = false;
-        if(($arguments['document']['recordtype'] === 'marc') || ($arguments['document']['recordtype'] === 'marcfinc'))
+        if($arguments['document']['record_format'] === 'marc')
         {
             $is_marc = true;
         }
@@ -800,7 +800,7 @@ class LinksFromDataViewHelper extends AbstractViewHelper
                         $introLocalisationKey = 'LLL:' . $templateVariableContainer->get('settings')['languageRootPath'] . 'locallang.xml:links.introlabel_access_format.' . $arguments['document']['format_de14'][0];
                         $introLocalisedLabel = (\TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) !== NULL) ? \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($introLocalisationKey) : '';      
         
-                        if($document['recordtype'] === 'ai' || $document['recordtype'] === 'is') {
+                        if($document['record_format'] === 'is') {
 
                             $rediLinks = static::getRediService($templateVariableContainer->get('settings'))->getCached($document, $enriched);
 
