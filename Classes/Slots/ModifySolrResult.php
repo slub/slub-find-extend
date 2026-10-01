@@ -64,25 +64,14 @@ class ModifySolrResult
             foreach ($this->settings['decode'] as $decoding) {
                 switch ($decoding['type']) {
                     case 'marc':
-                        if ($fields['recordtype'] === 'marc') {
+                        if ($fields['record_format'] === 'marc') {
                             $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
                             $assignments['decoded'][$decoding['field']] = $decoder->decode($fields[$decoding['field']]);
-                        }
-                        break;
-                    case 'marcfinc':
-                        if ($fields['recordtype'] === 'marcfinc') {
-                            $decoder = new \Slub\SlubFindExtend\Slots\Decoder\Marc21();
-                            $assignments['decoded'][$decoding['field']] = $decoder->decode($fields[$decoding['field']]);
-                        }
-                        break;
-                    case 'ai':
-                        if (($fields['recordtype'] === 'ai')
-                            && (strrpos($fields[$decoding['field']], 'blob:', -strlen($fields[$decoding['field']])) === false)) {
-                            $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']]);
                         }
                         break;
                     case 'is':
-                        if ($fields['recordtype'] === 'is') {
+                        if (($fields['record_format'] === 'is')
+                            && (strrpos($fields[$decoding['field']], 'blob:', -strlen($fields[$decoding['field']])) === false)) {
                             $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']]);
                         }
                         break;

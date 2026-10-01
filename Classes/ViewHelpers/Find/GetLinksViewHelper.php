@@ -44,15 +44,13 @@ class GetLinksViewHelper extends AbstractViewHelper
         \Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
-        if (($arguments['document']['recordtype'] === 'ai' || $arguments['document']['recordtype'] === 'is') && (!$arguments['index'])) {
+        if ($arguments['document']['record_format'] === 'is' && (!$arguments['index'])) {
             return static::getLinksFromAiFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], true);
         } else {
-            switch ($arguments['document']['recordtype']) {
+            switch ($arguments['document']['record_format']) {
                 case 'marc':
-                case 'marcfinc':
                     return static::getLinksFromMarcFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], $arguments['unique'], $arguments['merged']);
                     break;
-                case 'ai':
                 case 'is':
                     return static::getLinksFromAiFullrecordService()->getLinks($arguments['fullrecord'], $arguments['isil'], false);
                 default:
