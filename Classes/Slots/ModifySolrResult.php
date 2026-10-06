@@ -72,7 +72,7 @@ class ModifySolrResult
                     case 'is':
                         if (($fields['record_format'] === 'is')
                             && (strrpos($fields[$decoding['field']], 'blob:', -strlen($fields[$decoding['field']])) === false)) {
-                            $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']]);
+                            $assignments['enriched']['fields'] = (array)json_decode($fields[$decoding['field']], true);
                         }
                         break;
                 }
