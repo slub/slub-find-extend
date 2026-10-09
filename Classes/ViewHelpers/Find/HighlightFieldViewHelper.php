@@ -140,7 +140,8 @@ class HighlightFieldViewHelper extends AbstractViewHelper
 
         foreach ($highlightInfo as $highlightItem) {
             $highlightItemStripped = str_replace(array('\ueeee', '\ueeef'), array('', ''), $highlightItem);
-            if (strpos($fieldString, $highlightItemStripped) !== false) {
+
+            if (!empty(trim($highlightItemStripped)) && strpos($fieldString, $highlightItemStripped) !== false) {
                 // HTML escape the text here if not explicitly configured to not do so.
                 // Use f:format.raw in the template to avoid double escaping the HTML tags.
                 if (!$this->arguments['raw']) {

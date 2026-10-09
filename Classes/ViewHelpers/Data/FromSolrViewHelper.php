@@ -154,7 +154,7 @@ class FromSolrViewHelper extends AbstractViewHelper
     private static function createQueryComponents(&$query, &$templateVariableContainer)
     {
         // Shards
-        $activeConnection = $templateVariableContainer->get('settings')['activeConnection'];
+        $activeConnection = $templateVariableContainer->get('settings')['activeConnection'] ?? 'default';
         $shards = $templateVariableContainer->get('settings')['connections'][$activeConnection]['options']['shards'];
         if (is_array($shards) && count($shards)) {
             $distributedSearch = $query->getDistributedSearch();
