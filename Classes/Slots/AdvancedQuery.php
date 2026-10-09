@@ -160,15 +160,14 @@ class AdvancedQuery
         return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'], ' ', $queryParameter);
     }
 
-
     /**
      * Handle Dismax parameters for the solr query
      *
      * @param array $dismaxParameters Settings Array
      */
-    private function handleDismaxParameters($dismaxParameters)
+    private function handleDismaxParameters(array $dismaxParameters, Query &$query)
     {
-        if($this->dismax instanceof \Solarium\Component\EdisMax) {
+        if($this->dismax instanceof \Solarium\Component\EdisMax && is_array($dismaxParameters)) {
             foreach($dismaxParameters as $key => $value) {
                 if (isset($value) && $value !== '') {
                     switch ($key) {
@@ -241,6 +240,29 @@ class AdvancedQuery
         }
     }
 
+    private function createQueryString(array $queryArray) {
+        $allowedDismaxParmeters = ['qf','pf','pf2','pf3','ps','ps2','ps3','qs','tie','mm','bq','bf','sow'];
+        $queryStringArray = [];
+        $filteredQueryFields = array_filter(
+            $this->settings['queryFields'],
+            static fn(array $entry): bool => in_array($entry['id'], array_keys($queryArray) ?? [])
+        );
+        foreach($filteredQueryFields as $queryField) {
+            $filteredDismaxParmeters = [];
+            foreach($queryField as $k => $v) {
+                if(in_array($k, $allowedDismaxParmeters)) {
+                    $filteredDismaxParmeters[$k] = $k . '="' . $v . '"';
+                }
+            }
+            if(!in_array('qf', array_keys($filteredDismaxParmeters))) {
+                $filteredDismaxParmeters['qf'] = 'qf="' . $queryField['id'] . '"';
+            }
+            $searchTerm = is_array($queryArray[$queryField['id']]) ? '"' . join('" "', $queryArray[$queryField['id']]) . '"' : $queryArray[$queryField['id']];
+            $queryStringArray[$queryField['id']] .= '_query_:"{!edismax ' . addslashes(join(' ', $filteredDismaxParmeters) . '}' . $searchTerm) . '"';
+        }
+        return join(' AND ', $queryStringArray);
+    }
+
     /**
      * Slot to build the advanced query
      *
@@ -295,18 +317,12 @@ class AdvancedQuery
                 $query->setQuery($querystring);
             } else {
                 $this->dismax = $query->getEDisMax();
-
+                $this->dismax->setUserFields('_query_');
                 if (is_array($settings['DismaxParams'])) {
-                    $this->handleDismaxParameters($settings['DismaxParams']);
+                    $this->handleDismaxParameters($settings['DismaxParams'], $query);
                 }
 
-                if (is_array($this->settings['queryFields'])) {
-                    foreach ($this->settings['queryFields'] as $queryField) {
-                        if (array_key_exists('id', $queryField ?? []) && array_key_exists($queryField['id'], $arguments['q'] ?? [])) {
-                            $this->handleDismaxParameters($queryField);
-                        }
-                    }
-                }
+                $query->setQuery($this->createQueryString($arguments['q']));
             }
         }
     }
