@@ -160,105 +160,50 @@ class AdvancedQuery
         return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'], ' ', $queryParameter);
     }
 
-    /**
-     * Handle Dismax parameters for the solr query
-     *
-     * @param array $dismaxParameters Settings Array
-     */
-    private function handleDismaxParameters(array $dismaxParameters, Query &$query)
+    private function createQueryString(array $queryArray)
     {
-        if($this->dismax instanceof \Solarium\Component\EdisMax && is_array($dismaxParameters)) {
-            foreach($dismaxParameters as $key => $value) {
-                if (isset($value) && $value !== '') {
-                    switch ($key) {
-                        case 'bf':
-                            $this->dismax->setBoostFunctions($value);
-                            break;
-                        case 'boost':
-                            $this->dismax->setBoostFunctionsMult($value);
-                            break;
-                        case 'bq':
-                            if(is_array($value)) {
-                                $this->dismax->setBoostQueries($value);
-                            } else {
-                                $this->dismax->setBoostQuery($value);
-                            }
-                            break;
-                        case 'fq':
-                            $additionalFilters = is_array($value) ? $value : [$value];
-                            $query->clearFilterQueries();
-                            foreach ($additionalFilters as $key => $filterQuery) {
-                                $query->createFilterQuery('additionalFilter-'.$key)->setQuery($filterQuery);
-                            }
-                            break;
-                        case 'fq+':
-                            #TODO: Implementation
-                            break;
-                        case 'mm':
-                            $this->dismax->setMinimumMatch($value);
-                            break;
-                        case 'pf':
-                            $this->dismax->setPhraseFields($value);
-                            break;
-                        case 'pf2':
-                            $this->dismax->setPhraseBigramFields($value);
-                            break;
-                        case 'pf3':
-                            $this->dismax->setPhraseTrigramFields($value);
-                            break;
-                        case 'ps':
-                            $this->dismax->setPhraseSlop($value);
-                            break;
-                        case 'ps2':
-                            $this->dismax->setPhraseBigramSlop($value);
-                            break;
-                        case 'ps3':
-                            $this->dismax->setPhraseTrigramSlop($value);
-                            break;
-                        case 'qf':
-                            $this->dismax->setQueryFields($value);
-                            break;
-                        case 'q.alt':
-                            $this->dismax->setQueryAlternative($value);
-                            break;
-                        case 'qs':
-                            $this->dismax->setQueryPhraseSlop($value);
-                            break;
-                        case 'tie':
-                            $this->dismax->setTie($value);
-                            break;
-                        case 'uf':
-                            $this->dismax->setUserFields($value);
-                            break;
-                        case 'sow':
-                            //TODO: Check $value for boolean
-                            //$query->setSplitOnWhitespace($value);
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    private function createQueryString(array $queryArray) {
         $allowedDismaxParmeters = ['qf','pf','pf2','pf3','ps','ps2','ps3','qs','tie','mm','bq','bf','sow'];
-        $queryStringArray = [];
+        $queryStringArray = ['default_query' => '*:*'];
         $filteredQueryFields = array_filter(
             $this->settings['queryFields'],
             static fn(array $entry): bool => in_array($entry['id'], array_keys($queryArray) ?? [])
         );
-        foreach($filteredQueryFields as $queryField) {
+        foreach ($filteredQueryFields as $queryField) {
             $filteredDismaxParmeters = [];
-            foreach($queryField as $k => $v) {
-                if(in_array($k, $allowedDismaxParmeters)) {
-                    $filteredDismaxParmeters[$k] = $k . '="' . $v . '"';
+            $searchTerm = $queryArray[$queryField['id']];
+            $searchField = $queryField['id'] ?? '';
+            foreach ($queryField as $k => $v) {
+                switch($k) {
+                    case in_array($k, $allowedDismaxParmeters):
+                        $filteredDismaxParmeters[$k] = $k . '="' . addslashes($v) . '"';
+                        break;
+                    case 'query':
+                        preg_match('/^(?:(?<field>[^:]+):)?(?<query>.+)$/', $v, $queryParts);
+                        $searchTerm = vsprintf($queryParts['query'], $searchTerm) ?? $searchTerm;
+                        $searchField = $queryParts['field'] != '' ? $queryParts['field'] : $queryField['id'];
+                        break;
                 }
             }
-            if(!in_array('qf', array_keys($filteredDismaxParmeters))) {
-                $filteredDismaxParmeters['qf'] = 'qf="' . $queryField['id'] . '"';
+            // handle default Dismax parameters from TypoScript configuration
+            if (is_array($this->settings['components']['DismaxParams'])) {
+                foreach ($this->settings['components']['DismaxParams'] as $k => $v) {
+                    if (in_array($k, $allowedDismaxParmeters) && !in_array($k, array_keys($filteredDismaxParmeters))) {
+                        $filteredDismaxParmeters[$k] = $k . '="' . addslashes($v) . '"';
+                    }
+                }
             }
-            $searchTerm = is_array($queryArray[$queryField['id']]) ? '"' . join('" "', $queryArray[$queryField['id']]) . '"' : $queryArray[$queryField['id']];
-            $queryStringArray[$queryField['id']] .= '_query_:"{!edismax ' . addslashes(join(' ', $filteredDismaxParmeters) . '}' . $searchTerm) . '"';
+            if(!preg_match('/^".*"$/', trim($searchTerm))) {
+                $searchTerm = preg_replace('/\s*-\s+/', ' ', $searchTerm);
+                // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($searchTerm, 'searchTerm after preg_replace');
+            }
+            // if searchTerm is an array join it with quotes to create a phrase query, otherwise use the string as is
+            $searchTerm = is_array($searchTerm) ? '"' . join('" "', $searchTerm) . '"' : $searchTerm;
+            $filteredDismaxParmeters['v'] = 'v="' . addslashes($searchTerm) .'"';
+            // if qf parameter is not in the queryField configuration use the queryField id as default
+            if ($searchField != '' && !in_array('qf', array_keys($filteredDismaxParmeters)) && !in_array('pf', array_keys($filteredDismaxParmeters))) {
+                $filteredDismaxParmeters['qf'] = 'qf="' . $searchField . '"';
+            }
+            $queryStringArray[$queryField['id']] .= '{!edismax ' . join(' ', $filteredDismaxParmeters) . '}';
         }
         return join(' AND ', $queryStringArray);
     }
@@ -316,12 +261,6 @@ class AdvancedQuery
 
                 $query->setQuery($querystring);
             } else {
-                $this->dismax = $query->getEDisMax();
-                $this->dismax->setUserFields('_query_');
-                if (is_array($settings['DismaxParams'])) {
-                    $this->handleDismaxParameters($settings['DismaxParams'], $query);
-                }
-
                 $query->setQuery($this->createQueryString($arguments['q']));
             }
         }
