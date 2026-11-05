@@ -165,7 +165,6 @@ class AdvancedQuery
         return str_replace([':','?', ';', '-', '!', '&', '–', '(', ')', '+', '=', '$', '[', ']', '.', '„', '“', '‘', '’'], ' ', $queryParameter);
     }
 
-    private function createQueryString(array $queryArray)
     private function createQueryString(array $queryArray): string
     {
         $allowedDismaxParmeters = ['qf','pf','pf2','pf3','ps','ps2','ps3','qs','tie','mm','bq','bf','sow'];
@@ -223,11 +222,6 @@ class AdvancedQuery
                     }
                 }
             }
-            if(!preg_match('/^".*"$/', trim($searchTerm))) {
-                $searchTerm = preg_replace('/\s*-\s+/', ' ', $searchTerm);
-                // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($searchTerm, 'searchTerm after preg_replace');
-            }
-            */
             //$searchTerm = is_array($searchTerm) ? '"' . implode('" "', $searchTerm) . '"' : $searchTerm;
             $dismaxParmeters['v'] = 'v=' . $this->query->getHelper()->escapeLocalParamValue(implode(' ', $searchTerms));
             if ($searchField != '' && !in_array('qf', array_keys($dismaxParmeters)) && !in_array('pf', array_keys($dismaxParmeters))) {
