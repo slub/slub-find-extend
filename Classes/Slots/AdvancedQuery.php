@@ -179,24 +179,33 @@ class AdvancedQuery
         foreach ($filteredQueryFields as $fieldInfo) {
             $dismaxParmeters = [];
             $searchField = $fieldInfo['id'] ?? '';
-            $searchTerms = is_array($queryArray[$fieldInfo['id']]) ? $queryArray[$fieldInfo['id']] : [$queryArray[$fieldInfo['id']]];
-            $phrasedSearchTerms = [];
+            $searchTerms = [
+                'normal' => is_array($queryArray[$fieldInfo['id']]) ? $queryArray[$fieldInfo['id']] : [$queryArray[$fieldInfo['id']]],
+                'phrased' => []
+            ];
             // always escape search terms
-            foreach (array_keys($searchTerms) as $key) {
-                if (!preg_match('/^".*"$/', trim($searchTerms[$key]))) {
-                    $searchTerms[$key] = empty($fieldInfo['phrase'])
-                        ? $this->query->getHelper()->escapeTerm($searchTerms[$key])
-                        : $this->query->getHelper()->escapePhrase($searchTerms[$key]);
-                    // add additional phrased term if the term is not phrased already
-                    if (!preg_match('/^".*"$/', trim($searchTerms[$key]))) {
-                        $phrasedSearchTerms[] = $this->query->getHelper()->escapePhrase($searchTerms[$key]);
+            foreach (array_keys($searchTerms['normal']) as $key) {
+                // remove leading and trailing whitespace from the search term
+                $searchTerms['normal'][$key] = trim($searchTerms['normal'][$key]);
+                // if the search term is not a phrased, escape it according to the specified escape method
+                if (!preg_match('/^".*"$/', $searchTerms['normal'][$key])) {
+                    switch ($fieldInfo['escapeMethod']) {
+                        case 'term':
+                            $searchTerms['normal'][$key] = $this->query->getHelper()->escapeTerm($searchTerms['normal'][$key]);
+                            break;
+                        case 'phrase':
+                            $searchTerms['normal'][$key] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
+                            break;
+                        default:
+                            // add additional phrased term if the term does contain more than token
+                            $searchTerms['phrased'][] = $this->query->getHelper()->escapeTerm($searchTerms['normal'][$key]);
+                            $searchTerms['phrased'][] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
                     }
                 } else {
                     // make sure that the phrased search term is escaped properly
-                    $searchTerms[$key] = $this->query->getHelper()->escapePhrase(substr(trim($searchTerms[$key]), 1, -1));
+                    $searchTerms['normal'][$key] = $this->query->getHelper()->escapePhrase(trim(substr($searchTerms['normal'][$key], 1, -1)));
                 }
             }
-            $searchTerms = array_merge($searchTerms, $phrasedSearchTerms);
             foreach ($fieldInfo as $k => $v) {
                 switch($k) {
                     case in_array($k, $allowedDismaxParmeters):
@@ -207,8 +216,11 @@ class AdvancedQuery
                         break;
                     case 'query':
                         preg_match('/^(?:(?<field>[^:]+):)?(?<query>.+)$/', $v, $queryParts);
-                        $searchTerms = array_map(function ($term) use ($queryParts) {
-                            return vsprintf($queryParts['query'], [$term]);
+                        $searchTerms = array_map(function ($searchTermType) use ($queryParts) {
+                            foreach ($searchTermType as $key => $term) {
+                                $searchTermType[$key] = vsprintf($queryParts['query'], [$term]);
+                            }
+                            return $searchTermType;
                         }, $searchTerms) ?? $searchTerms;
                         $searchField = $queryParts['field'] != '' ? $queryParts['field'] : $fieldInfo['id'];
                         break;
@@ -222,12 +234,15 @@ class AdvancedQuery
                     }
                 }
             }
-            //$searchTerm = is_array($searchTerm) ? '"' . implode('" "', $searchTerm) . '"' : $searchTerm;
-            $dismaxParmeters['v'] = 'v=' . $this->query->getHelper()->escapeLocalParamValue(implode(' ', $searchTerms));
             if ($searchField != '' && !in_array('qf', array_keys($dismaxParmeters)) && !in_array('pf', array_keys($dismaxParmeters))) {
                 $dismaxParmeters['qf'] = 'qf=' . $this->query->getHelper()->escapeLocalParamValue($searchField);
                 $dismaxParmeters['pf'] = 'pf=' . $this->query->getHelper()->escapeLocalParamValue($searchField . '^100');
             }
+            $searchTerm = '(' .  implode(' ', $searchTerms['normal']) . ')';
+            if (count($searchTerms['phrased']) > 0) {
+                $searchTerm .= ' OR (' . implode(') OR (', $searchTerms['phrased']) . ')';
+            }
+            $dismaxParmeters['v'] = 'v=' . $this->query->getHelper()->escapeLocalParamValue($searchTerm);
             $queryStringArray[$fieldInfo['id']] .= '{!edismax ' . implode(' ', $dismaxParmeters) . '}';
         }
         return implode(' ' . Query::QUERY_OPERATOR_AND . ' ', $queryStringArray);
