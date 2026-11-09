@@ -51,11 +51,6 @@ class AdvancedQuery
     protected $configurationManager;
 
     /**
-     * @var \Solarium\Component\EdisMax
-     */
-    protected $dismax = null;
-
-    /**
      * @param \Slub\SlubFindExtend\Services\StopWordService $stopWordService
      */
     public function __construct(\Slub\SlubFindExtend\Services\StopWordService $stopWordService)
@@ -183,7 +178,6 @@ class AdvancedQuery
                 'normal' => is_array($queryArray[$fieldInfo['id']]) ? $queryArray[$fieldInfo['id']] : [$queryArray[$fieldInfo['id']]],
                 'phrased' => []
             ];
-            // always escape search terms
             foreach (array_keys($searchTerms['normal']) as $key) {
                 // remove leading and trailing whitespace from the search term
                 $searchTerms['normal'][$key] = trim($searchTerms['normal'][$key]);
@@ -196,10 +190,15 @@ class AdvancedQuery
                         case 'phrase':
                             $searchTerms['normal'][$key] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
                             break;
+                        case 'wildcard':
+                            $searchTerms['normal'][$key] = $this->query->getHelper()->escapeTerm(rtrim($searchTerms['normal'][$key], '*?')) .'*';
+                            break;
                         default:
                             // add additional phrased term if the term does contain more than token
-                            $searchTerms['phrased'][] = $this->query->getHelper()->escapeTerm($searchTerms['normal'][$key]);
-                            $searchTerms['phrased'][] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
+                            if (preg_match('/\s+/', $searchTerms['normal'][$key])) {
+                                $searchTerms['phrased'][] = $this->query->getHelper()->escapeTerm($searchTerms['normal'][$key]);
+                                $searchTerms['phrased'][] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
+                            }
                     }
                 } else {
                     // make sure that the phrased search term is escaped properly
