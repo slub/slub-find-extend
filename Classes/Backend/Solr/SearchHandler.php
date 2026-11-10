@@ -135,24 +135,27 @@ class SearchHandler
     {
         $boostQuery = [];
         if ($this->hasDismax()) {
-            foreach ($this->getDismaxParams() as $param) {
-                if ($param['name'] === 'bq') {
-                    $boostQuery[] = $param['value'];
-                } elseif ($param['name'] === 'bf') {
-                    // BF parameter may contain multiple space-separated functions
-                    // with individual boosts.  We need to parse this into _val_
-                    // query components:
+            foreach ($this->getDismaxParams() as $key => $value) {
+                switch ($key) {
+                    case 'bq':
+                        $boostQuery[] = $value;
+                        break;
+                    case 'bf':
+                        // BF parameter may contain multiple space-separated functions
+                        // with individual boosts. We need to parse this into _val_
+                        // query components:
 
-                    foreach (explode(' ', $param['value']) as $boostFunction) {
-                        if ($boostFunction) {
-                            $parts = explode('^', $boostFunction, 2);
-                            $boostQuery[] = sprintf(
-                                '_val_:"%s"%s',
-                                addcslashes($parts[0], '"'),
-                                isset($parts[1]) ? "^{$parts[1]}" : ''
-                            );
+                        foreach (explode(' ', $value) as $boostFunction) {
+                            if ($boostFunction) {
+                                $parts = explode('^', $boostFunction, 2);
+                                $boostQuery[] = sprintf(
+                                    '_val_:"%s"%s',
+                                    addcslashes($parts[0], '"'),
+                                    isset($parts[1]) ? "^{$parts[1]}" : ''
+                                );
+                            }
                         }
-                    }
+                        break;
                 }
             }
         }
@@ -260,11 +263,11 @@ class SearchHandler
     protected function dismaxSubquery($search)
     {
         $dismaxParams = [];
-        foreach ($this->specs['DismaxParams'] as $param) {
+        foreach ($this->specs['DismaxParams'] as $key => $value) {
             $dismaxParams[] = sprintf(
                 "%s='%s'",
-                $param['name'],
-                addcslashes($param['value'], "'")
+                $key,
+                addcslashes($value, "'")
             );
         }
 

@@ -28,6 +28,11 @@ use Slub\SlubFindExtend\Services\StopWordService;
 class AdvancedQuery
 {
     /**
+     * @var Query
+     */
+    protected Query $query;
+
+    /**
      * @var \Slub\SlubFindExtend\Services\StopWordService
      */
     protected $stopWordService = null;
@@ -156,6 +161,102 @@ class AdvancedQuery
     }
 
     /**
+     * Create a Solr edismax query string from an array of query parameters
+     *
+     * @param array $queryArray Array of query parameters
+     * @return string Solr edismax query string
+     */
+    private function createQueryString(array $queryArray): string
+    {
+        $allowedDismaxParmeters = ['qf','pf','pf2','pf3','ps','ps2','ps3','qs','tie','mm','bq','bf','sow'];
+        $queryStringArray = ['default_query' => '*:*'];
+        $filteredQueryFields = array_filter(
+            $this->settings['queryFields'],
+            static fn(array $entry): bool => in_array($entry['id'], array_keys($queryArray) ?? [])
+        );
+
+        if (empty($filteredQueryFields)) {
+            return $queryStringArray['default_query'];
+        }
+
+        foreach ($filteredQueryFields as $fieldInfo) {
+            $dismaxParmeters = [];
+            $searchField = $fieldInfo['id'] ?? '';
+            $searchTerms = [
+                'normal' => is_array($queryArray[$fieldInfo['id']]) ? $queryArray[$fieldInfo['id']] : [$queryArray[$fieldInfo['id']]],
+                'phrased' => []
+            ];
+
+            foreach (array_keys($searchTerms['normal']) as $key) {
+                $searchTerms['normal'][$key] = trim($searchTerms['normal'][$key]);
+                if (!preg_match('/^".*"$/', $searchTerms['normal'][$key])) {
+                    switch ($fieldInfo['escapeMethod']) {
+                        case 'term':
+                            $searchTerms['normal'][$key] = $this->query->getHelper()->escapeTerm($searchTerms['normal'][$key]);
+                            break;
+                        case 'phrase':
+                            $searchTerms['normal'][$key] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
+                            break;
+                        case 'wildcard':
+                            $searchTerms['normal'][$key] = $this->query->getHelper()->escapeTerm(rtrim($searchTerms['normal'][$key], '*?')) .'*';
+                            break;
+                        default:
+                            if (preg_match('/\s+/', $searchTerms['normal'][$key])) {
+                                $searchTerms['phrased'][] = $this->query->getHelper()->escapeTerm($searchTerms['normal'][$key]);
+                                $searchTerms['phrased'][] = $this->query->getHelper()->escapePhrase($searchTerms['normal'][$key]);
+                            }
+                    }
+                } else {
+                    $searchTerms['normal'][$key] = $this->query->getHelper()->escapePhrase(trim(substr($searchTerms['normal'][$key], 1, -1)));
+                }
+            }
+
+            foreach ($fieldInfo as $k => $v) {
+                switch($k) {
+                    case in_array($k, $allowedDismaxParmeters):
+                        $dismaxParmeters[$k] = $k . '=' . $this->query->getHelper()->escapeLocalParamValue($v);
+                        break;
+                    case 'operator':
+                        $dismaxParmeters['q.op'] = 'q.op=' . $this->query->getHelper()->escapeLocalParamValue($v);
+                        break;
+                    case 'query':
+                        preg_match('/^(?:(?<field>[^:]+):)?(?<query>.+)$/', $v, $queryParts);
+                        $searchTerms = array_map(function ($searchTermType) use ($queryParts) {
+                            foreach ($searchTermType as $key => $term) {
+                                $searchTermType[$key] = vsprintf($queryParts['query'], [$term]);
+                            }
+                            return $searchTermType;
+                        }, $searchTerms) ?? $searchTerms;
+                        $searchField = $queryParts['field'] != '' ? $queryParts['field'] : $fieldInfo['id'];
+                        break;
+                }
+            }
+
+            if (is_array($this->settings['components']['DismaxParams'])) {
+                foreach ($this->settings['components']['DismaxParams'] as $k => $v) {
+                    if (in_array($k, $allowedDismaxParmeters) && !in_array($k, array_keys($dismaxParmeters))) {
+                        $dismaxParmeters[$k] = $k . '=' . $this->query->getHelper()->escapeLocalParamValue($v);
+                    }
+                }
+            }
+
+            if ($searchField != '' && !in_array('qf', array_keys($dismaxParmeters)) && !in_array('pf', array_keys($dismaxParmeters))) {
+                $dismaxParmeters['qf'] = 'qf=' . $this->query->getHelper()->escapeLocalParamValue($searchField);
+                $dismaxParmeters['pf'] = 'pf=' . $this->query->getHelper()->escapeLocalParamValue($searchField . '^100');
+            }
+
+            $searchTerm = '(' .  implode(' ', $searchTerms['normal']) . ')';
+            if (count($searchTerms['phrased']) > 0) {
+                $searchTerm .= ' OR (' . implode(') OR (', $searchTerms['phrased']) . ')';
+            }
+
+            $dismaxParmeters['v'] = 'v=' . $this->query->getHelper()->escapeLocalParamValue($searchTerm);
+            $queryStringArray[$fieldInfo['id']] .= '{!edismax ' . implode(' ', $dismaxParmeters) . '}';
+        }
+        return implode(' ' . Query::QUERY_OPERATOR_AND . ' ', $queryStringArray);
+    }
+
+    /**
      * Slot to build the advanced query
      *
      * @param Query &$query
@@ -163,6 +264,7 @@ class AdvancedQuery
      */
     public function build(&$query, $arguments)
     {
+        $this->query = $query;
         $queryParameter = trim(is_array($arguments['q']['default']) ? $arguments['q']['default'][0] : $arguments['q']['default']);
         $originalQueryParameter = $queryParameter;
 
@@ -206,24 +308,9 @@ class AdvancedQuery
                     $querystring .= $this->handleIsilMatch($originalQueryParameter, $searchHandler, $this->settings);
                 }
 
-                $query->setQuery($querystring);
+                $this->query->setQuery($querystring);
             } else {
-                if ($settings['DismaxHandler'] === 'edismax') {
-                    $dismax = $query->getEDisMax();
-                } else {
-                    $dismax = $query->getDisMax();
-                }
-
-                if ($settings['DismaxParams']) {
-                    foreach ($settings['DismaxParams'] as $params) {
-                        if ($params['name'] === 'bf') {
-                            $dismax->setBoostFunctions($params['value']);
-                        }
-                        if ($params['name'] === 'bq') {
-                            $dismax->setBoostQuery($params['value']);
-                        }
-                    }
-                }
+                $this->query->setQuery($this->createQueryString($arguments['q']));
             }
         }
     }
